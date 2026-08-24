@@ -103,6 +103,8 @@ in
     cargo
     gcc
     tree-sitter
+    nodejs
+    librsvg
     tmux
     thunderbird
     (pkgs.writeShellApplication {

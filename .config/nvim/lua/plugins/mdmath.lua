@@ -8,8 +8,11 @@ return {
     end,
   },
   {
-    "techwizrd/render-latex.nvim",
+    "Thiago4532/mdmath.nvim",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
-    opts = {},
+    build = ":MdMath build",
+    opts = {
+      filetypes = { "markdown" },
+    },
   },
 }
