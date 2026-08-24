@@ -228,6 +228,7 @@ window#waybar {
 /*                   TOGGLE BUTTONS                            */
 /* ─────────────────────────────────────────────────────────── */
 
+#custom-terminal,
 #custom-mic-toggle,
 #custom-power-button {
     color: #e6e1e1;
@@ -238,6 +239,7 @@ window#waybar {
     transition: all 0.15s ease;
 }
 
+#custom-terminal:hover,
 #custom-mic-toggle:hover,
 #custom-power-button:hover {
     background: #1a1a1a;

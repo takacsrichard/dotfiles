@@ -43,7 +43,7 @@ in
   # down") visible on screen during shutdown so a hang can be localized to
   # kernel vs. firmware.
   boot.kernelPackages = pkgs.linuxPackages;
-  boot.consoleLogLevel = 7;
+  boot.consoleLogLevel = 4;
   boot.kernel.sysctl."net.ipv4.tcp_mtu_probing" = 1;
   boot.kernelParams = [ "reboot=efi" "amd_iommu=off" ];
   boot.kernel.sysctl."vm.vfs_cache_pressure" = 50;

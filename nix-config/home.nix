@@ -1,11 +1,5 @@
 { config, pkgs, pkgs-unstable, ... }:
 let
-  firefox-history-watcher = pkgs.writeShellApplication {
-    name = "firefox-history-watcher";
-    runtimeInputs = with pkgs; [ inotify-tools sqlite ];
-    text = builtins.readFile ../scripts/firefox-history-watcher;
-  };
-
   dotfilesConfig = builtins.readDir ../.config;
   autoExcluded = [ "systemd" "mimeapps.list" "fontconfig" "doublecmd" ];
   autoConfigEntries = builtins.listToAttrs (
@@ -207,18 +201,4 @@ in
       config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.config/doublecmd/multiarc.ini";
   };
 
-  systemd.user.services.firefox-history-watcher = {
-    Unit = {
-      Description = "Append Firefox history to a permanent log";
-      After = [ "graphical-session.target" ];
-    };
-    Service = {
-      ExecStart = "${firefox-history-watcher}/bin/firefox-history-watcher";
-      Restart = "always";
-      RestartSec = "5s";
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
 }

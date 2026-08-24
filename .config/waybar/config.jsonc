@@ -5,7 +5,7 @@
     "position": "top",
     "height": 36,
     "spacing": 0,
-    "modules-left": ["hyprland/workspaces"],
+    "modules-left": ["hyprland/workspaces", "custom/terminal"],
     "modules-center": ["clock"],
     "modules-right": [
         "custom/power-button",
@@ -149,6 +149,14 @@
         "interval": 2,
         "return-type": "json",
         "tooltip": "Unread notifications"
+    },
+
+    "custom/terminal": {
+        "format": "{}",
+        "exec": "~/.config/waybar/scripts/terminal-icon.sh",
+        "on-click": "setsid kitty",
+        "interval": "once",
+        "return-type": "json"
     },
 
     "custom/power-button": {

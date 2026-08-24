@@ -2,11 +2,14 @@
 #  Aliases
 # ============================================================
 
+alias aliases="nvim /home/richard/dotfiles/.config/zsh/aliases.zsh"
+alias cla="claude --dangerously-skip-permissions"
+alias cpwd="copy pwd"
 alias bt="bluetui"
 alias wf="wifitui"
 alias wifitui="nmtui"
 alias wifirec="nmcli radio wifi off && nmcli radio wifi on"
-
+alias n="nvim"
 # btrfs balance
 alias reclaim="sudo btrfs balance start -dusage=50 /home"
 
