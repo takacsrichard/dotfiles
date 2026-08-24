@@ -102,6 +102,7 @@ in
     rustc
     cargo
     gcc
+    tree-sitter
     tmux
     thunderbird
     (pkgs.writeShellApplication {

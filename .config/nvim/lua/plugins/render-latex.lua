@@ -3,11 +3,9 @@ return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     lazy = false,
-    main = "nvim-treesitter.configs",
-    opts = {
-      ensure_installed = { "markdown", "markdown_inline", "latex" },
-      highlight = { enable = true },
-    },
+    config = function()
+      require("nvim-treesitter").install({ "markdown", "markdown_inline", "latex" })
+    end,
   },
   {
     "techwizrd/render-latex.nvim",
