@@ -1,3 +1,9 @@
+# run okular and disown
+o() {
+    okular "$@" >/dev/null 2>&1 & disown
+}
+
+
 # play yt audio; -d also downloads as opus with full metadata+thumbnail to ~/Music/yt_ddl/
 yt() {
     local download=false

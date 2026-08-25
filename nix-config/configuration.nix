@@ -222,6 +222,7 @@ in
     touchpad-filter
     reset-touchpad
     sddm-sugar-candy
+    lm_sensors
   ];
 
   # udev: allow input group to access uinput (needed by touchpad-filter)

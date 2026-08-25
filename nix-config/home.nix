@@ -154,6 +154,7 @@ in
       "video/x-flv"        = "mpv.desktop";
       "video/3gpp"         = "mpv.desktop";
       "audio/x-opus+ogg"   = "mpv.desktop";
+      "application/pdf"    = "okular.desktop";
     };
     associations.removed = {
       "audio/x-opus+ogg" = "org.kde.elisa.desktop";

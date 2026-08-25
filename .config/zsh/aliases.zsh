@@ -2,6 +2,7 @@
 #  Aliases
 # ============================================================
 
+alias szsh="sourcezsh"
 alias aliases="nvim /home/richard/dotfiles/.config/zsh/aliases.zsh"
 alias cla="claude --dangerously-skip-permissions"
 alias cpwd="copy pwd"
@@ -31,7 +32,6 @@ alias hlay='hyprctl layers'         # active layer surfaces (bars, overlays)
 alias hrel='hyprctl reload'
 alias hkill='hyprctl kill'          # click to kill a window
 alias hver='hyprctl version'
-alias hcf="nvim $HOME/.config/hypr/hyprland.conf"
 
 alias memusers='ps axo rss,comm --sort=-rss | head -n 6 | awk '\''NR==1 {print $1, $2; next} {printf "%.2f MB\t%s\n", $1/1024, $2}'\'''
 alias memuserspriv='ps axo pid,comm --sort=-rss | head -n 6 | awk '\''NR==1 {next} {print $1, $2}'\'' | while read pid name; do priv=$(awk '\''/^Private_Dirty/{sum+=$2} END{printf "%.2f MB", sum/1024}'\'' /proc/$pid/smaps 2>/dev/null); echo "$priv\t$name"; done | sort -rn'
@@ -51,8 +51,7 @@ alias htopcopy="copy 'ps auxf'"
 # --- Directory shortcuts ---
 alias ssd='cd "$SSD_MOUNT"'
 alias hdd="cd /run/media/$USER/Expansion"
-alias richard="cd $HOME"
-alias thesis="cd $HOME/Documents/Thesis"
+alias home="cd $HOME"
 alias config='cd ~/.config'
 alias kdeconf='cd ~/.config'
 alias ddls="cd $HOME/Downloads"
@@ -67,10 +66,6 @@ alias localip='ip -br addr show | grep -v lo'
 # --- Bluetooth shortcuts ---
 alias blon='bluetoothctl power on'
 alias bloff='bluetoothctl power off'
-
-# backup commands
-alias pdrivebackup="rclone copy /home/richard/Documents/docs pdrive:backup/docs --protondrive-replace-existing-draft=true -P"
-alias gdrivebackup="rclone copy /run/media/richard/7ABF-7932/backup/restic_repo gdrive:backup/restic_repo --progress --transfers 4 --checkers 8 --retries 10 --low-level-retries 20 --timeout 5m --contimeout 1m --stats 5s"
 
 # --- Misc ---
 alias weather='curl wttr.in'
