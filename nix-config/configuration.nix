@@ -228,7 +228,9 @@ in
     sddm-sugar-candy
     lm_sensors
     # R / data science
-    R
+    (rWrapper.override {
+      packages = with rPackages; [ rmarkdown knitr tidyverse ggplot2 ];
+    })
     rstudio
     (texlive.combine {
       inherit (texlive)
