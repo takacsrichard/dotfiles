@@ -33,7 +33,7 @@ ItemGeometriesHorizontal=
 activityId=4fb69a6b-00db-4bbd-87ac-4340f0aa95e3
 formfactor=0
 immutability=1
-lastScreen=0
+lastScreen=2
 location=0
 plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.image
@@ -151,6 +151,10 @@ plugin=org.kde.plasma.cameraindicator
 [Containments][2][Applets][7][Applets][9]
 immutability=1
 plugin=org.kde.plasma.clipboard
+
+[Containments][2][Applets][7][General]
+extraItems=org.kde.plasma.cameraindicator,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.manage-inputmethod,org.kde.plasma.mediacontroller,org.kde.plasma.notifications,org.kde.kscreen,org.kde.plasma.battery,org.kde.plasma.bluetooth,org.kde.plasma.brightness,org.kde.plasma.keyboardindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.plasma.weather
+knownItems=org.kde.plasma.cameraindicator,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.manage-inputmethod,org.kde.plasma.mediacontroller,org.kde.plasma.notifications,org.kde.kscreen,org.kde.plasma.battery,org.kde.plasma.bluetooth,org.kde.plasma.brightness,org.kde.plasma.keyboardindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.plasma.weather
 
 [Containments][2][General]
 AppletOrder=3;4;5;6;7;19;20
@@ -319,8 +323,8 @@ immutability=1
 plugin=org.kde.plasma.keyboardlayout
 
 [Containments][3][Applets][8][General]
-extraItems=org.kde.plasma.keyboardlayout,org.kde.plasma.bluetooth,org.kde.plasma.manage-inputmethod,org.kde.plasma.clipboard,org.kde.plasma.cameraindicator,org.kde.plasma.brightness,org.kde.plasma.devicenotifier,org.kde.plasma.mediacontroller,org.kde.plasma.weather,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.volume,org.kde.plasma.printmanager,org.kde.plasma.networkmanagement
-knownItems=org.kde.plasma.keyboardlayout,org.kde.plasma.bluetooth,org.kde.plasma.manage-inputmethod,org.kde.plasma.clipboard,org.kde.plasma.cameraindicator,org.kde.plasma.brightness,org.kde.plasma.devicenotifier,org.kde.plasma.mediacontroller,org.kde.plasma.weather,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.volume,org.kde.plasma.printmanager,org.kde.plasma.networkmanagement
+extraItems=org.kde.plasma.keyboardlayout,org.kde.plasma.bluetooth,org.kde.plasma.manage-inputmethod,org.kde.plasma.clipboard,org.kde.plasma.cameraindicator,org.kde.plasma.brightness,org.kde.plasma.devicenotifier,org.kde.plasma.mediacontroller,org.kde.plasma.weather,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.volume,org.kde.plasma.networkmanagement
+knownItems=org.kde.plasma.keyboardlayout,org.kde.plasma.bluetooth,org.kde.plasma.manage-inputmethod,org.kde.plasma.clipboard,org.kde.plasma.cameraindicator,org.kde.plasma.brightness,org.kde.plasma.devicenotifier,org.kde.plasma.mediacontroller,org.kde.plasma.weather,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.volume,org.kde.plasma.networkmanagement
 
 [Containments][3][General]
 AppletOrder=4;5;39;7;8;22;23
@@ -456,8 +460,8 @@ immutability=1
 plugin=org.kde.plasma.mediacontroller
 
 [Containments][40][Applets][44][General]
-extraItems=org.kde.plasma.keyboardlayout,org.kde.plasma.bluetooth,org.kde.plasma.manage-inputmethod,org.kde.plasma.clipboard,org.kde.plasma.cameraindicator,org.kde.plasma.brightness,org.kde.plasma.devicenotifier,org.kde.plasma.mediacontroller,org.kde.plasma.weather,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.volume,org.kde.plasma.printmanager,org.kde.plasma.networkmanagement
-knownItems=org.kde.plasma.keyboardlayout,org.kde.plasma.bluetooth,org.kde.plasma.manage-inputmethod,org.kde.plasma.clipboard,org.kde.plasma.cameraindicator,org.kde.plasma.brightness,org.kde.plasma.devicenotifier,org.kde.plasma.mediacontroller,org.kde.plasma.weather,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.volume,org.kde.plasma.printmanager,org.kde.plasma.networkmanagement
+extraItems=org.kde.plasma.keyboardlayout,org.kde.plasma.bluetooth,org.kde.plasma.manage-inputmethod,org.kde.plasma.clipboard,org.kde.plasma.cameraindicator,org.kde.plasma.brightness,org.kde.plasma.devicenotifier,org.kde.plasma.mediacontroller,org.kde.plasma.weather,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.volume,org.kde.plasma.networkmanagement
+knownItems=org.kde.plasma.keyboardlayout,org.kde.plasma.bluetooth,org.kde.plasma.manage-inputmethod,org.kde.plasma.clipboard,org.kde.plasma.cameraindicator,org.kde.plasma.brightness,org.kde.plasma.devicenotifier,org.kde.plasma.mediacontroller,org.kde.plasma.weather,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.volume,org.kde.plasma.networkmanagement
 
 [Containments][40][Applets][61]
 immutability=1
@@ -497,6 +501,8 @@ launchers=applications:doublecmd.desktop,applications:obsidian.desktop,applicati
 AppletOrder=41;42;63;43;44;61;62
 
 [Containments][64]
+ItemGeometries-1800x1125=
+ItemGeometriesHorizontal=
 activityId=4fb69a6b-00db-4bbd-87ac-4340f0aa95e3
 formfactor=0
 immutability=1
@@ -516,4 +522,4 @@ wallpaperplugin=org.kde.image
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=desktop:/a,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d,file:///home/richard/Desktop/Link to Application.desktop,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d,desktop:/asd.txt,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d
+screenMapping=file:///home/richard/Desktop/Link to Application.desktop,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d,desktop:/a,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d,desktop:/asd.txt,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d

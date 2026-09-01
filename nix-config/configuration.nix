@@ -35,7 +35,7 @@ in
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.configurationLimit = 5;
-  boot.loader.timeout = 0;
+  boot.loader.timeout = 5;
   boot.loader.efi.canTouchEfiVariables = true;
   # Default (older, stable) kernel instead of linuxPackages_latest while
   # chasing the intermittent poweroff hang — rules bleeding-edge regressions
@@ -50,10 +50,11 @@ in
   # Network
   networking.hostName = "nixos";
   networking.networkmanager = {
-  enable = true;
-  plugins = with pkgs; [ networkmanager-openconnect ];
-	};
+    enable = true;
+    plugins = with pkgs; [ networkmanager-openconnect ];
+  };
   networking.networkmanager.dns = "systemd-resolved";
+
   services.resolved.enable = true;
   # Run home-manager activation after graphical.target instead of before it,
   # so the login screen appears ~3.5s earlier. home-manager finishes in ~3.5s
@@ -226,6 +227,18 @@ in
     reset-touchpad
     sddm-sugar-candy
     lm_sensors
+    # R / data science
+    R
+    rstudio
+    (texlive.combine {
+      inherit (texlive)
+        scheme-medium
+        framed
+        titling
+        enumitem
+        parskip;
+    })
+    pandoc
   ];
 
   # udev: allow input group to access uinput (needed by touchpad-filter)
