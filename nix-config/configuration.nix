@@ -43,13 +43,16 @@ in
   # down") visible on screen during shutdown so a hang can be localized to
   # kernel vs. firmware.
   boot.kernelPackages = pkgs.linuxPackages;
-  boot.consoleLogLevel = 4;
+  boot.consoleLogLevel = 1;
   boot.kernel.sysctl."net.ipv4.tcp_mtu_probing" = 1;
   boot.kernelParams = [ "reboot=efi" "amd_iommu=off" ];
   boot.kernel.sysctl."vm.vfs_cache_pressure" = 50;
   # Network
   networking.hostName = "nixos";
-  networking.networkmanager.enable = true;
+  networking.networkmanager = {
+  enable = true;
+  plugins = with pkgs; [ networkmanager-openconnect ];
+	};
   networking.networkmanager.dns = "systemd-resolved";
   services.resolved.enable = true;
   # Run home-manager activation after graphical.target instead of before it,
