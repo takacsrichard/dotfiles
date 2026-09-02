@@ -522,4 +522,4 @@ wallpaperplugin=org.kde.image
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=file:///home/richard/Desktop/Link to Application.desktop,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d,desktop:/a,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d,desktop:/asd.txt,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d
+screenMapping=desktop:/a,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d,file:///home/richard/Desktop/Link to Application.desktop,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d,desktop:/asd.txt,0,7bb900f4-0e4a-4ecd-8286-e707d7e1084d

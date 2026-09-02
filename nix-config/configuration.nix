@@ -229,7 +229,19 @@ in
     lm_sensors
     # R / data science
     (rWrapper.override {
-      packages = with rPackages; [ rmarkdown knitr tidyverse ggplot2 ];
+      packages = with rPackages; [
+        # document rendering
+        rmarkdown knitr
+        # core data wrangling & viz
+        tidyverse ggplot2 dplyr tidyr readr lubridate stringr purrr
+        data_table
+        # stats & ML
+        caret forecast zoo xts
+        # quant finance
+        quantmod TTR PerformanceAnalytics tidyquant tseries rugarch
+        # misc utils
+        plotly DT scales
+      ];
     })
     rstudio
     (texlive.combine {

@@ -3,11 +3,12 @@
 # ============================================================
 
 alias szsh="sourcezsh"
+alias sz="sourcezsh"
 alias aliases="nvim /home/richard/dotfiles/.config/zsh/aliases.zsh"
 alias cla="claude --dangerously-skip-permissions"
 alias cpwd="copy pwd"
 alias bt="bluetui"
-alias wf="wifitui"
+alias wt="wifitui"
 alias wifitui="nmtui"
 alias wifirec="nmcli radio wifi off && nmcli radio wifi on"
 alias n="nvim"
@@ -91,3 +92,8 @@ alias plasma-scores="sqlite3 ~/.local/share/kactivitymanagerd/resources/database
     AND initiatingAgent NOT LIKE 'org.kde.krunner' \
     AND initiatingAgent NOT LIKE '%desktop-portal%' \
     ORDER BY cachedScore DESC LIMIT 15;\""
+
+# --- R / LaTeX ---
+rr()   { Rscript "$1" }
+rrmd() { Rscript -e "rmarkdown::render('$1', output_format='pdf_document')" }
+lmk()  { latexmk -pdf "$1" }
