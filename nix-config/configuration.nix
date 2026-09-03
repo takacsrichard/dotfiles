@@ -1,4 +1,4 @@
-{ config, pkgs, lib, agenix, ... }:
+{ config, pkgs, lib, ragenix, ... }:
 
 let
   touchpad-filter = pkgs.writers.writePython3Bin "touchpad-filter"
@@ -54,6 +54,34 @@ in
     plugins = with pkgs; [ networkmanager-openconnect ];
   };
   networking.networkmanager.dns = "systemd-resolved";
+
+  age.secrets."eduroam" = {
+    file = ../secrets/eduroam.age;
+    mode = "0600";
+  };
+
+  environment.etc."ssl/certs/eduroam/ca.pem".source = ./certs/wu-eduroam-ca.pem;
+
+  networking.networkmanager.ensureProfiles = {
+    environmentFiles = [ config.age.secrets."eduroam".path ];
+    profiles.eduroam = {
+      connection = { id = "eduroam"; type = "wifi"; };
+      wifi = { mode = "infrastructure"; ssid = "eduroam"; };
+      wifi-security = { key-mgmt = "wpa-eap"; };
+      "802-1x" = {
+        eap = "peap;";
+        identity = "h12313036@wu.ac.at";
+        anonymous-identity = "h12313036@wu.ac.at";
+        ca-cert = "/etc/ssl/certs/eduroam/ca.pem";
+        altsubject-matches = "DNS:radius.wu.ac.at;DNS:radius1.wu.ac.at;DNS:radius2.wu.ac.at";
+        phase2-auth = "mschapv2";
+        password = "$EDUROAM_PASSWORD";
+        password-flags = "0";
+      };
+      ipv4 = { method = "auto"; };
+      ipv6 = { method = "auto"; };
+    };
+  };
 
   services.resolved.enable = true;
   # Run home-manager activation after graphical.target instead of before it,
@@ -219,13 +247,12 @@ in
 
   # System packages
   environment.systemPackages = with pkgs; [
-    agenix.packages.x86_64-linux.default
+    age
     wireguard-tools
     ffmpeg
     brightnessctl
     touchpad-filter
     reset-touchpad
-    sddm-sugar-candy
     lm_sensors
     # R / data science
     (rWrapper.override {
@@ -250,7 +277,9 @@ in
         framed
         titling
         enumitem
-        parskip;
+        parskip
+        preprint
+        titlesec;
     })
     pandoc
   ];

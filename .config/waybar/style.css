@@ -229,6 +229,7 @@ window#waybar {
 /* ─────────────────────────────────────────────────────────── */
 
 #custom-terminal,
+#custom-scr,
 #custom-mic-toggle,
 #custom-power-button {
     color: #e6e1e1;
@@ -240,10 +241,15 @@ window#waybar {
 }
 
 #custom-terminal:hover,
+#custom-scr:hover,
 #custom-mic-toggle:hover,
 #custom-power-button:hover {
     background: #1a1a1a;
     color: #e6e1e1;
+}
+
+#custom-scr {
+    margin-left: 10px;
 }
 
 #custom-mic-toggle.muted {

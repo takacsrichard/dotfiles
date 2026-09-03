@@ -5,7 +5,7 @@
     "position": "top",
     "height": 36,
     "spacing": 0,
-    "modules-left": ["hyprland/workspaces", "custom/terminal"],
+    "modules-left": ["hyprland/workspaces", "custom/terminal", "custom/scr"],
     "modules-center": ["clock"],
     "modules-right": [
         "custom/power-button",
@@ -157,6 +157,15 @@
         "on-click": "setsid kitty",
         "interval": "once",
         "return-type": "json"
+    },
+
+    "custom/scr": {
+        "format": "{}",
+        "exec": "echo '{\"text\":\"󰹑\"}'",
+        "on-click": "grim -g \"$(slurp)\" - | wl-copy",
+        "interval": "once",
+        "return-type": "json",
+        "tooltip": "Screenshot region → clipboard"
     },
 
     "custom/power-button": {

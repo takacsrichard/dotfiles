@@ -11,7 +11,6 @@ update:
 # Rebuild NixOS and push dotfiles on success
 rebuild:
     sudo nixos-rebuild switch --flake ~/dotfiles/nix-config#nixos
-    cd ~/dotfiles && git add . && { git commit -m "update dotfiles" || true; } && git push
 
 # push to gh
 push:

@@ -25,7 +25,6 @@ in
     zoxide
     fzf
     jq
-    ncdu
     yazi
     cowsay
     cmatrix
@@ -49,7 +48,6 @@ in
     libreoffice-still
     vesktop
     pnpm
-    plocate
     nixfmt
     kitty
     bc
@@ -64,7 +62,6 @@ in
     testdisk
     tesseract
     trash-cli
-    fdupes
     graphviz
     imagemagick
     inxi

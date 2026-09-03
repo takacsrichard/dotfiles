@@ -7,4 +7,5 @@ in {
   "atvpn_pf.conf.age".publicKeys = all;
   "huvpn.conf.age".publicKeys    = all;
   "huvpn_pf.conf.age".publicKeys = all;
+  "eduroam.age".publicKeys = all;
 }

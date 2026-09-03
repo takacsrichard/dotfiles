@@ -282,6 +282,43 @@ toppct() {
 }
 
 
+# Jump to zoxide target and copy the resulting path to clipboard
+zcpwd() {
+    z "$@" && copy pwd
+}
+
+# Find with fd, open matches in nvim (max 10); usage: nfd <pattern> [search_dir]
+nfd() {
+    if (( $# == 0 )); then
+        echo "Usage: nfd <pattern> [search_dir]" >&2
+        return 1
+    fi
+
+    local pattern="$1"
+    local search_dir="${2:-.}"
+    local -a files
+
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && files+=("$line")
+    done < <(fd -H -- "$pattern" "$search_dir")
+
+    local count=${#files[@]}
+
+    if (( count == 0 )); then
+        echo "nfd: no matches for '$pattern'" >&2
+        return 1
+    fi
+
+    if (( count > 10 )); then
+        echo "nfd: $count matches, opening first 10" >&2
+        files=("${files[1,10]}")
+    else
+        echo "nfd: $count match(es)" >&2
+    fi
+
+    nvim "${files[@]}"
+}
+
 function download_insta_reels {
     local reels_dir=~/Downloads/reels
     mkdir -p "$reels_dir"

@@ -15,7 +15,9 @@
   };
 
   systemd.services."wg-quick-atvpn" = {
-    after    = [ "graphical.target" ];
-    wantedBy = [ "graphical.target" ];
+    after            = [ "graphical.target" ];
+    wantedBy         = [ "graphical.target" ];
+    restartIfChanged = false;
+    stopIfChanged    = false;
   };
 }

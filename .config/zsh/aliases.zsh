@@ -14,6 +14,7 @@ alias wifirec="nmcli radio wifi off && nmcli radio wifi on"
 alias n="nvim"
 # btrfs balance
 alias reclaim="sudo btrfs balance start -dusage=50 /home"
+alias restartwaybar="pkill waybar; waybar &>/dev/null & disown"
 
 # screenshot
 alias scr='grim -g "$(slurp)" - | wl-copy'
