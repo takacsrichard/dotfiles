@@ -1,7 +1,10 @@
-# ============================================================
+#============================================================
 #  Aliases
 # ============================================================
 
+alias lo="libreoffice"
+alias mv="mv -i"
+alias l="ls"
 alias szsh="sourcezsh"
 alias sz="sourcezsh"
 alias aliases="nvim /home/richard/dotfiles/.config/zsh/aliases.zsh"

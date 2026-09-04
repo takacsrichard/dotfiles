@@ -222,6 +222,11 @@ in
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings.http-connections = 1;
 
+  nix.gc = {
+  automatic = true;
+  dates = "weekly";
+  options = "--delete-older-than 30d";
+};
 
   # Shell
   programs.firefox.enable = true;
@@ -254,6 +259,8 @@ in
     touchpad-filter
     reset-touchpad
     lm_sensors
+    gnucash
+    quarto
     # R / data science
     (rWrapper.override {
       packages = with rPackages; [
@@ -264,10 +271,15 @@ in
         data_table
         # stats & ML
         caret forecast zoo xts
+        tidymodels xgboost lightgbm glmnet
         # quant finance
         quantmod TTR PerformanceAnalytics tidyquant tseries rugarch
         # misc utils
         plotly DT scales
+        # I/O & web
+        writexl openxlsx httr vctrs
+        # interactive & data
+        shiny
       ];
     })
     rstudio

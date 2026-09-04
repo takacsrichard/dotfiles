@@ -20,16 +20,13 @@ push:
 
 # Remove generations older than 7 days, GC store, optimise, delete caches, organize and tidy up
 putzfrau:
-    sudo nix-collect-garbage --delete-older-than 7d
+    sudo nix-collect-garbage --delete-older-than 14d
     nix store gc
     nix store optimise
     command -v go &>/dev/null && go clean -modcache -cache || rm -rf ~/go/pkg/mod ~/.cache/go-build
     command -v npm &>/dev/null && npm cache clean --force || rm -rf ~/.npm/_cacache
     command -v uv &>/dev/null && uv cache clean || rm -rf ~/.cache/uv
     rm -rf ~/.cache/mozilla ~/.cache/mesa_shader_cache
-    mkdir -p ~/Documents/torrent_files && find ~ -type f -name "*.torrent" -exec mv {} ~/Documents/torrent_files/ \;
-    mkdir -p ~/Books && find ~ -type f -name "*.epub" -exec mv {} ~/Documents/Books/ \;
-
 
 # Run all backups: restic to local HDD, then sync to ProtonDrive and Google Drive
 backup:
