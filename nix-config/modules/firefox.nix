@@ -21,6 +21,20 @@
       };
     };
     profiles.default = {
+      search = {
+        force = true;
+        default = "Brave";
+        engines = {
+          "Brave" = {
+            urls = [{
+              template = "https://search.brave.com/search";
+              params = [{ name = "q"; value = "{searchTerms}"; }];
+            }];
+            iconURL = "https://brave.com/static-assets/images/brave-favicon.png";
+            definedAliases = [ "@brave" ];
+          };
+        };
+      };
       settings = {
         "browser.startup.page"                                           = 3;
         "browser.newtabpage.activity-stream.feeds.topsites"             = false;

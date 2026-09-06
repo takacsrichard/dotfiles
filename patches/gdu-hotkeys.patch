@@ -1,0 +1,190 @@
+diff --git a/tui/clipboard.go b/tui/clipboard.go
+new file mode 100644
+index 0000000..3496fe5
+--- /dev/null
++++ b/tui/clipboard.go
+@@ -0,0 +1,120 @@
++package tui
++
++import (
++	"os"
++	"os/exec"
++	"path/filepath"
++	"runtime"
++	"strings"
++	"time"
++
++	"github.com/pkg/errors"
++
++	"github.com/dundee/gdu/v5/pkg/fs"
++)
++
++const (
++	osDarwin  = "darwin"
++	osWindows = "windows"
++)
++
++type clipboardTool struct {
++	name string
++	args []string
++}
++
++var (
++	pbcopy = clipboardTool{name: "pbcopy"}
++	clip   = clipboardTool{name: "clip"}
++	xclip  = clipboardTool{name: "xclip", args: []string{"-selection", "clipboard"}}
++	xsel   = clipboardTool{name: "xsel", args: []string{"--clipboard", "--input"}}
++	wlCopy = clipboardTool{name: "wl-copy"}
++)
++
++var errClipboardUnavailable = errors.New("no clipboard tool found")
++
++func clipboardCommand() ([]string, bool) {
++	goos := runtime.GOOS
++	wayland := os.Getenv("WAYLAND_DISPLAY") != ""
++
++	var candidates []clipboardTool
++	switch goos {
++	case osDarwin:
++		candidates = []clipboardTool{pbcopy}
++	case osWindows:
++		candidates = []clipboardTool{clip}
++	default:
++		if wayland {
++			candidates = []clipboardTool{wlCopy, xclip, xsel}
++		} else {
++			candidates = []clipboardTool{xclip, xsel, wlCopy}
++		}
++	}
++
++	for _, c := range candidates {
++		if path, err := exec.LookPath(c.name); err == nil {
++			return append([]string{path}, c.args...), true
++		}
++	}
++	return nil, false
++}
++
++func copyToClipboard(text string) error {
++	argv, ok := clipboardCommand()
++	if !ok {
++		return errClipboardUnavailable
++	}
++	cmd := exec.Command(argv[0], argv[1:]...)
++	cmd.Stdin = strings.NewReader(text)
++	if err := cmd.Run(); err != nil {
++		return errors.Wrap(err, "running clipboard command")
++	}
++	return nil
++}
++
++func (ui *UI) showMessage(message string) {
++	previousText := ui.header.GetText(false)
++	ui.header.SetText(message)
++	go func() {
++		time.Sleep(2 * time.Second)
++		ui.app.QueueUpdateDraw(func() {
++			ui.header.Clear()
++			ui.header.SetText(previousText)
++		})
++	}()
++}
++
++func (ui *UI) copySelectedFullPath() {
++	if ui.currentDir == nil {
++		return
++	}
++	row, column := ui.table.GetSelection()
++	cell := ui.table.GetCell(row, column)
++	if cell == nil || cell.GetReference() == nil {
++		return
++	}
++	path := cell.GetReference().(fs.Item).GetPath()
++	if err := copyToClipboard(path); err != nil {
++		ui.showErr("Can't copy path to clipboard", err)
++		return
++	}
++	ui.showMessage(" Copied " + path)
++}
++
++func (ui *UI) copySelectedDirPath() {
++	if ui.currentDir == nil {
++		return
++	}
++	row, column := ui.table.GetSelection()
++	cell := ui.table.GetCell(row, column)
++	if cell == nil || cell.GetReference() == nil {
++		return
++	}
++	path := cell.GetReference().(fs.Item).GetPath()
++	dirPath := filepath.Dir(filepath.Clean(path))
++	if err := copyToClipboard(dirPath); err != nil {
++		ui.showErr("Can't copy directory path to clipboard", err)
++		return
++	}
++	ui.showMessage(" Copied " + dirPath)
++}
+diff --git a/tui/keys.go b/tui/keys.go
+index 13764d4..37f8b93 100644
+--- a/tui/keys.go
++++ b/tui/keys.go
+@@ -73,9 +73,24 @@ func (ui *UI) keyPressed(key *tcell.EventKey) *tcell.EventKey {
+ 		return nil
+ 	}
+ 
++	if ui.yankPending {
++		return ui.handleYankChord(key)
++	}
++
+ 	return ui.handleMainActions(key)
+ }
+ 
++func (ui *UI) handleYankChord(key *tcell.EventKey) *tcell.EventKey {
++	ui.yankPending = false
++	switch key.Rune() {
++	case 'c':
++		ui.copySelectedFullPath()
++	case 'd':
++		ui.copySelectedDirPath()
++	}
++	return nil
++}
++
+ func (ui *UI) handleClosingModals(key *tcell.EventKey) *tcell.EventKey {
+ 	if key.Key() == tcell.KeyEsc || key.Rune() == 'q' {
+ 		if ui.pages.HasPage("help") {
+@@ -317,6 +332,9 @@ func (ui *UI) handleMainActions(key *tcell.EventKey) *tcell.EventKey {
+ 		return nil
+ 	case 'I':
+ 		ui.ignoreItem()
++	case 'Y':
++		ui.yankPending = true
++		return nil
+ 	}
+ 	return key
+ }
+diff --git a/tui/show.go b/tui/show.go
+index 75e1170..8daf09d 100644
+--- a/tui/show.go
++++ b/tui/show.go
+@@ -39,6 +39,8 @@ Item under cursor:
+ 			   [::b]space [white:black:-]Mark file or directory for deletion
+ 			   [::b]p     [white:black:-]Print marked items paths to stdout after quitting
+ 			   [::b]I     [white:black:-]Ignore file or directory
++			   [::b]Y+c   [white:black:-]Copy full path to clipboard
++			   [::b]Y+d   [white:black:-]Copy parent directory path to clipboard
+                [::b]v     [white:black:-]Show content of file
+                [::b]o     [white:black:-]Open file or directory in external program
+                [::b]i     [white:black:-]Show info about item
+diff --git a/tui/tui.go b/tui/tui.go
+index 02b8c9b..cee386b 100644
+--- a/tui/tui.go
++++ b/tui/tui.go
+@@ -95,6 +95,7 @@ type UI struct {
+ 	browseParentDirs        bool
+ 	showDiskProgressBar     bool
+ 	currentDeviceSize       int64
++	yankPending             bool
+ }
+ 
+ type deleteQueueItem struct {

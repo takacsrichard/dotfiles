@@ -31,7 +31,7 @@
           home-manager.users.richard = import ./home.nix;
           home-manager.extraSpecialArgs = { inherit pkgs-unstable; };
           nixpkgs.config.allowUnfree = true;
-          nixpkgs.overlays = [ nur.overlays.default ];
+          nixpkgs.overlays = [ nur.overlays.default (import ./overlays/gdu.nix) ];
         }
       ];
     };
