@@ -23,10 +23,13 @@ putzfrau:
     sudo nix-collect-garbage --delete-older-than 14d
     nix store gc
     nix store optimise
-    command -v go &>/dev/null && go clean -modcache -cache || rm -rf ~/go/pkg/mod ~/.cache/go-build
+    command -v go &>/dev/null && go clean -modcache -cache || { chmod -R u+w ~/go/pkg/mod ~/.cache/go-build 2>/dev/null || true; rm -rf ~/go/pkg/mod ~/.cache/go-build; }
     command -v npm &>/dev/null && npm cache clean --force || rm -rf ~/.npm/_cacache
     command -v uv &>/dev/null && uv cache clean || rm -rf ~/.cache/uv
     rm -rf ~/.cache/mozilla ~/.cache/mesa_shader_cache
+    sudo journalctl --vacuum-time=2weeks
+    restic cache --cleanup
+    rm -rf ~/.cache/pip ~/.cache/fontconfig ~/.cache/thumbnails ~/.cache/R
 
 # Run all backups: restic to local HDD, then sync to ProtonDrive and Google Drive
 backup:
@@ -72,12 +75,12 @@ backup:
     rclone copy "$HOME/Documents/" pdrive:backup/documents \
         --protondrive-replace-existing-draft=true -P
 
-    # echo "==> Syncing restic repo to GoogleDrive..."
-    # rclone copy "$RESTIC_REPO" gdrive:restic_repo \
-    #     --progress --transfers 4 --checkers 8 \
-    #     --retries 10 --low-level-retries 20 \
-    #     --timeout 5m --contimeout 1m --stats 5s
-    #
+    echo "==> Syncing restic repo to GoogleDrive..."
+    rclone copy "$RESTIC_REPO" gdrive:restic_repo \
+        --progress --transfers 4 --checkers 8 \
+        --retries 10 --low-level-retries 20 \
+        --timeout 5m --contimeout 1m --stats 5s
+
     echo "==> Backup done."
 
 

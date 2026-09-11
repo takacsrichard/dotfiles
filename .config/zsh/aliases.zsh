@@ -2,6 +2,13 @@
 #  Aliases
 # ============================================================
 
+alias gs="git status"
+alias hn="n /home/richard/dotfiles/nix-config/home.nix"
+alias cn="n /home/richard/dotfiles/nix-config/configuration.nix"
+alias dfs="df -hTx tmpfs -x efivarfs -x devtmpfs -x vfat"
+alias fd="fd -E /staging/"
+alias m="mpv"
+alias mpvnr="find . -maxdepth 1 -type f -print0 | xargs -0 mpv"
 alias lo="libreoffice"
 alias mv="mv -i"
 alias l="ls"
@@ -101,3 +108,7 @@ alias plasma-scores="sqlite3 ~/.local/share/kactivitymanagerd/resources/database
 rr()   { Rscript "$1" }
 rrmd() { Rscript -e "rmarkdown::render('$1', output_format='pdf_document')" }
 lmk()  { latexmk -pdf "$1" }
+
+
+cpw() {copy "readlink -f '$1'"}
+

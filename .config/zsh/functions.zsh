@@ -47,6 +47,18 @@ temps() {
   '
 }
 
+mpv() {
+    local -a args
+    for arg in "$@"; do
+        case "$arg" in
+            --nv) args+=(--no-video) ;;
+            --na) args+=(--no-audio) ;;
+            *)    args+=("$arg") ;;
+        esac
+    done
+    command mpv "${args[@]}"
+}
+
 # --- script wrappers ---
 # irq balance checker
 irqgini() { python3 "$HOME/dotfiles/scripts/irqgini.py" "$@"; }
@@ -317,6 +329,42 @@ nfd() {
     fi
 
     nvim "${files[@]}"
+}
+
+# Init a local dir and push to gitlab as takacsrichard/<name>
+# Usage: glinit -n <repo_name> [-c "commit message"]
+glinit() {
+    local repo_name=""
+    local commit_msg="initial commit"
+
+    while getopts ":n:c:" opt; do
+        case "$opt" in
+            n) repo_name="$OPTARG" ;;
+            c) commit_msg="$OPTARG" ;;
+            :) echo "glinit: -$OPTARG requires an argument" >&2; return 1 ;;
+            \?) echo "glinit: unknown option -$OPTARG" >&2; return 1 ;;
+        esac
+    done
+
+    if [[ -z "$repo_name" ]]; then
+        echo "Usage: glinit -n <repo_name> [-c \"commit message\"]" >&2
+        return 1
+    fi
+
+    local current_dir="$PWD"
+    local confirm
+    read "confirm?Push '${current_dir}' to gitlab:takacsrichard/${repo_name}.git? [y/N] " </dev/tty
+    if [[ "$confirm" != [Yy] ]]; then
+        echo "Aborted."
+        return 1
+    fi
+
+    git init &&
+    git remote add origin "git@gitlab.com:takacsrichard/${repo_name}.git" &&
+    git add . &&
+    git commit -m "$commit_msg" &&
+    git branch -M main &&
+    git push --set-upstream origin main
 }
 
 function download_insta_reels {

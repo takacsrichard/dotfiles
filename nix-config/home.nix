@@ -117,7 +117,7 @@ in
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    autosuggestion.enable = true;
+    autosuggestion.enable = false;
     syntaxHighlighting.enable = true;
     oh-my-zsh = {
       enable = true;

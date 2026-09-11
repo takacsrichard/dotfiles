@@ -1,6 +1,26 @@
 alias wuvpnon="sudo openconnect --protocol=gp -b vpn.wu.ac.at"
 alias wuvpnoff="sudo pkill openconnect"
 
+# CIDRs that bypass atvpn and go via the regular connection instead.
+# 137.208.0.0/16 = WU AS1776 (wu.ac.at and all subdomains)
+# 99.84.91.0/24  = canvas.wu.ac.at → wu-vanity.instructure.com (CloudFront CDN)
+_ATVPN_BYPASS=(
+    "137.208.0.0/16"
+    "99.84.91.0/24"
+)
+
+_atvpn_bypass_add() {
+    for cidr in "${_ATVPN_BYPASS[@]}"; do
+        sudo ip rule add to "$cidr" table main priority 100 2>/dev/null
+    done
+}
+
+_atvpn_bypass_del() {
+    for cidr in "${_ATVPN_BYPASS[@]}"; do
+        sudo ip rule del to "$cidr" table main priority 100 2>/dev/null
+    done
+}
+
 vpnon() {
     local flag="${1:--a}"
     local conf=""
@@ -31,6 +51,7 @@ vpnon() {
 
     echo "Connecting to $conf..."
     sudo systemctl start wg-quick-$conf || { echo "Failed to connect to $conf." >&2; return 1; }
+    [[ "$conf" == atvpn* ]] && _atvpn_bypass_add
     echo "Connected to $conf."
     if [[ "$pf" == true ]]; then
         echo "Public port: $(getpport)"
@@ -54,6 +75,7 @@ vpnoff() {
 
     for svc in "${active[@]}"; do
         echo "Disconnecting $svc..."
+        [[ "$svc" == atvpn* ]] && _atvpn_bypass_del
         sudo systemctl stop wg-quick-$svc
     done
     sleep 3 && myip

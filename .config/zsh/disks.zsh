@@ -66,3 +66,77 @@ unmntdisk() {
     echo "$err"
     cd ~
 }
+
+checkfs() {
+    local report="/tmp/checkfs_report.txt"
+    local disks=()
+    local i=1
+    local dev rest size fstype
+
+    sudo -v || return 1
+
+    echo "Scanning unmounted drives..."
+    echo "(Supported: exfat, ext2/3/4, btrfs)"
+
+    local mountpoint
+    while IFS= read -r line; do
+        dev="${line%% *}"
+        rest="${line#* }"
+        size="${rest%% *}"
+        fstype="${rest##* }"
+        mountpoint=$(lsblk -rno MOUNTPOINT "$dev" 2>/dev/null | head -1)
+        [[ -n "$mountpoint" ]] && continue
+        disks+=("$dev $size $fstype")
+        echo "  $i) $dev  $size  [$fstype]"
+        (( i++ ))
+    done < <(lsblk -rpo NAME,TYPE,SIZE,FSTYPE | \
+        awk '$2=="part" && $4~/^(exfat|ext[234]|btrfs)$/ {print $1, $3, $4}')
+
+    if (( ${#disks[@]} == 0 )); then
+        echo "No unmounted partitions with supported filesystems found."
+        return 1
+    fi
+
+    local choices_raw
+    read "choices_raw?Pick numbers to check (comma-separated, e.g. 1,3): "
+
+    local -a choices
+    choices=(${(s:,:)choices_raw})
+
+    {
+        echo "checkfs report — $(date)"
+        echo "Mode: read-only / dry-run. No repairs made."
+        echo "========================================"
+
+        local entry choice
+        for choice in "${choices[@]}"; do
+            choice="${choice// /}"
+            if ! [[ "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#disks[@]} )); then
+                echo ""
+                echo "Invalid selection: '$choice', skipping."
+                continue
+            fi
+
+            entry="${disks[$choice]}"
+            dev="${entry%% *}"
+            rest="${entry#* }"
+            size="${rest%% *}"
+            fstype="${rest##* }"
+
+            echo ""
+            echo "--- $dev  $size  [$fstype] ---"
+
+            case "$fstype" in
+                exfat)          sudo env PATH="$PATH" fsck.exfat -n -v "$dev" ;;
+                ext2|ext3|ext4) sudo env PATH="$PATH" e2fsck -n "$dev" ;;
+                btrfs)          sudo env PATH="$PATH" btrfs check --readonly "$dev" ;;
+            esac
+        done
+
+        echo ""
+        echo "========================================"
+        echo "Scan complete — $(date)"
+    } > "$report" 2>&1
+
+    echo "Done. Full results written to $report"
+}

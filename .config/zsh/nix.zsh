@@ -53,9 +53,9 @@ rb() {
     echo ""
     echo "Recent generations for '$profile_name':"
     if [[ "$needs_sudo" == true ]]; then
-        sudo nix-env --profile "$profile_path" --list-generations 2>/dev/null | tail -5
+        sudo nix-env --profile "$profile_path" --list-generations 2>/dev/null
     else
-        nix-env --profile "$profile_path" --list-generations 2>/dev/null | tail -5
+        nix-env --profile "$profile_path" --list-generations 2>/dev/null
     fi
     echo ""
 

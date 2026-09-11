@@ -170,7 +170,6 @@ in
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-
   # Printing
   # services.printing.enable = true;
 
@@ -253,6 +252,9 @@ in
   # System packages
   environment.systemPackages = with pkgs; [
     age
+    exfatprogs
+    e2fsprogs
+    btrfs-progs
     wireguard-tools
     ffmpeg
     brightnessctl

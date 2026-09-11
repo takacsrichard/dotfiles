@@ -28,6 +28,7 @@
 
     "hyprland/workspaces": {
         "format": "{id}",
+        "on-click": "~/.config/waybar/scripts/ws-click.sh",
         "on-scroll-up": "hyprctl dispatch workspace e+1",
         "on-scroll-down": "hyprctl dispatch workspace e-1",
         "all-outputs": false,

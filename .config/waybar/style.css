@@ -35,6 +35,7 @@ window#waybar {
     transition: all 0.15s ease;
 }
 
+
 #workspaces button:hover {
     background: #1a1a1a;
     color: #e6e1e1;
