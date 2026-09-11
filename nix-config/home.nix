@@ -103,7 +103,6 @@ in
     nodejs
     librsvg
     tmux
-    thunderbird
     (pkgs.writeShellApplication {
       name = "netwatch";
       runtimeInputs = with pkgs; [ tshark iproute2 gawk util-linux ];

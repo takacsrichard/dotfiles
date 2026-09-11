@@ -30,7 +30,7 @@ in
   ];
 
   # Protonmail
-  services.protonmail-bridge.enable = true;
+  # services.protonmail-bridge.enable = true;
 
   # Bootloader
   boot.loader.systemd-boot.enable = true;

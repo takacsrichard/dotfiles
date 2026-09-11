@@ -1,7 +1,8 @@
 set shell := ["zsh", "-euo", "pipefail", "-c"]
 
+SSD_MOUNT := "/run/media/richard/SanDisk"
 HDD_MOUNT := "/run/media/richard/Expansion"
-RESTIC_REPO := HDD_MOUNT + "/backups/restic_repo"
+RESTIC_REPO := SSD_MOUNT + "/backups/restic_repo"
 
 # Update flake inputs and rebuild NixOS
 update:
@@ -31,13 +32,13 @@ putzfrau:
     restic cache --cleanup
     rm -rf ~/.cache/pip ~/.cache/fontconfig ~/.cache/thumbnails ~/.cache/R
 
-# Run all backups: restic to local HDD, then sync to ProtonDrive and Google Drive
+# Run all backups: restic to local SDD, then sync to ProtonDrive and Google Drive
 backup:
     #!/usr/bin/env zsh
-    HDD_MOUNT="{{HDD_MOUNT}}"
+    SSD_MOUNT="{{SSD_MOUNT}}"
     RESTIC_REPO="{{RESTIC_REPO}}"
 
-    mountpoint -q "$HDD_MOUNT" || { echo "HDD not mounted at $HDD_MOUNT" >&2; exit 1; }
+    mountpoint -q "$SSD_MOUNT" || { echo "SDD not mounted at $HDD_MOUNT" >&2; exit 1; }
 
     [[ -f "$RESTIC_REPO/config" ]] || restic -r "$RESTIC_REPO" init
 

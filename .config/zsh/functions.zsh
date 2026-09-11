@@ -299,6 +299,58 @@ zcpwd() {
     z "$@" && copy pwd
 }
 
+# Find with fd; 1 match → copy immediately, multiple → pick from less -N
+# Default: copies file path. -f: copies file contents.
+cfd() {
+    local copy_contents=false
+    local -a fd_args=()
+    for arg in "$@"; do
+        [[ "$arg" == "-f" ]] && copy_contents=true || fd_args+=("$arg")
+    done
+
+    if (( ${#fd_args[@]} == 0 )); then
+        echo "Usage: cfd [-f] <pattern> [fd-args...]" >&2
+        return 1
+    fi
+
+    local -a files=()
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && files+=("$line")
+    done < <(fd -u "${fd_args[@]}")
+
+    _cfd_do_copy() {
+        local target="$1"
+        if [[ $copy_contents == true ]]; then
+            copy "$target"
+            echo "Copied contents: $target"
+        else
+            print -rn -- "$target" | wl-copy
+            echo "Copied path: $target"
+        fi
+    }
+
+    case ${#files[@]} in
+        0)
+            echo "cfd: no matches" >&2
+            return 1
+            ;;
+        1)
+            _cfd_do_copy "${files[1]}"
+            ;;
+        *)
+            printf '%s\n' "${files[@]}" | less -N
+            local choice
+            read "choice?Copy which? [1-${#files[@]}] " </dev/tty
+            if [[ "$choice" =~ '^[0-9]+$' ]] && (( choice >= 1 && choice <= ${#files[@]} )); then
+                _cfd_do_copy "${files[$choice]}"
+            else
+                echo "cfd: invalid selection" >&2
+                return 1
+            fi
+            ;;
+    esac
+}
+
 # Find with fd, open matches in nvim (max 10); usage: nfd <pattern> [search_dir]
 nfd() {
     if (( $# == 0 )); then
@@ -365,6 +417,72 @@ glinit() {
     git commit -m "$commit_msg" &&
     git branch -M main &&
     git push --set-upstream origin main
+}
+
+# Convert FLAC to Opus; -d deletes originals, -b <rate> sets bitrate (default: 128k)
+ftoo() {
+    local ffmpeg_bin rm_bin
+    ffmpeg_bin="$(whence -p ffmpeg 2>/dev/null || whence ffmpeg 2>/dev/null)"
+    rm_bin="$(whence -p rm 2>/dev/null || whence rm 2>/dev/null)"
+    if [[ -z "$ffmpeg_bin" ]]; then
+        echo "ftoo: ffmpeg not found — add it to your nix config or run: nix shell nixpkgs#ffmpeg" >&2
+        return 1
+    fi
+
+    local delete=false bitrate="128k" path=""
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -d|--delete)  delete=true; shift ;;
+            -b|--bitrate) bitrate="$2"; shift 2 ;;
+            *)            path="$1"; shift ;;
+        esac
+    done
+
+    if [[ -z "$path" ]]; then
+        echo "Usage: ftoo <file|dir> [-d] [-b <bitrate>]"
+        return 1
+    fi
+
+    local -a files=()
+    if [[ -f "$path" ]]; then
+        files=("$path")
+    elif [[ -d "$path" ]]; then
+        files=("${path}"/**/*.flac(.N))
+    else
+        echo "ftoo: '$path': not a file or directory" >&2
+        return 1
+    fi
+
+    if (( ${#files[@]} == 0 )); then
+        echo "ftoo: no FLAC files found in '$path'" >&2
+        return 1
+    fi
+
+    local count=0 failed=0 skipped=0 overwrite_all=false
+    local input output confirm
+    for input in "${files[@]}"; do
+        output="${input%.flac}.opus"
+        if [[ -f "$output" ]] && [[ $overwrite_all == false ]]; then
+            read "confirm?'${output:t}' exists. Overwrite? [y / N / Y=all] " </dev/tty
+            case "$confirm" in
+                Y) overwrite_all=true ;;
+                [y]) ;;
+                *) skipped=$(( skipped + 1 )); continue ;;
+            esac
+        fi
+        printf 'Converting: %s\n' "${input:t}"
+        if "$ffmpeg_bin" -loglevel warning -i "$input" -c:a libopus -b:a "$bitrate" \
+                  -vbr on -application audio -y "$output"; then
+            [[ $delete == true ]] && [[ -n "$rm_bin" ]] && "$rm_bin" "$input"
+            count=$(( count + 1 ))
+        else
+            printf 'Failed: %s\n' "$input" >&2
+            failed=$(( failed + 1 ))
+        fi
+    done
+
+    (( ${#files[@]} > 1 )) && printf 'Done: %d converted, %d skipped, %d failed\n' "$count" "$skipped" "$failed"
 }
 
 function download_insta_reels {
