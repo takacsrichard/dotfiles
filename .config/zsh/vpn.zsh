@@ -4,9 +4,11 @@ alias wuvpnoff="sudo pkill openconnect"
 # CIDRs that bypass atvpn and go via the regular connection instead.
 # 137.208.0.0/16 = WU AS1776 (wu.ac.at and all subdomains)
 # 99.84.91.0/24  = canvas.wu.ac.at → wu-vanity.instructure.com (CloudFront CDN)
+# 193.22.104.0/23 = willhaben.at AS34798 (willhaben internet service GmbH)
 _ATVPN_BYPASS=(
     "137.208.0.0/16"
     "99.84.91.0/24"
+    "193.22.104.0/23"
 )
 
 _atvpn_bypass_add() {

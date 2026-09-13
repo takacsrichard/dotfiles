@@ -15,17 +15,39 @@ yt() {
             args+=("$arg")
         fi
     done
+
+    local cookie_file="${XDG_CACHE_HOME:-$HOME/.cache}/yt-cookies.txt"
+    local -a cookie_args
+    local used_cache=false
+
+    # Use cached cookie file if < 24h old; otherwise re-extract from Firefox and save
+    if [[ -f "$cookie_file" ]] && (( $(date +%s) - $(stat -c %Y "$cookie_file") < 86400 )); then
+        cookie_args=(--cookies "$cookie_file")
+        used_cache=true
+    else
+        cookie_args=(--cookies-from-browser firefox --cookies "$cookie_file")
+    fi
+
     if [[ "$download" == true ]]; then
         mkdir -p "$HOME/Music/yt_ddl"
         yt-dlp -x --audio-format opus --audio-quality 0 \
             --embed-thumbnail --embed-metadata \
-            --cookies-from-browser firefox --force-ipv4 \
+            "${cookie_args[@]}" --force-ipv4 \
             -o "$HOME/Music/yt_ddl/%(title)s.%(ext)s" \
             "ytsearch1:${args[*]}" &
     fi
+
     yt-dlp -f "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/worst[acodec!=none]" \
-        --cookies-from-browser firefox --force-ipv4 -q --no-warnings \
+        --extractor-args "youtube:player_client=mweb" \
+        "${cookie_args[@]}" --force-ipv4 -q --no-warnings \
         -o - "ytsearch1:${args[*]}" | mpv --no-video -
+
+    # Silently refresh the cookie file in the background after each fast-path call,
+    # so the next invocation always hits the cache
+    [[ $used_cache == true ]] && \
+        yt-dlp --cookies-from-browser firefox --cookies "$cookie_file" \
+            --skip-download -q "https://www.youtube.com/watch?v=dQw4w9WgXcQ" \
+            &>/dev/null &|
 }
 
 filecount() {
@@ -500,6 +522,7 @@ ftoo() {
 }
 
 source "$HOME/dotfiles/.config/zsh/functions/identical.zsh"
+source "$HOME/dotfiles/.config/zsh/functions/is-subset.zsh"
 
 function download_insta_reels {
     local reels_dir=~/Downloads/reels

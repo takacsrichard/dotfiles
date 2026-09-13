@@ -2,6 +2,8 @@
 #  Aliases
 # ============================================================
 
+
+alias ccusage="npx ccusage@latest --json"
 alias img="kitten icat"
 alias gs="git status"
 alias hn="n /home/richard/dotfiles/nix-config/home.nix"
@@ -16,6 +18,10 @@ alias szsh="sourcezsh"
 alias sz="sourcezsh"
 alias aliases="nvim /home/richard/dotfiles/.config/zsh/aliases.zsh"
 alias cla="claude --dangerously-skip-permissions"
+alias clm="claude --dangerously-skip-permissions --resume"
+alias dumb="claude --dangerously-skip-permissions --model claude-haiku-4-5-20251001"   # haiku 4.5
+alias normal="claude --dangerously-skip-permissions --model claude-sonnet-4-6"         # sonnet 4.6
+alias better="claude --dangerously-skip-permissions --model claude-opus-4-8"           # opus 4.8
 alias bt="bluetui"
 alias wt="wifitui"
 alias wifitui="nmtui"
@@ -43,7 +49,7 @@ alias hlay='hyprctl layers'         # active layer surfaces (bars, overlays)
 alias hrel='hyprctl reload'
 alias hkill='hyprctl kill'          # click to kill a window
 alias hver='hyprctl version'
-
+alias hl='hyprlock'
 alias memusers='ps axo rss,comm --sort=-rss | head -n 6 | awk '\''NR==1 {print $1, $2; next} {printf "%.2f MB\t%s\n", $1/1024, $2}'\'''
 alias memuserspriv='ps axo pid,comm --sort=-rss | head -n 6 | awk '\''NR==1 {next} {print $1, $2}'\'' | while read pid name; do priv=$(awk '\''/^Private_Dirty/{sum+=$2} END{printf "%.2f MB", sum/1024}'\'' /proc/$pid/smaps 2>/dev/null); echo "$priv\t$name"; done | sort -rn'
 alias t="trans"
