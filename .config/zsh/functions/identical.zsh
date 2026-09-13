@@ -1,30 +1,36 @@
 # Compare N paths for identity.
-# Usage: identical [MODE] [-rs N | -st C:P] <path1> <path2> [path3 ...]
+# Usage: identical [MODE] [-rs N | -st C:P] [-star] <path1> <path2> [path3 ...]
 #
 # Modes (mutually exclusive; default = byte-for-byte via cmp):
-#   -d       diff mode  : diff for files, diff -qr for dirs/archives (2 paths only)
+#   -d       diff mode  : diff for files, diff -qr for dirs/archives; one diff per pair
 #   -q       quick mode : filename + filesize only, no I/O
 #
 # Options:
 #   -rs N    randomly sample N files byte-for-byte
 #   -st C:P  auto-sample: C% confident ≤P% of files differ  (e.g. -st 95:1)
 #            both require dirs or archives, not plain files
+#   -star    for N>2: compare all paths against the first only (hub-and-spoke).
+#            Called "star" because in graph terms the first path is the hub
+#            and every other is a spoke — N-1 comparisons instead of N(N-1)/2.
+#            Default (without -star) is all-pairs: every combination is checked,
+#            which gives a complete picture when no single canonical reference exists.
 #
 # Supported inputs: plain files, directories,
 #   .tar / .tar.{gz,bz2,xz,zst} / .tgz, .zip, .7z
-# N≥2: all paths are compared against the first (reference)
+# N=2: -star has no effect (only one pair exists either way)
 
 identical() {
-    local mode=cmp rs_n=0 _st_arg=''
+    local mode=cmp rs_n=0 _st_arg='' star=0
 
     while [[ $# -gt 0 && "$1" == -* ]]; do
         case "$1" in
-            -d)   mode=diff;      shift ;;
-            -q)   mode=quick;     shift ;;
-            -rs)  rs_n="$2";      shift 2 ;;
-            -st)  _st_arg="$2";   shift 2 ;;
-            --)   shift; break ;;
-            *)    printf 'identical: unknown option %s\n' "$1" >&2; return 1 ;;
+            -d)    mode=diff;      shift ;;
+            -q)    mode=quick;     shift ;;
+            -rs)   rs_n="$2";      shift 2 ;;
+            -st)   _st_arg="$2";   shift 2 ;;
+            -star) star=1;         shift ;;
+            --)    shift; break ;;
+            *)     printf 'identical: unknown option %s\n' "$1" >&2; return 1 ;;
         esac
     done
 
@@ -32,18 +38,15 @@ identical() {
 
     if (( ${#paths} < 2 )); then
         cat >&2 <<'USAGE'
-Usage: identical [MODE] [-rs N | -st C:P] <path1> <path2> [path3 ...]
-  Modes:  (default) full cmp  |  -d diff (2 paths only)  |  -q quick (size+name)
+Usage: identical [MODE] [-rs N | -st C:P] [-star] <path1> <path2> [path3 ...]
+  Modes:  (default) full cmp  |  -d diff (one diff per pair)  |  -q quick (size+name)
   -rs N      random-sample N files byte-for-byte
   -st C:P    auto-sample: C% confident ≤P% of files differ  (e.g. -st 95:1)
+  -star      N>2 only: compare all paths against the first (hub-and-spoke);
+             default is all-pairs: every combination, O(N²) but complete
   Types:  files, dirs, .tar[.gz|.bz2|.xz|.zst], .tgz, .zip, .7z
-  N≥2:   all paths compared against the first (reference)
 USAGE
         return 1
-    fi
-
-    if [[ "$mode" == diff && ${#paths} -gt 2 ]]; then
-        printf 'identical: -d only supports 2 paths\n' >&2; return 1
     fi
 
     local p
@@ -160,6 +163,32 @@ USAGE
         types+=($(_ident_type "${paths[$i]}"))
     done
 
+    # ── build pair list ───────────────────────────────────────────────────────
+    # pair_lefts[k] and pair_rights[k] are indices into paths[] for pair k
+    local -a pair_lefts=() pair_rights=()
+    local _a _b
+    if (( star || ${#paths} == 2 )); then
+        # star / hub-and-spoke: all against first
+        for (( _b=2; _b<=${#paths}; _b++ )); do
+            pair_lefts+=(1); pair_rights+=($_b)
+        done
+    else
+        # all-pairs: every combination
+        for (( _a=1; _a<${#paths}; _a++ )); do
+            for (( _b=_a+1; _b<=${#paths}; _b++ )); do
+                pair_lefts+=($_a); pair_rights+=($_b)
+            done
+        done
+    fi
+    local npairs=${#pair_lefts}
+    local show_pair_headers=$(( npairs > 1 ))
+
+    # classify input types (used by -d and default cmp)
+    local has_file=0 has_container=0
+    for t in "${types[@]}"; do
+        [[ "$t" == file ]] && has_file=1 || has_container=1
+    done
+
     # ── -st: compute sample size ──────────────────────────────────────────────
     if [[ -n "$_st_arg" ]]; then
         local st_conf="${_st_arg%%:*}"
@@ -180,7 +209,7 @@ conf   = $st_conf   / 100.0
 thresh = min($st_thresh / 100.0, 0.9999)
 print(math.ceil(math.log(1 - conf) / math.log(1 - thresh)))
 ")
-        # cap at actual file count in reference
+        # cap at actual file count in first path
         local ref_count
         if [[ "${types[1]}" == dir ]]; then
             ref_count=$(find "${paths[1]}" -type f | wc -l)
@@ -207,47 +236,72 @@ print(math.ceil(math.log(1 - conf) / math.log(1 - thresh)))
             workdirs+=("$(_ident_to_workdir "${paths[$i]}" "${types[$i]}")")
         done
 
-        local ref="${workdirs[1]}" ref_name="${paths[1]}"
-        local total_diffs=0 total_only=0 checked=0
+        local grand_diffs=0 grand_only=0 grand_checked=0
+        local pk
+        for (( pk=1; pk<=npairs; pk++ )); do
+            local ia=${pair_lefts[$pk]} ib=${pair_rights[$pk]}
+            local wA="${workdirs[$ia]}" wB="${workdirs[$ib]}"
+            local nA="${paths[$ia]}"    nB="${paths[$ib]}"
+            local pair_diffs=0 pair_only=0 pair_checked=0
 
-        while IFS= read -r rel; do
-            (( checked++ ))
-            for (( i=2; i<=${#workdirs}; i++ )); do
-                local other="${workdirs[$i]}" oname="${paths[$i]}"
-                if [[ ! -f "$other/$rel" ]]; then
-                    printf 'Only in %s (not %s): %s\n' "$ref_name" "$oname" "$rel"
-                    (( total_only++ ))
-                elif ! cmp -s "$ref/$rel" "$other/$rel"; then
-                    printf 'Differ (%s vs %s): %s\n' "$ref_name" "$oname" "$rel"
-                    (( total_diffs++ ))
+            (( show_pair_headers )) && printf '── %s vs %s ──\n' "$nA" "$nB"
+
+            while IFS= read -r rel; do
+                (( pair_checked++ ))
+                if [[ ! -f "$wB/$rel" ]]; then
+                    printf 'Only in %s (not %s): %s\n' "$nA" "$nB" "$rel"
+                    (( pair_only++ ))
+                elif ! cmp -s "$wA/$rel" "$wB/$rel"; then
+                    printf 'Differ (%s vs %s): %s\n' "$nA" "$nB" "$rel"
+                    (( pair_diffs++ ))
                 fi
-            done
-        done < <(find "$ref" -type f -printf '%P\n' | shuf -n "$rs_n")
+            done < <(find "$wA" -type f -printf '%P\n' | shuf -n "$rs_n")
 
-        if (( total_diffs == 0 && total_only == 0 )); then
-            printf 'All %d sampled files are identical\n' "$checked"
-        else
-            printf '%d/%d differ, %d only in first\n' "$total_diffs" "$checked" "$total_only"
+            if (( pair_diffs == 0 && pair_only == 0 )); then
+                printf 'All %d sampled files are identical\n' "$pair_checked"
+            else
+                printf '%d/%d differ, %d only in first\n' "$pair_diffs" "$pair_checked" "$pair_only"
+            fi
+            (( grand_diffs += pair_diffs ))
+            (( grand_only  += pair_only ))
+            (( grand_checked += pair_checked ))
+        done
+
+        if (( show_pair_headers )); then
+            if (( grand_diffs == 0 && grand_only == 0 )); then
+                printf 'All %d pairs identical\n' "$npairs"
+            else
+                printf 'Summary: %d/%d total differ, %d only in left across %d pairs\n' \
+                       "$grand_diffs" "$grand_checked" "$grand_only" "$npairs"
+            fi
         fi
         _ident_cleanup; return
     fi
 
     # ── quick mode (-q) ───────────────────────────────────────────────────────
     if [[ "$mode" == quick ]]; then
-        local ref_list any_diff=0
-        ref_list=$(_ident_list "${paths[1]}" "${types[1]}")
-        for (( i=2; i<=${#paths}; i++ )); do
-            local other_list out ret
-            other_list=$(_ident_list "${paths[$i]}" "${types[$i]}")
-            out=$(diff <(printf '%s\n' "$ref_list") <(printf '%s\n' "$other_list"))
+        # pre-compute all lists to avoid redundant work (each path may appear in multiple pairs)
+        local -a _qlists=()
+        for (( i=1; i<=${#paths}; i++ )); do
+            _qlists+=("$(_ident_list "${paths[$i]}" "${types[$i]}")")
+        done
+
+        local any_diff=0
+        local pk
+        for (( pk=1; pk<=npairs; pk++ )); do
+            local ia=${pair_lefts[$pk]} ib=${pair_rights[$pk]}
+            local out ret
+            out=$(diff <(printf '%s\n' "${_qlists[$ia]}") <(printf '%s\n' "${_qlists[$ib]}"))
             ret=$?
             if (( ret != 0 )); then
                 any_diff=1
-                (( ${#paths} > 2 )) && printf '── %s vs %s ──\n' "${paths[1]}" "${paths[$i]}"
-                printf '%s\n' "$out" | awk -F'\t' -v a="${paths[1]}" -v b="${paths[$i]}" '
+                (( show_pair_headers )) && printf '── %s vs %s ──\n' "${paths[$ia]}" "${paths[$ib]}"
+                printf '%s\n' "$out" | awk -F'\t' -v a="${paths[$ia]}" -v b="${paths[$ib]}" '
                     /^</ { printf "Only in %s: %s (%s bytes)\n", a, $2, substr($1,3) }
                     /^>/ { printf "Only in %s: %s (%s bytes)\n", b, $2, substr($1,3) }
                 '
+            elif (( show_pair_headers )); then
+                printf '%s and %s: identical (metadata)\n' "${paths[$ia]}" "${paths[$ib]}"
             fi
         done
         if (( !any_diff )); then
@@ -257,38 +311,49 @@ print(math.ceil(math.log(1 - conf) / math.log(1 - thresh)))
         _ident_cleanup; return
     fi
 
-    # ── diff mode (-d) — 2 paths only ────────────────────────────────────────
+    # ── diff mode (-d) ───────────────────────────────────────────────────────
     if [[ "$mode" == diff ]]; then
-        local w1 w2
-        w1=$(_ident_to_workdir "${paths[1]}" "${types[1]}")
-        w2=$(_ident_to_workdir "${paths[2]}" "${types[2]}")
-        local nt1=$([[ "${types[1]}" == file ]] && echo file || echo dir)
-        local nt2=$([[ "${types[2]}" == file ]] && echo file || echo dir)
-        if   [[ "$nt1" == file && "$nt2" == file ]]; then diff     "$w1" "$w2"
-        elif [[ "$nt1" == dir  && "$nt2" == dir  ]]; then diff -qr  "$w1" "$w2"
-        else
-            printf 'identical: -d: cannot diff a plain file against a directory/archive\n' >&2
+        if (( has_file && has_container )); then
+            printf 'identical: cannot mix plain files with directories/archives\n' >&2
             _ident_cleanup; return 1
         fi
+        local -a workdirs=()
+        for (( i=1; i<=${#paths}; i++ )); do
+            workdirs+=("$(_ident_to_workdir "${paths[$i]}" "${types[$i]}")")
+        done
+        local pk
+        for (( pk=1; pk<=npairs; pk++ )); do
+            local ia=${pair_lefts[$pk]} ib=${pair_rights[$pk]}
+            local wA="${workdirs[$ia]}" wB="${workdirs[$ib]}"
+            local ntA=$([[ "${types[$ia]}" == file ]] && echo file || echo dir)
+            local ntB=$([[ "${types[$ib]}" == file ]] && echo file || echo dir)
+            if (( show_pair_headers )); then
+                printf '── %s vs %s ──\n' "${paths[$ia]}" "${paths[$ib]}"
+            fi
+            if   [[ "$ntA" == file && "$ntB" == file ]]; then diff     "$wA" "$wB"
+            elif [[ "$ntA" == dir  && "$ntB" == dir  ]]; then diff -qr  "$wA" "$wB"
+            else
+                printf 'identical: -d: cannot diff a plain file against a directory/archive\n' >&2
+                _ident_cleanup; return 1
+            fi
+        done
         _ident_cleanup; return
     fi
 
     # ── default cmp mode ─────────────────────────────────────────────────────
-    local has_file=0 has_container=0
-    for t in "${types[@]}"; do
-        [[ "$t" == file ]] && has_file=1 || has_container=1
-    done
     if (( has_file && has_container )); then
         printf 'identical: cannot mix plain files with directories/archives\n' >&2
         _ident_cleanup; return 1
     fi
 
-    # all plain files: direct cmp against first
+    # all plain files: cmp each pair
     if (( has_file )); then
         local all_same=1
-        for (( i=2; i<=${#paths}; i++ )); do
-            if ! cmp -s "${paths[1]}" "${paths[$i]}"; then
-                printf 'Different: %s vs %s\n' "${paths[1]}" "${paths[$i]}"
+        local pk
+        for (( pk=1; pk<=npairs; pk++ )); do
+            local ia=${pair_lefts[$pk]} ib=${pair_rights[$pk]}
+            if ! cmp -s "${paths[$ia]}" "${paths[$ib]}"; then
+                printf 'Different: %s vs %s\n' "${paths[$ia]}" "${paths[$ib]}"
                 all_same=0
             fi
         done
@@ -296,47 +361,48 @@ print(math.ceil(math.log(1 - conf) / math.log(1 - thresh)))
         _ident_cleanup; return
     fi
 
-    # dirs/archives: normalize all to workdirs, compare all against first
+    # dirs/archives: normalize all to workdirs, compare each pair
     local -a workdirs=()
     for (( i=1; i<=${#paths}; i++ )); do
         workdirs+=("$(_ident_to_workdir "${paths[$i]}" "${types[$i]}")")
     done
 
-    local ref="${workdirs[1]}" ref_name="${paths[1]}"
     local grand_diffs=0
-
-    for (( i=2; i<=${#workdirs}; i++ )); do
-        local other="${workdirs[$i]}" oname="${paths[$i]}"
-        local diffs=0 only_ref=0 only_other=0 total=0
+    local pk
+    for (( pk=1; pk<=npairs; pk++ )); do
+        local ia=${pair_lefts[$pk]} ib=${pair_rights[$pk]}
+        local wA="${workdirs[$ia]}" wB="${workdirs[$ib]}"
+        local nA="${paths[$ia]}"    nB="${paths[$ib]}"
+        local diffs=0 only_a=0 only_b=0 total=0
 
         while IFS= read -r rel; do
             (( total++ ))
-            if [[ ! -e "$other/$rel" ]]; then
-                printf 'Only in %s: %s\n' "$ref_name" "$rel"; (( only_ref++ ))
-            elif ! cmp -s "$ref/$rel" "$other/$rel"; then
-                printf 'Differ (%s vs %s): %s\n' "$ref_name" "$oname" "$rel"
+            if [[ ! -e "$wB/$rel" ]]; then
+                printf 'Only in %s: %s\n' "$nA" "$rel"; (( only_a++ ))
+            elif ! cmp -s "$wA/$rel" "$wB/$rel"; then
+                printf 'Differ (%s vs %s): %s\n' "$nA" "$nB" "$rel"
                 (( diffs++ ))
             fi
-        done < <(find "$ref" -type f -printf '%P\n' | sort)
+        done < <(find "$wA" -type f -printf '%P\n' | sort)
 
         while IFS= read -r rel; do
-            [[ ! -e "$ref/$rel" ]] && {
-                printf 'Only in %s: %s\n' "$oname" "$rel"; (( only_other++ ))
+            [[ ! -e "$wA/$rel" ]] && {
+                printf 'Only in %s: %s\n' "$nB" "$rel"; (( only_b++ ))
             }
-        done < <(find "$other" -type f -printf '%P\n' | sort)
+        done < <(find "$wB" -type f -printf '%P\n' | sort)
 
-        (( grand_diffs += diffs + only_ref + only_other ))
+        (( grand_diffs += diffs + only_a + only_b ))
 
-        if (( diffs == 0 && only_ref == 0 && only_other == 0 )); then
-            if (( ${#paths} > 2 )); then
-                printf '%s and %s: identical (%d files)\n' "$ref_name" "$oname" "$total"
+        if (( diffs == 0 && only_a == 0 && only_b == 0 )); then
+            if   (( show_pair_headers )); then
+                printf '%s and %s: identical (%d files)\n' "$nA" "$nB" "$total"
             else
                 printf 'Identical (%d files)\n' "$total"
             fi
         fi
     done
 
-    if (( grand_diffs == 0 && ${#paths} > 2 )); then
+    if (( grand_diffs == 0 && show_pair_headers )); then
         printf 'All %d paths are identical\n' "${#paths}"
     fi
 
