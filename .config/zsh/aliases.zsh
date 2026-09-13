@@ -2,11 +2,12 @@
 #  Aliases
 # ============================================================
 
+alias img="kitten icat"
 alias gs="git status"
 alias hn="n /home/richard/dotfiles/nix-config/home.nix"
 alias cn="n /home/richard/dotfiles/nix-config/configuration.nix"
 alias dfs="df -hTx tmpfs -x efivarfs -x devtmpfs -x vfat"
-alias fd="fd -E /staging/"
+alias fd="fd -H -E /staging/"
 alias m="mpv"
 alias mpvnr="find . -maxdepth 1 -type f -print0 | xargs -0 mpv"
 alias lo="libreoffice"
@@ -15,7 +16,6 @@ alias szsh="sourcezsh"
 alias sz="sourcezsh"
 alias aliases="nvim /home/richard/dotfiles/.config/zsh/aliases.zsh"
 alias cla="claude --dangerously-skip-permissions"
-alias cpwd="copy pwd"
 alias bt="bluetui"
 alias wt="wifitui"
 alias wifitui="nmtui"

@@ -51,6 +51,7 @@ mpv() {
     local -a args
     for arg in "$@"; do
         case "$arg" in
+		--shf) args+=(--shuffle) ;;
             --nv) args+=(--no-video) ;;
             --na) args+=(--no-audio) ;;
             *)    args+=("$arg") ;;
@@ -299,6 +300,19 @@ zcpwd() {
     z "$@" && copy pwd
 }
 
+# Copy full path of cwd, or of a given file/folder, to clipboard
+cpwd() {
+    if (( $# == 0 )); then
+        pwd | tr -d '\n' | wl-copy
+        echo "Copied: $(pwd)"
+    else
+        local target
+        target=$(realpath "$1")
+        print -rn -- "$target" | wl-copy
+        echo "Copied: $target"
+    fi
+}
+
 # Find with fd; 1 match → copy immediately, multiple → pick from less -N
 # Default: copies file path. -f: copies file contents.
 cfd() {
@@ -324,8 +338,8 @@ cfd() {
             copy "$target"
             echo "Copied contents: $target"
         else
-            print -rn -- "$target" | wl-copy
-            echo "Copied path: $target"
+            print -rn -- "$(realpath "$target")" | wl-copy
+            echo "Copied path: $(realpath "$target")"
         fi
     }
 
@@ -384,8 +398,8 @@ nfd() {
 }
 
 # Init a local dir and push to gitlab as takacsrichard/<name>
-# Usage: glinit -n <repo_name> [-c "commit message"]
-glinit() {
+# Usage: ginit -n <repo_name> [-c "commit message"]
+ginit() {
     local repo_name=""
     local commit_msg="initial commit"
 
@@ -393,13 +407,13 @@ glinit() {
         case "$opt" in
             n) repo_name="$OPTARG" ;;
             c) commit_msg="$OPTARG" ;;
-            :) echo "glinit: -$OPTARG requires an argument" >&2; return 1 ;;
-            \?) echo "glinit: unknown option -$OPTARG" >&2; return 1 ;;
+            :) echo "ginit: -$OPTARG requires an argument" >&2; return 1 ;;
+            \?) echo "ginit: unknown option -$OPTARG" >&2; return 1 ;;
         esac
     done
 
     if [[ -z "$repo_name" ]]; then
-        echo "Usage: glinit -n <repo_name> [-c \"commit message\"]" >&2
+        echo "Usage: ginit -n <repo_name> [-c \"commit message\"]" >&2
         return 1
     fi
 
@@ -485,6 +499,8 @@ ftoo() {
     (( ${#files[@]} > 1 )) && printf 'Done: %d converted, %d skipped, %d failed\n' "$count" "$skipped" "$failed"
 }
 
+source "$HOME/dotfiles/.config/zsh/functions/identical.zsh"
+
 function download_insta_reels {
     local reels_dir=~/Downloads/reels
     mkdir -p "$reels_dir"
@@ -494,4 +510,47 @@ function download_insta_reels {
     comm -23 \
         <(grep -oP 'reel/\K[^/]+' "$reels_dir/reel_links.txt" | sort) \
         <(ls "$reels_dir"/*.mp4 | grep -oP '\[\K[^\]]+(?=\])' | sort) | wc -l
+}
+
+# Remove all empty directories under a given path (depth-first, with confirmation)
+# Usage: rmemptydirs [path]   (defaults to current dir)
+rmemptydirs() {
+    local force=0
+    if [[ "$1" == "-f" ]]; then
+        force=1
+        shift
+    fi
+
+    local target="${1:-.}"
+    if [[ ! -d "$target" ]]; then
+        echo "rmemptydirs: '$target' is not a directory" >&2
+        return 1
+    fi
+
+    local dirs
+    dirs=$(find "$target" -depth -mindepth 1 -type d -empty 2>/dev/null)
+    if [[ -z "$dirs" ]]; then
+        echo "No empty directories in '$target'"
+        return 0
+    fi
+
+    local count
+    count=$(printf '%s\n' "$dirs" | wc -l)
+    printf '%s\n' "$dirs"
+    echo
+    printf 'Remove %d empty director%s? [y/N] ' "$count" "$([[ $count -eq 1 ]] && echo y || echo ies)"
+
+    local reply='y'
+    if (( ! force )); then
+        read -r reply
+    else
+        echo y
+    fi
+
+    if [[ "$reply" =~ ^[Yy]$ ]]; then
+        find "$target" -depth -mindepth 1 -type d -empty -delete
+        echo "Removed $count empty director$([[ $count -eq 1 ]] && echo y || echo ies)."
+    else
+        echo "Aborted."
+    fi
 }

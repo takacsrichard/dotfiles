@@ -1,3 +1,5 @@
 [binds]
 r = rotate by 90
 <Shift+R> = exec mogrify -rotate 90 "$imv_current_file"
+d = exec trash-put "$imv_current_file" ; close
+u = exec bash -c 'echo 0 | trash-restore'

@@ -82,7 +82,7 @@ in
     git
     libnatpmp
     qview
-    imv
+    swayimg
     mpv
     anki
     qbittorrent
@@ -103,6 +103,7 @@ in
     nodejs
     librsvg
     tmux
+    zathura
     (pkgs.writeShellApplication {
       name = "netwatch";
       runtimeInputs = with pkgs; [ tshark iproute2 gawk util-linux ];
@@ -128,17 +129,18 @@ in
     '';
   };
 
+
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "image/jpeg"         = "qview.desktop";
-      "image/png"          = "qview.desktop";
-      "image/gif"          = "qview.desktop";
-      "image/webp"         = "qview.desktop";
-      "image/bmp"          = "qview.desktop";
-      "image/tiff"         = "qview.desktop";
-      "image/svg+xml"      = "qview.desktop";
-      "image/x-icon"       = "qview.desktop";
+      "image/jpeg"         = "swayimg.desktop";
+      "image/png"          = "swayimg.desktop";
+      "image/gif"          = "swayimg.desktop";
+      "image/webp"         = "swayimg.desktop";
+      "image/bmp"          = "swayimg.desktop";
+      "image/tiff"         = "swayimg.desktop";
+      "image/svg+xml"      = "swayimg.desktop";
+      "image/x-icon"       = "swayimg.desktop";
       "video/mp4"          = "mpv.desktop";
       "video/x-matroska"   = "mpv.desktop";
       "video/webm"         = "mpv.desktop";

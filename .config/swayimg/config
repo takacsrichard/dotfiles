@@ -1,0 +1,12 @@
+[list]
+# Load all files in the same directory when opening a single file
+all = yes
+
+[keys.viewer]
+# Navigate files with arrow keys
+Left = prev_file
+Right = next_file
+# Move to trash and advance to next file
+d = exec trash-put '%'; skip_file
+# Undo last trash (restores most recently deleted)
+u = exec bash -c 'echo 0 | trash-restore'

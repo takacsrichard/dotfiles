@@ -205,9 +205,23 @@ in
   };
   systemd.user.extraConfig = "DefaultTimeoutStopSec=10s";
 
+  fileSystems."/mnt/hdd" = {
+    device = "/dev/disk/by-uuid/00FD-8196";
+    fsType = "exfat";
+    options = [ "uid=1000" "gid=100" "nofail" "x-systemd.automount" "x-systemd.idle-timeout=120" ];
+  };
+
+  fileSystems."/mnt/ssd" = {
+    device = "/dev/disk/by-uuid/6AE7-F045";
+    fsType = "exfat";
+    options = [ "uid=1000" "gid=100" "nofail" "x-systemd.automount" "x-systemd.idle-timeout=120" ];
+  };
+
   systemd.tmpfiles.rules = [
     "d /etc/asusd 0755 root root -"
     "d /var/cache/tuigreet 0755 greeter greeter -"
+    "d /mnt/hdd 0755 richard users -"
+    "d /mnt/ssd 0755 richard users -"
   ];
 
   # Fonts
@@ -271,11 +285,20 @@ in
         # core data wrangling & viz
         tidyverse ggplot2 dplyr tidyr readr lubridate stringr purrr
         data_table
+        # EDA & cleaning
+        janitor skimr broom here fs
+        # visualization extensions
+        patchwork ggthemes ggridges GGally corrplot viridis
+        # tables
+        kableExtra modelsummary stargazer
         # stats & ML
         caret forecast zoo xts
         tidymodels xgboost lightgbm glmnet
+        # econometrics
+        car lme4 sandwich lmtest fixest quantreg moments urca vars
         # quant finance
         quantmod TTR PerformanceAnalytics tidyquant tseries rugarch
+        PortfolioAnalytics RQuantLib copula rmgarch slider
         # misc utils
         plotly DT scales
         # I/O & web
@@ -293,7 +316,21 @@ in
         enumitem
         parskip
         preprint
-        titlesec;
+        titlesec
+        # bibliography
+        biblatex biber csquotes
+        # cross-references
+        cleveref
+        # math & science
+        siunitx mathtools thmtools
+        # tables
+        multirow
+        # code & algorithms
+        minted algorithm2e
+        # document structure
+        appendix glossaries todonotes pdfpages
+        # boxes & text
+        tcolorbox soul;
     })
     pandoc
   ];
