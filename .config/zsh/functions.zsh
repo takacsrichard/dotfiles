@@ -3,6 +3,10 @@ o() {
     okular "$@" >/dev/null 2>&1 & disown
 }
 
+oz() {
+    zathura "$@" >/dev/null 2>&1 & disown
+}
+
 
 # play yt audio; -d also downloads as opus with full metadata+thumbnail to ~/Music/yt_ddl/
 yt() {
@@ -447,10 +451,46 @@ ginit() {
         return 1
     fi
 
-    git init &&
-    git remote add origin "git@gitlab.com:takacsrichard/${repo_name}.git" &&
-    git add . &&
-    git commit -m "$commit_msg" &&
+    # Safety: bail out if the repo already has commits (i.e. this isn't a fresh init)
+    if git rev-parse HEAD &>/dev/null 2>&1; then
+        local existing_remote
+        existing_remote="$(git remote get-url origin 2>/dev/null || echo '(none)')"
+        echo "ginit: this directory already has git history." >&2
+        echo "  Current remote: $existing_remote" >&2
+        echo "  Use 'git remote set-url origin <url>' manually if you really want to change it." >&2
+        return 1
+    fi
+
+    git init
+
+    local remote_url="git@gitlab.com:takacsrichard/${repo_name}.git"
+    if git remote get-url origin &>/dev/null; then
+        git remote set-url origin "$remote_url"
+    else
+        git remote add origin "$remote_url"
+    fi
+
+    git add .
+
+    # Show what's about to be committed and ask for confirmation
+    echo ""
+    git status
+    echo ""
+    local proceed
+    read "proceed?Commit and push the above to gitlab:takacsrichard/${repo_name}.git? [y/N] " </dev/tty
+    if [[ "$proceed" != [Yy] ]]; then
+        echo "Aborted. Remote is set to: git@gitlab.com:takacsrichard/${repo_name}.git"
+        echo "Files are staged but not committed — re-run ginit when ready."
+        # Un-stage everything so the working tree is clean for a re-run
+        git reset HEAD -- . &>/dev/null
+        return 1
+    fi
+
+    # Only commit if there is something to commit
+    if ! git diff --cached --quiet; then
+        git commit -m "$commit_msg"
+    fi
+
     git branch -M main &&
     git push --set-upstream origin main
 }

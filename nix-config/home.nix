@@ -91,6 +91,7 @@ in
     rbw
     pinentry-qt
     just
+    zathura
     neovim
     fd
     syncthing

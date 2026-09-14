@@ -2,6 +2,7 @@
 #  Aliases
 # ============================================================
 
+alias agy="agy --dangerously-skip-permissions"
 alias mediumclaude="CLAUDE_CODE_EFFORT_LEVEL=medium cla"
 alias getmusic="yt-dlp -x --audio-format opus --cookies-from-browser firefox"
 alias ccusage="npx ccusage@latest --json"

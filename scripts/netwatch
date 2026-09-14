@@ -42,7 +42,8 @@ is_valid_label() {
 
 # IPFILE:    dir<tab>remote_ip<tab>local_port per packet (for counting; dir is IN/OUT)
 # LBLFILE:   remote_ip<tab>rank<tab>label — every label we've seen for an IP,
-#            plus how good it is (1=DNS/SNI, 2=HTTP host, 3=reverse-DNS).
+#            plus how good it is (1=DNS/SNI, 2=HTTP host, 3=reverse-DNS,
+#            4=RDAP org name fallback).
 #            print_table keeps the best (lowest) rank per IP, not the latest.
 # PORTFILE:  local_port<tab>process — snapshot of what ss says owns each local
 #            port right now, refreshed every display tick (not historical: a
@@ -50,10 +51,11 @@ is_valid_label() {
 IPFILE=$(mktemp)
 LBLFILE=$(mktemp)
 PORTFILE=$(mktemp)
+RDAP_TRIED=$(mktemp)
 
 printf '\033[?1049h'  # enter alternate screen buffer
 
-cleanup() { kill "$BGPID" "$RESOLVER_PID" 2>/dev/null; rm -f "$IPFILE" "$LBLFILE" "$PORTFILE"; printf '\033[?1049l'; exit; }
+cleanup() { kill "$BGPID" "$RESOLVER_PID" 2>/dev/null; rm -f "$IPFILE" "$LBLFILE" "$PORTFILE" "$RDAP_TRIED"; printf '\033[?1049l'; exit; }
 trap cleanup INT TERM EXIT
 
 # === Capture: classify each packet as IN/OUT, log remote IP, cache any named label ===
@@ -119,19 +121,39 @@ while IFS=$'\x1f' read -r src4 dst4 src6 dst6 http_host sni qname dns_a dns_aaaa
 done &
 BGPID=$!
 
-# === Background resolver: reverse-DNS any remote IP not yet in label cache ===
+# === Background resolver: reverse-DNS any remote IP not yet in label cache,
+#     with RDAP org-name fallback for IPs that have no PTR record ===
+# RDAP_TRIED: tracks IPs we've already attempted RDAP for, to avoid
+#             repeated expensive lookups for the same IP.
+
 (
     while true; do
         sleep 2
         [[ -s "$IPFILE" ]] || continue
 
-        # remote IPs seen but not yet labelled
+        # remote IPs seen but not yet labelled at all
         comm -23 \
             <(awk -F'\t' '{print $2}' "$IPFILE" 2>/dev/null | sort -u) \
             <(awk -F'\t' '{print $1}' "$LBLFILE" 2>/dev/null | sort -u) \
         | while read -r ip; do
             name=$(getent hosts "$ip" 2>/dev/null | awk '{print $2; exit}')
-            is_valid_label "$name" && [[ "$name" != "$ip" ]] && printf '%s\t3\t%s\n' "$ip" "$name" >> "$LBLFILE"
+            if is_valid_label "$name" && [[ "$name" != "$ip" ]]; then
+                printf '%s\t3\t%s\n' "$ip" "$name" >> "$LBLFILE"
+            elif ! grep -qxF "$ip" "$RDAP_TRIED" 2>/dev/null; then
+                # No PTR record — try RDAP for an org/entity name
+                echo "$ip" >> "$RDAP_TRIED"
+                rdap_url="https://rdap.arin.net/registry/ip/${ip}"
+                org=$(curl -sfL --max-time 5 "$rdap_url" 2>/dev/null \
+                    | grep -o '"name" *: *"[^"]*"' \
+                    | head -5 \
+                    | awk -F'"' '
+                        # skip pure numbers and internal ARIN handle patterns
+                        $4 !~ /^[0-9-]+$/ && $4 !~ /^[A-Z]+-[0-9]+-ARIN$/ && length($4) > 1 { print $4; exit }
+                    ')
+                if is_valid_label "$org" && [[ "$org" != "$ip" ]]; then
+                    printf '%s\t4\t[%s]\n' "$ip" "$org" >> "$LBLFILE"
+                fi
+            fi
         done
     done
 ) &
