@@ -208,13 +208,13 @@ in
   fileSystems."/mnt/hdd" = {
     device = "/dev/disk/by-uuid/00FD-8196";
     fsType = "exfat";
-    options = [ "uid=1000" "gid=100" "nofail" "x-systemd.automount" "x-systemd.idle-timeout=120" ];
+    options = [ "uid=1000" "gid=100" "nofail" "noauto" ];
   };
 
   fileSystems."/mnt/ssd" = {
     device = "/dev/disk/by-uuid/6AE7-F045";
     fsType = "exfat";
-    options = [ "uid=1000" "gid=100" "nofail" "x-systemd.automount" "x-systemd.idle-timeout=120" ];
+    options = [ "uid=1000" "gid=100" "nofail" "noauto" ];
   };
 
   systemd.tmpfiles.rules = [
@@ -403,7 +403,7 @@ in
   # subvolumes are on the same device)
   services.btrfs.autoScrub = {
     enable = true;
-    interval = "monthly";
+    interval = "*-*-1 16:00:00";
     fileSystems = [ "/" ];
   };
 
