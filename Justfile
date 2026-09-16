@@ -1,8 +1,8 @@
 set shell := ["zsh", "-euo", "pipefail", "-c"]
 
-SSD_MOUNT := "/run/media/richard/SanDisk"
-HDD_MOUNT := "/run/media/richard/Expansion"
-RESTIC_REPO := SSD_MOUNT + "/backups/restic_repo"
+SSD_MOUNT := "/mnt/ssd/"
+HDD_MOUNT := "/mnt/hdd/"
+RESTIC_REPO := SSD_MOUNT + "backups/restic_repo"
 
 # Update flake inputs and rebuild NixOS
 update:

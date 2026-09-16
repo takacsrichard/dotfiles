@@ -6,8 +6,4 @@ venv/
 result
 result-*
 
-# Managed by home-manager
-.config/kitty/kitty.conf
-.config/fuzzel/fuzzel.ini
-.config/wlogout/style.css
-.config/tmux/plugins/
+

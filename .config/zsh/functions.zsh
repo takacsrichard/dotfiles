@@ -88,9 +88,7 @@ mpv() {
 
 # --- script wrappers ---
 # irq balance checker
-irqgini() { python3 "$HOME/dotfiles/scripts/irqgini.py" "$@"; }
-# downloads / documents organizer
-dlorg() { python3 "$HOME/dotfiles/scripts/downloads_organizer.py" "$@"; }
+irqgini() { python3 "$HOME/scripts/irqgini.py" "$@"; }
 # bitwarden vault password analyzer
 pwanal() { python3 "$HOME/Documents/Projects/rbwcheck/pwanal.py" "$@"; }
 
@@ -424,22 +422,24 @@ nfd() {
 }
 
 # Init a local dir and push to gitlab as takacsrichard/<name>
-# Usage: ginit -n <repo_name> [-c "commit message"]
+# Usage: ginit -n <repo_name> [-c "commit message"] [-p (public)]
 ginit() {
     local repo_name=""
     local commit_msg="initial commit"
+    local visibility="private"
 
-    while getopts ":n:c:" opt; do
+    while getopts ":n:c:p" opt; do
         case "$opt" in
             n) repo_name="$OPTARG" ;;
             c) commit_msg="$OPTARG" ;;
+            p) visibility="public" ;;
             :) echo "ginit: -$OPTARG requires an argument" >&2; return 1 ;;
             \?) echo "ginit: unknown option -$OPTARG" >&2; return 1 ;;
         esac
     done
 
     if [[ -z "$repo_name" ]]; then
-        echo "Usage: ginit -n <repo_name> [-c \"commit message\"]" >&2
+        echo "Usage: ginit -n <repo_name> [-c \"commit message\"] [-p (public)]" >&2
         return 1
     fi
 
@@ -489,6 +489,30 @@ ginit() {
     # Only commit if there is something to commit
     if ! git diff --cached --quiet; then
         git commit -m "$commit_msg"
+    fi
+
+    # Create the GitLab repo via API before pushing so git push doesn't hang
+    # waiting for a non-existent remote. Token fetched from rbw (Bitwarden).
+    local gl_token
+    gl_token="$(rbw get "gitlab stuff personal access token" 2>/dev/null)"
+    if [[ -z "$gl_token" ]]; then
+        echo "ginit: warning: could not fetch GitLab token from rbw — skipping remote repo creation." >&2
+        echo "  If the repo doesn't exist on GitLab, the push will fail. Create it manually first." >&2
+    else
+        local api_resp http_code
+        # Use --write-out to get the HTTP status code separately from the body
+        api_resp=$(curl -sfS --max-time 15 \
+            --write-out '\n%{http_code}' \
+            --header "PRIVATE-TOKEN: $gl_token" \
+            --header "Content-Type: application/json" \
+            --data "{\"name\":\"${repo_name}\",\"visibility\":\"${visibility}\",\"initialize_with_readme\":false}" \
+            "https://gitlab.com/api/v4/projects" 2>&1)
+        http_code="${api_resp##*$'\n'}"
+        case "$http_code" in
+            201) echo "  → GitLab repo created (${visibility}): https://gitlab.com/takacsrichard/${repo_name}" ;;
+            400) echo "  → GitLab repo already exists, skipping creation." ;;
+            *)   echo "ginit: GitLab API returned HTTP ${http_code} — continuing anyway." >&2 ;;
+        esac
     fi
 
     git branch -M main &&
