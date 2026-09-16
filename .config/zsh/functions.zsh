@@ -11,14 +11,29 @@ oz() {
 # play yt audio; -d also downloads as opus with full metadata+thumbnail to ~/Music/yt_ddl/
 yt() {
     local download=false
+    local soundcloud=false
     local -a args
     for arg in "$@"; do
-        if [[ "$arg" == "-d" ]]; then
-            download=true
-        else
-            args+=("$arg")
-        fi
+        case "$arg" in
+            -d)  download=true ;;
+            -sc) soundcloud=true ;;
+            *)   args+=("$arg") ;;
+        esac
     done
+
+    if [[ "$soundcloud" == true ]]; then
+        if [[ "$download" == true ]]; then
+            mkdir -p "$HOME/Music/yt_ddl"
+            yt-dlp -x --audio-format mp3 --audio-quality 0 \
+                --embed-thumbnail --embed-metadata \
+                -o "$HOME/Music/yt_ddl/%(title)s.%(ext)s" \
+                "scsearch1:${args[*]}" &
+        fi
+        mpv --no-video \
+            --ytdl-raw-options-append="force-ipv4=" \
+            "ytdl://scsearch1:${args[*]}"
+        return
+    fi
 
     local cookie_file="${XDG_CACHE_HOME:-$HOME/.cache}/yt-cookies.txt"
     local -a cookie_args
@@ -41,10 +56,11 @@ yt() {
             "ytsearch1:${args[*]}" &
     fi
 
-    yt-dlp -f "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/worst[acodec!=none]" \
-        --extractor-args "youtube:player_client=mweb" \
-        "${cookie_args[@]}" --force-ipv4 -q --no-warnings \
-        -o - "ytsearch1:${args[*]}" | mpv --no-video -
+    mpv --no-video \
+        --ytdl-raw-options-append="cookies-from-browser=firefox" \
+        --ytdl-raw-options-append="extractor-args=youtube:player_client=web,mweb" \
+        --ytdl-raw-options-append="force-ipv4=" \
+        "ytdl://ytsearch1:${args[*]}"
 
     # Silently refresh the cookie file in the background after each fast-path call,
     # so the next invocation always hits the cache

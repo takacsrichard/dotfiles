@@ -155,14 +155,170 @@ in
   };
   xdg.configFile."mimeapps.list".force = true;
 
+  xdg.configFile = {
+    "zathura/zathurarc".text = "set selection-clipboard clipboard\n";
+
+    "swayimg/config".text = ''
+      [list]
+      all = yes
+
+      [keys.viewer]
+      Left = prev_file
+      Right = next_file
+      d = exec trash-put '%'; skip_file
+      u = exec bash -c 'echo 0 | trash-restore'
+    '';
+
+    "mako/config".text = ''
+      background-color=#1a1a1a
+      text-color=#e6e1e1
+      border-color=#49464a
+      border-size=1
+      border-radius=10
+      padding=12
+      margin=8
+
+      font=Google Sans Flex 12
+      max-icon-size=32
+      icon-path=/usr/share/icons/hicolor
+
+      default-timeout=5000
+      ignore-timeout=0
+      max-visible=5
+
+      layer=overlay
+      anchor=top-right
+
+      [urgency=low]
+      border-color=#49464a
+      default-timeout=3000
+
+      [urgency=normal]
+      border-color=#49464a
+
+      [urgency=high]
+      border-color=#ffb4ab
+      text-color=#ffdad6
+      default-timeout=0
+
+      [mode=do-not-disturb]
+      invisible=1
+    '';
+
+    "fastfetch/config.jsonc".text = ''
+      {
+        "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+        "modules": [
+          "title",
+          "separator",
+          "os",
+          "host",
+          "kernel",
+          "uptime",
+          "packages",
+          "shell",
+          "display",
+          "de",
+          "wm",
+          "wmtheme",
+          "terminal",
+          "cpu",
+          "gpu",
+          "memory",
+          "swap",
+          "disk",
+          "localip",
+          "battery",
+          "poweradapter",
+          "break"
+        ]
+      }
+    '';
+
+    "fuzzel/fuzzel.ini".text = ''
+      font=Google Sans Flex:weight=medium
+      terminal=kitty -1
+      prompt=">>  "
+      layer=overlay
+
+      [colors]
+      background=131315ff
+      text=e4e2e3ff
+      selection=474648ff
+      selection-text=c8c6c7ff
+      border=474648dd
+      match=c2c6d6ff
+      selection-match=c2c6d6ff
+
+      [border]
+      radius=17
+      width=1
+
+      [dmenu]
+      exit-immediately-if-empty=yes
+    '';
+
+    "tmux/tmux.conf".text = ''
+      set  -g default-terminal "screen"
+      set  -g base-index      0
+      setw -g pane-base-index 0
+
+      set -g status-keys emacs
+      set -g mode-keys   emacs
+
+      set  -g mouse             off
+      set  -g focus-events      off
+      setw -g aggressive-resize off
+      setw -g clock-mode-style  12
+      set  -s escape-time       10
+      set  -g history-limit     2000
+
+      set -g @plugin 'tmux-plugins/tpm'
+      set -g @plugin 'tmux-plugins/tmux-resurrect'
+      set -g @plugin 'tmux-plugins/tmux-continuum'
+
+      set -g @continuum-restore 'on'
+      set -g @continuum-save-interval '10'
+
+      run '~/.tmux/plugins/tpm/tpm'
+    '';
+
+    "fontconfig/fonts.conf".text = ''
+      <?xml version="1.0"?>
+      <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+      <fontconfig>
+          <match target="font">
+              <edit name="rgba" mode="assign">
+              <const>none</const>
+          </edit>
+        </match>
+      </fontconfig>
+    '';
+  };
+
+  systemd.user.services.touchpad-filter = {
+    Unit = {
+      Description = "Touchpad BTN_LEFT filter (drops stuck-click ELAN firmware bug)";
+      After = [ "graphical-session.target" ];
+      StartLimitIntervalSec = 120;
+      StartLimitBurst = 5;
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "/usr/local/bin/touchpad-filter";
+      Restart = "on-failure";
+      RestartSec = "3";
+      StandardOutput = "journal";
+      StandardError = "journal";
+      SyslogIdentifier = "touchpad-filter";
+    };
+    Install.WantedBy = [ "default.target" ];
+  };
+
   # Auto-symlink everything from ~/dotfiles/.config/ except entries managed
-  # by home-manager itself (systemd, mimeapps.list) or needing per-file
-  # handling (fontconfig — HM owns conf.d/ alongside fonts.conf).
+  # by home-manager itself (systemd, mimeapps.list, fontconfig, doublecmd).
   # To add a new app: drop its config into ~/dotfiles/.config/ and rebuild.
   home.file = autoConfigEntries // {
-    ".config/fontconfig/fonts.conf".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.config/fontconfig/fonts.conf";
-
     ".config/rbw/config.json".text = builtins.toJSON {
       email             = "takacs.richard121@gmail.com";
       sso_id            = null;
@@ -178,9 +334,6 @@ in
 
     ".gitconfig".source =
       config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.gitconfig";
-
-    ".gtkrc-2.0".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.gtkrc-2.0";
 
     ".claude/settings.json".source =
       config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.claude/settings.json";

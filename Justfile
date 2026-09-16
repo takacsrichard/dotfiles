@@ -8,10 +8,12 @@ RESTIC_REPO := SSD_MOUNT + "backups/restic_repo"
 update:
     nix flake update --flake ~/dotfiles/nix-config
     sudo nixos-rebuild switch --flake 'path:/home/richard/dotfiles?dir=nix-config#nixos' --impure
+    sudo systemctl restart home-manager-richard.service
 
 # Rebuild NixOS and push dotfiles on success
 rebuild:
     sudo nixos-rebuild switch --flake 'path:/home/richard/dotfiles?dir=nix-config#nixos' --impure
+    sudo systemctl restart home-manager-richard.service
 
 # push to gh
 push:
