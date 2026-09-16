@@ -104,12 +104,6 @@ in
     nodejs
     librsvg
     tmux
-    zathura
-    (pkgs.writeShellApplication {
-      name = "netwatch";
-      runtimeInputs = with pkgs; [ tshark iproute2 gawk util-linux ];
-      text = builtins.readFile ../scripts/netwatch;
-    })
   ];
 
 
