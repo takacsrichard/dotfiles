@@ -76,11 +76,11 @@ hl.config({
 
         blur = {
             enabled = true,
-            xray = true,
+            xray = false,
             special = false,
             new_optimizations = true,
-            size = 10,
-            passes = 3,
+            size = 8,
+            passes = 1,
             brightness = 1,
             noise = 0.05,
             contrast = 0.89,
@@ -100,7 +100,7 @@ hl.config({
 
         },
         -- Dim
-        dim_inactive = true,
+        dim_inactive = false,
         dim_strength = 0.05,
         dim_special = 0.2
     },

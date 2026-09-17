@@ -24,8 +24,11 @@ in
     eza
     zoxide
     fzf
+    eza
     jq
     yazi
+    delta
+    bat
     cowsay
     cmatrix
     yt-dlp
@@ -54,6 +57,8 @@ in
     curl
     less
     mc
+    dust
+    choose
     nnn
     file-rename
     pyright
@@ -104,6 +109,12 @@ in
     nodejs
     librsvg
     tmux
+    hyperfine
+    tldr
+    procs
+    duf
+    btop
+    lazygit
   ];
 
 
@@ -116,7 +127,7 @@ in
     syntaxHighlighting.enable = true;
     oh-my-zsh = {
       enable = true;
-      theme = "robbyrussell";
+      theme = "";
       plugins = [ "git" ];
     };
     initContent = ''
@@ -124,6 +135,11 @@ in
     '';
   };
 
+
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+  };
 
   xdg.mimeApps = {
     enable = true;

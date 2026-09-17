@@ -8,6 +8,7 @@ alias getmusic="yt-dlp -x --audio-format opus --cookies-from-browser firefox"
 alias ccusage="npx ccusage@latest --json"
 alias img="kitten icat"
 alias gs="git status"
+alias pushall="git add . && { git commit -m 'update various things' || true; } && git push"
 alias hn="n /home/richard/dotfiles/nix-config/home.nix"
 alias cn="n /home/richard/dotfiles/nix-config/configuration.nix"
 alias dfs="df -hTx tmpfs -x efivarfs -x devtmpfs -x vfat"
@@ -58,7 +59,7 @@ alias t="trans"
 alias filesbyline='find . -type f -name ".*" -o -type f | xargs wc -l | sort -n'
 
 # --- Aliases with colors ---
-alias ls='ls --color=auto'
+alias ls='eza -la --git --header --icons -o --no-permissions'
 alias grep='grep --color=auto'
 alias fafe='fastfetch'
 alias please='sudo'
@@ -118,4 +119,5 @@ lmk()  { latexmk -pdf "$1" }
 
 
 cpw() {copy "readlink -f '$1'"}
-
+cd() {z "$1"}
+chpwd() { eza -la --git --header --icons -o --no-permissions }

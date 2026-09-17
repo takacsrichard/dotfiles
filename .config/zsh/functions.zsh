@@ -601,8 +601,6 @@ ftoo() {
     (( ${#files[@]} > 1 )) && printf 'Done: %d converted, %d skipped, %d failed\n' "$count" "$skipped" "$failed"
 }
 
-source "$HOME/dotfiles/.config/zsh/functions/identical.zsh"
-source "$HOME/dotfiles/.config/zsh/functions/is-subset.zsh"
 
 function download_insta_reels {
     local reels_dir=~/Downloads/reels

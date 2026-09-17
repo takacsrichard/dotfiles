@@ -17,7 +17,7 @@ rebuild:
 
 # push to gh
 push:
-    cd ~/dotfiles && git add . && { git commit -m "update dotfiles" || true; } && git push
+    cd ~/dotfiles && git add . && { git commit -m "update stuff" || true; } && git push
 
 
 
