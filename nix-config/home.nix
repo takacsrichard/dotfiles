@@ -29,7 +29,11 @@ in
     yazi
     delta
     bat
+    sd
+    rm-improved
     cowsay
+    direnv
+    libqalculate
     cmatrix
     yt-dlp
     deno

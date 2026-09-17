@@ -2,6 +2,8 @@
 #  Aliases
 # ============================================================
 
+alias sw="swayimg"
+alias todo="n /home/richard/Documents/sysadmin/todo.txt"
 alias agy="agy --dangerously-skip-permissions"
 alias mediumclaude="CLAUDE_CODE_EFFORT_LEVEL=medium cla"
 alias getmusic="yt-dlp -x --audio-format opus --cookies-from-browser firefox"
@@ -17,9 +19,8 @@ alias m="mpv"
 alias mpvnr="find . -maxdepth 1 -type f -print0 | xargs -0 mpv"
 alias lo="libreoffice"
 alias mv="mv -i"
-alias szsh="sourcezsh"
-alias sz="sourcezsh"
 alias aliases="nvim /home/richard/dotfiles/.config/zsh/aliases.zsh"
+alias funcs="nvim /home/richard/dotfiles/.config/zsh/functions.zsh"
 alias cla="claude --dangerously-skip-permissions"
 alias clm="claude --dangerously-skip-permissions --resume"
 alias dumb="claude --dangerously-skip-permissions --model claude-haiku-4-5-20251001"   # haiku 4.5
@@ -59,7 +60,16 @@ alias t="trans"
 alias filesbyline='find . -type f -name ".*" -o -type f | xargs wc -l | sort -n'
 
 # --- Aliases with colors ---
-alias ls='eza -la --git --header --icons -o --no-permissions'
+_ezals() {
+    eza -la --git --header --icons -o --no-permissions "$@"
+    local target="."
+    for arg in "$@"; do [[ -e "$arg" ]] && target="$arg"; done
+    print -rn -- "$(realpath "$target")" | wl-copy
+    echo "Copied: $(realpath "$target")"
+}
+alias ls='_ezals'
+alias l='_ezals'
+compdef _ezals=eza
 alias grep='grep --color=auto'
 alias fafe='fastfetch'
 alias please='sudo'
@@ -121,3 +131,6 @@ lmk()  { latexmk -pdf "$1" }
 cpw() {copy "readlink -f '$1'"}
 cd() {z "$1"}
 chpwd() { eza -la --git --header --icons -o --no-permissions }
+
+mdc() { mkdir -p "$1" && print -rn -- "$(realpath "$1")" | wl-copy && echo "Copied: $(realpath "$1")" }
+

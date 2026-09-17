@@ -17,7 +17,14 @@ rebuild:
 
 # push to gh
 push:
-    cd ~/dotfiles && git add . && { git commit -m "update stuff" || true; } && git push
+    #!/usr/bin/env zsh
+    cd ~/dotfiles
+    git add .
+    printf "Commit message (blank = 'update dotfiles'): "
+    read msg
+    msg="${msg:-update dotfiles}"
+    { git commit -m "$msg" || true; }
+    git push
 
 
 

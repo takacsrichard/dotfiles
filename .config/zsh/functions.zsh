@@ -8,6 +8,10 @@ oz() {
 }
 
 
+epoch() { date -d @"$1" '+%Y-%m-%d %H:%M:%S %Z'; }
+
+mvp() { mkdir -p "$(dirname "${@: -1}")" && mv "$@"; }
+
 # play yt audio; -d also downloads as opus with full metadata+thumbnail to ~/Music/yt_ddl/
 yt() {
     local download=false
@@ -114,7 +118,7 @@ libcalc() {
 
 # mkdir + cd in one
 mkcd() {
-    mkdir -p "$1" && cd "$1"
+    mkdir -p "$1" && cd "$1" && cpwd 
 }
 
 # Compress PDFs in the current directory
