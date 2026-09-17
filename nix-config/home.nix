@@ -24,7 +24,6 @@ in
     eza
     zoxide
     fzf
-    eza
     jq
     yazi
     delta
@@ -60,10 +59,8 @@ in
     bc
     curl
     less
-    mc
     dust
     choose
-    nnn
     file-rename
     pyright
     strace
@@ -90,7 +87,6 @@ in
     restic
     git
     libnatpmp
-    qview
     swayimg
     mpv
     anki
