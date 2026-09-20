@@ -37,5 +37,5 @@
 
   services.resolved.enable = true;
 
-  environment.systemPackages = with pkgs; [ wireguard-tools ];
+  environment.systemPackages = with pkgs; [ wireguard-tools iw];
 }

@@ -1,3 +1,12 @@
+# Record timestamps and elapsed time per command.
+# INC_APPEND_HISTORY_TIME writes each entry after it finishes (so elapsed is
+# accurate) and is mutually exclusive with SHARE_HISTORY (set by oh-my-zsh).
+setopt EXTENDED_HISTORY
+setopt INC_APPEND_HISTORY_TIME
+unsetopt SHARE_HISTORY
+HISTSIZE=500000
+SAVEHIST=500000
+
 alias zc="zshcfgsrc"
 alias zshpwd="echo ~/dotfiles/.config/zsh"
 alias zshcopy='cat ~/dotfiles/.config/zsh/*.zsh | wl-copy'

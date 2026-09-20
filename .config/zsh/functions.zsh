@@ -107,8 +107,6 @@ mpv() {
 }
 
 # --- script wrappers ---
-# irq balance checker
-irqgini() { python3 "$HOME/scripts/irqgini.py" "$@"; }
 # bitwarden vault password analyzer
 pwanal() { python3 "$HOME/Documents/Projects/rbwcheck/pwanal.py" "$@"; }
 

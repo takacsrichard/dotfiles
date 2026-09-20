@@ -41,7 +41,6 @@ alias scr='grim -g "$(slurp)" - | wl-copy'
 
 alias ffmstats="ffprobe -v quiet -print_format json -show_streams -show_format"
 alias h="history"
-alias bootstats='python3 ~/scripts/bootstats'
 alias qsrestart='pkill -9 -x quickshell 2>/dev/null; pkill quickshell 2>/dev/null; sleep 0.5; qs -c ii &'
 
 # --- Hyprland shortcuts ---

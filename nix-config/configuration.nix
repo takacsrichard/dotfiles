@@ -83,5 +83,10 @@
     ];
   };
 
+  services.journald.extraConfig = ''
+    SystemMaxUse=100T
+    SystemKeepFree=0
+  '';
+
   system.stateVersion = "26.05";
 }
