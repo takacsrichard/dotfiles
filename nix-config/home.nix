@@ -52,7 +52,6 @@ in
     python3
     uv
     libreoffice-still
-    vesktop
     pnpm
     nixfmt
     kitty
