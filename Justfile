@@ -6,7 +6,14 @@ RESTIC_REPO := SSD_MOUNT + "backups/restic_repo"
 
 # Update flake inputs and rebuild NixOS
 update:
-    nix flake update --flake ~/dotfiles/nix-config
+    #!/usr/bin/env zsh
+    set -euo pipefail
+    nix flake update nixpkgs nixpkgs-unstable home-manager ragenix nur --flake ~/dotfiles/nix-config
+    printf "Update pinned R/RStudio packages too? They often aren't cached and rebuild from source. [y/N] "
+    read -r ans
+    if [[ "$ans" =~ ^[Yy]$ ]]; then
+        nix flake update nixpkgs-r --flake ~/dotfiles/nix-config
+    fi
     sudo nixos-rebuild switch --flake 'path:/home/richard/dotfiles?dir=nix-config#nixos' --impure
     sudo systemctl restart home-manager-richard.service
 

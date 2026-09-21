@@ -3,6 +3,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-r.url = "github:nixos/nixpkgs/nixos-26.05";
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -10,17 +11,21 @@
     ragenix.url = "github:yaxitech/ragenix";
     nur.url = "github:nix-community/NUR";
   };
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ragenix, nur, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-r, home-manager, ragenix, nur, ... }:
   let
     system = "x86_64-linux";
     pkgs-unstable = import nixpkgs-unstable {
       inherit system;
       config.allowUnfree = true;
     };
+    pkgs-r = import nixpkgs-r {
+      inherit system;
+      config.allowUnfree = true;
+    };
   in {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       inherit system;
-      specialArgs = { inherit ragenix; };
+      specialArgs = { inherit ragenix pkgs-r; };
       modules = [
         ./configuration.nix
         ragenix.nixosModules.default

@@ -1,13 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-r, ... }:
 {
   environment.systemPackages = with pkgs; [
     age
     ffmpeg
     gnucash
     quarto
-    # R / data science
-    (rWrapper.override {
-      packages = with rPackages; [
+    # R / data science — pinned via nixpkgs-r input (flake.nix), bumped only
+    # on request from `just update` since these often rebuild from source
+    (pkgs-r.rWrapper.override {
+      packages = with pkgs-r.rPackages; [
         # document rendering
         rmarkdown knitr
         # core data wrangling & viz
@@ -35,7 +36,7 @@
         shiny
       ];
     })
-    rstudio
+    pkgs-r.rstudio
     (texlive.combine {
       inherit (texlive)
         scheme-medium
