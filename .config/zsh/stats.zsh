@@ -4,6 +4,7 @@ function most_common {
     | sort -rn | head -10
 }
 
+
 function most_common_pairs {
   sed 's/^: [0-9]*:[0-9]*;//' "$HISTFILE" \
     | awk 'NF{cmd=$1; if(prev!=""){pair[prev" -> "cmd]++; total++}; prev=cmd} END{for(p in pair) printf "%d\t%.1f%%\t%s\n", pair[p], pair[p]/total*100, p}' \

@@ -10,9 +10,41 @@ oz() {
 
 epoch() { date -d @"$1" '+%Y-%m-%d %H:%M:%S %Z'; }
 
-mvp() { mkdir -p "$(dirname "${@: -1}")" && mv "$@"; }
+mvp() { mkdir -p "$(dirname "${@: -1}")" && command mv "$@"; }
 
-# play yt audio; -d also downloads as opus with full metadata+thumbnail to ~/Music/yt_ddl/
+mv() {
+    local -a plain
+    for arg in "$@"; do
+        [[ "$arg" == -* ]] || plain+=("$arg")
+    done
+
+    if (( ${#plain[@]} >= 2 )); then
+        local dest="${plain[-1]}"
+        local -a srcs=("${plain[1,-2]}")
+        for src in "${srcs[@]}"; do
+            local dest_path
+            [[ -d "$dest" ]] && dest_path="${dest%/}/$(basename "$src")" || dest_path="$dest"
+            if [[ -e "$src" && -e "$dest_path" && "$(basename "$src")" == "$(basename "$dest_path")" ]]; then
+                local born mod
+                born=$(stat -c '%w' "$src" 2>/dev/null | cut -d. -f1)
+                mod=$(stat -c '%y'  "$src" 2>/dev/null | cut -d. -f1)
+                [[ "$born" == "-" || -z "$born" ]] && born="unknown"
+                printf "  src  %s\n       born: %s  modified: %s\n" "$src" "$born" "$mod"
+                born=$(stat -c '%w' "$dest_path" 2>/dev/null | cut -d. -f1)
+                mod=$(stat -c '%y'  "$dest_path" 2>/dev/null | cut -d. -f1)
+                [[ "$born" == "-" || -z "$born" ]] && born="unknown"
+                printf "  dst  %s\n       born: %s  modified: %s\n" "$dest_path" "$born" "$mod"
+                local reply
+                read "reply?mv: overwrite '$(basename "$dest_path")'? [y/N] " </dev/tty
+                [[ "$reply" != [Yy] ]] && { echo "Skipped: $src"; return 0; }
+            fi
+        done
+    fi
+
+    command mv "$@"
+}
+
+# play yt audio; -d also downloads as opus with full metadata+thumbnail to the current directory
 yt() {
     local download=false
     local soundcloud=false
@@ -27,10 +59,9 @@ yt() {
 
     if [[ "$soundcloud" == true ]]; then
         if [[ "$download" == true ]]; then
-            mkdir -p "$HOME/Music/yt_ddl"
             yt-dlp -x --audio-format mp3 --audio-quality 0 \
                 --embed-thumbnail --embed-metadata \
-                -o "$HOME/Music/yt_ddl/%(title)s.%(ext)s" \
+                -o "%(title)s.%(ext)s" \
                 "scsearch1:${args[*]}" &
         fi
         mpv --no-video \
@@ -52,11 +83,10 @@ yt() {
     fi
 
     if [[ "$download" == true ]]; then
-        mkdir -p "$HOME/Music/yt_ddl"
         yt-dlp -x --audio-format opus --audio-quality 0 \
             --embed-thumbnail --embed-metadata \
             "${cookie_args[@]}" --force-ipv4 \
-            -o "$HOME/Music/yt_ddl/%(title)s.%(ext)s" \
+            -o "%(title)s.%(ext)s" \
             "ytsearch1:${args[*]}" &
     fi
 
