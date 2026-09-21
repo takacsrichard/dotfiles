@@ -56,6 +56,7 @@ in
     nixfmt
     kitty
     bc
+    btdu
     curl
     less
     dust
