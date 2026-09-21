@@ -52,6 +52,9 @@
     dates = "weekly";
     options = "--delete-older-than 30d";
   };
+  
+  virtualisation.docker.enable = true;
+  users.users.richard.extraGroups = [ "docker" ];
 
   programs.zsh.enable = true;
   programs.wireshark.enable = true;
