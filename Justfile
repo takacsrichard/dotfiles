@@ -37,7 +37,7 @@ push:
 
 # Remove generations older than 7 days, GC store, optimise, delete caches, organize and tidy up
 putzfrau:
-    sudo nix-collect-garbage --delete-older-than 14d
+    sudo nix-collect-garbage --delete-older-than 7d
     nix store gc
     nix store optimise
     command -v go &>/dev/null && go clean -modcache -cache || { chmod -R u+w ~/go/pkg/mod ~/.cache/go-build 2>/dev/null || true; rm -rf ~/go/pkg/mod ~/.cache/go-build; }
