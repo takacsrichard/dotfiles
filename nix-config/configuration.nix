@@ -54,7 +54,6 @@
   };
   
   virtualisation.docker.enable = true;
-  users.users.richard.extraGroups = [ "docker" ];
 
   programs.zsh.enable = true;
   programs.wireshark.enable = true;
@@ -70,7 +69,7 @@
   users.users."richard" = {
     isNormalUser = true;
     description = "richard";
-    extraGroups = [ "networkmanager" "wheel" "input" "video" "plocate" "wireshark" ];
+    extraGroups = [ "networkmanager" "wheel" "input" "video" "plocate" "wireshark" "docker" ];
     shell = pkgs.zsh;
     packages = with pkgs; [ kdePackages.kate ];
   };
