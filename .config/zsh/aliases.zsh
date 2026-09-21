@@ -2,35 +2,42 @@
 #  Aliases
 # ============================================================
 
+# multimedia 
 alias sw="swayimg"
-alias todo="n /home/richard/Documents/sysadmin/todo.txt"
+alias img="kitten icat"
+alias m="mpv"
+alias mpl="mpv . --shf --loop-playlist"
+alias mpvnr="find . -maxdepth 1 -type f -print0 | xargs -0 mpv"
+alias getmusic="yt-dlp -x --audio-format opus --cookies-from-browser firefox"
+
+#ai 
+alias cla="claude"
+alias clm="claude --resume"
+alias dumb="claude --model claude-haiku-4-5-20251001"   # haiku 4.5
+alias normal="claude --model claude-sonnet-4-6"         # sonnet 4.6
+alias better="claude --model claude-opus-4-8"           # opus 4.8
 alias agy="agy"
 alias mediumclaude="CLAUDE_CODE_EFFORT_LEVEL=medium cla"
-alias getmusic="yt-dlp -x --audio-format opus --cookies-from-browser firefox"
 alias ccusage="npx ccusage@latest --json"
-alias img="kitten icat"
+
+# networking, bluetooth, etc
+alias bt="bluetui"
+alias wt="wifitui"
+alias wifitui="nmtui"
+alias wifirec="nmcli radio wifi off && nmcli radio wifi on"
+
+
+alias todo="n /home/richard/Documents/sysadmin/todo.txt"
 alias gs="git status"
 alias pushall="git add . && { git commit -m 'update various things' || true; } && git push"
 alias hn="n /home/richard/dotfiles/nix-config/home.nix"
 alias cn="n /home/richard/dotfiles/nix-config/configuration.nix"
 alias dfs="df -hTx tmpfs -x efivarfs -x devtmpfs -x vfat"
 alias fd="fd -H -E /staging/"
-alias m="mpv"
-alias mpl="mpv . --shf --loop-playlist"
-alias mpvnr="find . -maxdepth 1 -type f -print0 | xargs -0 mpv"
 alias lo="libreoffice"
 alias cp='cp --reflink=auto'
 alias aliases="nvim /home/richard/dotfiles/.config/zsh/aliases.zsh"
 alias funcs="nvim /home/richard/dotfiles/.config/zsh/functions.zsh"
-alias cla="claude"
-alias clm="claude --resume"
-alias dumb="claude --model claude-haiku-4-5-20251001"   # haiku 4.5
-alias normal="claude --model claude-sonnet-4-6"         # sonnet 4.6
-alias better="claude --model claude-opus-4-8"           # opus 4.8
-alias bt="bluetui"
-alias wt="wifitui"
-alias wifitui="nmtui"
-alias wifirec="nmcli radio wifi off && nmcli radio wifi on"
 alias n="nvim"
 # btrfs balance
 alias reclaim="sudo btrfs balance start -dusage=50 /home"
