@@ -42,6 +42,9 @@
   console.keyMap = "hu";
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-41.9.1"  # vesktop on 26.05; remove once vesktop updates past electron-41
+  ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings.http-connections = 1;
   nix.gc = {
