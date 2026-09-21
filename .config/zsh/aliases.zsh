@@ -4,7 +4,7 @@
 
 alias sw="swayimg"
 alias todo="n /home/richard/Documents/sysadmin/todo.txt"
-alias agy="agy --dangerously-skip-permissions"
+alias agy="agy"
 alias mediumclaude="CLAUDE_CODE_EFFORT_LEVEL=medium cla"
 alias getmusic="yt-dlp -x --audio-format opus --cookies-from-browser firefox"
 alias ccusage="npx ccusage@latest --json"
@@ -22,11 +22,11 @@ alias lo="libreoffice"
 alias cp='cp --reflink=auto'
 alias aliases="nvim /home/richard/dotfiles/.config/zsh/aliases.zsh"
 alias funcs="nvim /home/richard/dotfiles/.config/zsh/functions.zsh"
-alias cla="claude --dangerously-skip-permissions"
-alias clm="claude --dangerously-skip-permissions --resume"
-alias dumb="claude --dangerously-skip-permissions --model claude-haiku-4-5-20251001"   # haiku 4.5
-alias normal="claude --dangerously-skip-permissions --model claude-sonnet-4-6"         # sonnet 4.6
-alias better="claude --dangerously-skip-permissions --model claude-opus-4-8"           # opus 4.8
+alias cla="claude"
+alias clm="claude --resume"
+alias dumb="claude --model claude-haiku-4-5-20251001"   # haiku 4.5
+alias normal="claude --model claude-sonnet-4-6"         # sonnet 4.6
+alias better="claude --model claude-opus-4-8"           # opus 4.8
 alias bt="bluetui"
 alias wt="wifitui"
 alias wifitui="nmtui"
