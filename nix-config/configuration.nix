@@ -8,6 +8,7 @@
     ./modules/desktop.nix
     ./modules/audio.nix
     ./modules/bluetooth.nix
+    ./modules/ios.nix
     ./modules/power.nix
     ./modules/input.nix
     ./modules/packages.nix

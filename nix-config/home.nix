@@ -181,7 +181,7 @@ in
       [keys.viewer]
       Left = prev_file
       Right = next_file
-      d = exec trash-put '%'; skip_file
+      d = exec hyprctl dispatch exec -- trash-put '%'; skip_file
       u = exec bash -c 'echo 0 | trash-restore'
     '';
 

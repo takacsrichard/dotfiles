@@ -6,11 +6,15 @@ alias wuvpnoff="sudo pkill openconnect"
 # 99.84.91.0/24   = canvas.wu.ac.at → wu-vanity.instructure.com (CloudFront CDN range A)
 # 65.9.130.0/24   = canvas.wu.ac.at → wu-vanity.instructure.com (CloudFront CDN range B)
 # 193.22.104.0/23 = willhaben.at AS34798 (willhaben internet service GmbH)
+# 207.241.224.2 archive.org
+# 207.241.237.3 web.archive.org 
 _VPN_BYPASS=(
     "137.208.0.0/16"
     "99.84.91.0/24"
     "65.9.130.0/24"
     "193.22.104.0/23"
+    "207.241.224.2"
+    "207.241.237.3"
 )
 
 _vpn_bypass_add() {

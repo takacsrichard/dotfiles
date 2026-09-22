@@ -1,3 +1,13 @@
+mntiphone() {
+	idevicepair pair
+	mkdir -p ~/iphone
+	ifuse ~/iphone
+}
+
+unmntiphone(){
+    fusermount -u ~/iphone
+}
+
 mntdisk() {
     local disks=()
     local i=1

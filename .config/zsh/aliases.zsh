@@ -12,6 +12,7 @@ alias getmusic="yt-dlp -x --audio-format opus --cookies-from-browser firefox"
 
 #ai 
 alias cla="claude"
+alias cld="claude --dangerously-skip-permissions"
 alias clm="claude --resume"
 alias dumb="claude --model claude-haiku-4-5-20251001"   # haiku 4.5
 alias normal="claude --model claude-sonnet-4-6"         # sonnet 4.6
