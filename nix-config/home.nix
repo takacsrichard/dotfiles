@@ -183,6 +183,7 @@ in
       Right = next_file
       d = exec hyprctl dispatch 'hl.dsp.exec_cmd("trash-put \"%\"")'; skip_file
       u = exec bash -c 'echo 0 | trash-restore'
+      Period = zoom +10
     '';
 
     "mako/config".text = ''

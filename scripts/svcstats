@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # Stats for systemd services I hand-declare in nix-config (not distro/module
 # defaults). darkstat/home-manager expand to multiple unit names at build
 # time, so patterns here use globs instead of a literal list; pass unit
@@ -125,84 +126,4 @@ svcstats() {
     print -r -- "$bot"
 }
 
-# Battery stats from sysfs (this hardware exposes charge_* in uAh + current_now
-# in uA, not the energy_*/power_now uWh/uW pair some laptops use instead).
-battinfo() {
-    emulate -L zsh
-    setopt local_options
-
-    local dir="${1:-/sys/class/power_supply/BAT0}"
-    if [[ ! -d "$dir" ]]; then
-        print "battinfo: no such battery dir: $dir" >&2
-        return 1
-    fi
-
-    local _read
-    _read() { command cat "$dir/$1" 2>/dev/null }
-
-    local pct=$(_read capacity)
-    local bstatus=$(_read status)
-    local charge_now=$(_read charge_now)
-    local charge_full=$(_read charge_full)
-    local charge_full_design=$(_read charge_full_design)
-    local current_now=$(_read current_now)
-    local voltage_now=$(_read voltage_now)
-    local model=$(_read model_name)
-    local cycles=$(_read cycle_count)
-
-    if [[ -z "$charge_now" || -z "$charge_full" || -z "$charge_full_design" ]]; then
-        print "battinfo: missing charge_* attributes under $dir" >&2
-        return 1
-    fi
-
-    # uAh -> Ah for display
-    local now_ah=$(awk -v v="$charge_now" 'BEGIN{printf "%.3f", v/1e6}')
-    local full_ah=$(awk -v v="$charge_full" 'BEGIN{printf "%.3f", v/1e6}')
-    local design_ah=$(awk -v v="$charge_full_design" 'BEGIN{printf "%.3f", v/1e6}')
-
-    local health=$(awk -v f="$charge_full" -v d="$charge_full_design" 'BEGIN{printf "%.1f", (f/d)*100}')
-    local degradation=$(awk -v h="$health" 'BEGIN{printf "%.1f", 100-h}')
-
-    local watts="n/a" rate_desc="n/a"
-    if [[ -n "$current_now" && -n "$voltage_now" && "$current_now" != 0 ]]; then
-        watts=$(awk -v i="$current_now" -v v="$voltage_now" 'BEGIN{printf "%.2f", (i/1e6)*(v/1e6)}')
-        case "$bstatus" in
-            Discharging) rate_desc="-${watts}W" ;;
-            Charging)    rate_desc="+${watts}W" ;;
-            *)            rate_desc="${watts}W" ;;
-        esac
-    fi
-
-    local time_desc="n/a"
-    if [[ -n "$current_now" && "$current_now" != 0 ]]; then
-        case "$bstatus" in
-            Discharging)
-                local target=$(awk -v f="$charge_full" 'BEGIN{printf "%.0f", f*0.10}')
-                if (( charge_now > target )); then
-                    local hrs=$(awk -v c="$charge_now" -v t="$target" -v i="$current_now" 'BEGIN{printf "%.2f", (c-t)/i}')
-                    time_desc="${hrs}h to 10%"
-                else
-                    local hrs=$(awk -v c="$charge_now" -v i="$current_now" 'BEGIN{printf "%.2f", c/i}')
-                    time_desc="already <=10%, ${hrs}h to empty"
-                fi
-                ;;
-            Charging)
-                local hrs=$(awk -v f="$charge_full" -v c="$charge_now" -v i="$current_now" 'BEGIN{printf "%.2f", (f-c)/i}')
-                time_desc="${hrs}h to full"
-                ;;
-            *)
-                time_desc="n/a (status: $bstatus)"
-                ;;
-        esac
-    fi
-
-    print -r -- "Battery:        ${model:-unknown}"
-    print -r -- "Status:         ${bstatus:-unknown}"
-    print -r -- "Charge:         ${pct}%  (${now_ah} Ah / ${full_ah} Ah max)"
-    print -r -- "Rated capacity: ${design_ah} Ah (design)"
-    print -r -- "Max capacity:   ${full_ah} Ah (current full)"
-    print -r -- "Health:         ${health}%  (degradation: ${degradation}%)"
-    print -r -- "Rate:           ${rate_desc}"
-    print -r -- "Estimate:       ${time_desc}"
-    [[ -n "$cycles" ]] && print -r -- "Cycles:         ${cycles}"
-}
+svcstats "$@"

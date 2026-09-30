@@ -37,7 +37,6 @@
         bitwarden
         absolute-enable-right-click
         vimium
-        # linkclump is not in NUR — install it manually from addons.mozilla.org
       ];
       userContent = ''
         @-moz-document url("about:newtab"), url("about:home") {
