@@ -77,8 +77,6 @@ mpv() {
 }
 
 # --- script wrappers ---
-# bitwarden vault password analyzer
-pwanal() { python3 "$HOME/Documents/Projects/rbwcheck/pwanal.py" "$@"; }
 
 libcalc() {
     libreoffice --calc "$@"

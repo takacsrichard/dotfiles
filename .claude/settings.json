@@ -32,6 +32,7 @@
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "theme": "light",
+  "effortLevel": "medium",
   "hooks": {
     "UserPromptSubmit": [
       {
