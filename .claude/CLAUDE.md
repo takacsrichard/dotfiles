@@ -1,14 +1,9 @@
-I am on NixOS. My dotfiles should be in ~/dotfiles/. If you can't find something, maybe its in ~/.config.
+My dotfiles should be in ~/dotfiles/.
 
 Laptop is an Asus Vivobook m3402qa
 
-nixos 26.05, zsh, btrfs, hyprland, waybar
+nixos 26.05, btrfs, hyprland
 
-If you are asked to make code changes or fixes or bugfixed or code writing, always search web before. ALWAYS SEARCH THE WEB BEFORE ANSWERING!
-
-All my configs are in /home/richard/dotfiles/.config/
-Examples:
-nvim: /home/richard/dotfiles/.config/nvim
-zsh: /home/richard/dotfiles/.config/zsh
+always search the web before answering.
 
 nix config is in /home/richard/dotfiles/nix-config
