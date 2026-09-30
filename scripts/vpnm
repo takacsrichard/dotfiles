@@ -1,0 +1,182 @@
+#!/usr/bin/env bash
+# vpnm — menu-driven entrypoint for the WireGuard VPN profiles
+# (connect / disconnect / edit config / show forwarded port), mirroring
+# venv_mng's design. No shell-state mutation is needed here (unlike venvm),
+# so this runs standalone with no eval wrapper.
+set -uo pipefail
+
+log() { printf '%s\n' "$*" >&2; }
+
+# CIDRs that bypass all VPN interfaces and go via the regular connection instead.
+# 137.208.0.0/16  = WU AS1776 (wu.ac.at and all subdomains)
+# 99.84.91.0/24   = canvas.wu.ac.at -> wu-vanity.instructure.com (CloudFront CDN range A)
+# 65.9.130.0/24   = canvas.wu.ac.at -> wu-vanity.instructure.com (CloudFront CDN range B)
+# 193.22.104.0/23 = willhaben.at AS34798 (willhaben internet service GmbH)
+# 207.241.224.2 archive.org
+# 207.241.237.3 web.archive.org
+VPN_BYPASS=(
+    "137.208.0.0/16"
+    "99.84.91.0/24"
+    "65.9.130.0/24"
+    "193.22.104.0/23"
+    "207.241.224.2"
+    "207.241.237.3"
+)
+
+bypass_add() {
+    local iface="${1:-atvpn}"
+    local cidr
+    for cidr in "${VPN_BYPASS[@]}"; do
+        sudo ip rule add to "$cidr" table main priority 100 2>/dev/null
+    done
+    # Revert wg-quick's DNS override so systemd-resolved uses the network's DNS
+    # instead of routing DNS queries through the VPN tunnel.
+    sudo resolvectl revert "$iface" 2>/dev/null
+}
+
+bypass_del() {
+    local cidr
+    for cidr in "${VPN_BYPASS[@]}"; do
+        sudo ip rule del to "$cidr" table main priority 100 2>/dev/null
+    done
+}
+
+pick_conf() {
+    local flag="$1"
+    case "$flag" in
+        -a)   echo "atvpn" ;;
+        -apf) echo "atvpn_pf" ;;
+        -h)   echo "huvpn" ;;
+        -hpf) echo "huvpn_pf" ;;
+        *)    return 1 ;;
+    esac
+}
+
+do_connect() {
+    local flag="${1:--a}"
+    local conf pf=false
+    conf="$(pick_conf "$flag")" || {
+        log "Usage: vpnm connect [-a|-apf|-h|-hpf]"
+        log "  -a    Austria VPN"
+        log "  -apf  Austria VPN with port forwarding"
+        log "  -h    Hungary VPN"
+        log "  -hpf  Hungary VPN with port forwarding"
+        return 1
+    }
+    [[ "$flag" == -apf || "$flag" == -hpf ]] && pf=true
+
+    local active_vpn
+    for active_vpn in atvpn atvpn_pf huvpn huvpn_pf; do
+        if systemctl is-active --quiet "wg-quick-$active_vpn" 2>/dev/null; then
+            log "Already connected to $active_vpn. Run 'vpnm disconnect' first."
+            return 1
+        fi
+    done
+
+    log "Connecting to $conf..."
+    sudo systemctl start "wg-quick-$conf" || { log "Failed to connect to $conf."; return 1; }
+    bypass_add "$conf"
+    log "Connected to $conf."
+    if [[ "$pf" == true ]]; then
+        log "Public port: $(do_port)"
+    fi
+    sleep 3
+    command -v myip &>/dev/null && myip
+}
+
+do_disconnect() {
+    local -a active=()
+    local svc
+    for svc in atvpn atvpn_pf huvpn huvpn_pf; do
+        if systemctl is-active --quiet "wg-quick-$svc" 2>/dev/null; then
+            active+=("$svc")
+        fi
+    done
+
+    if (( ${#active[@]} == 0 )); then
+        log "No WireGuard VPN is active."
+        return 0
+    fi
+
+    for svc in "${active[@]}"; do
+        log "Disconnecting $svc..."
+        bypass_del
+        sudo systemctl stop "wg-quick-$svc"
+    done
+    sleep 3
+    command -v myip &>/dev/null && myip
+}
+
+do_edit() {
+    local flag="${1:-}"
+    local conf
+    conf="$(pick_conf "$flag")" || {
+        log "Usage: vpnm edit [-a|-apf|-h|-hpf]"
+        log "  -a    Austria VPN"
+        log "  -apf  Austria VPN with port forwarding"
+        log "  -h    Hungary VPN"
+        log "  -hpf  Hungary VPN with port forwarding"
+        return 1
+    }
+    sudo nvim "/etc/wireguard/$conf.conf"
+}
+
+do_port() {
+    local port
+    port="$(natpmpc -a 1 0 tcp 60 -g 10.2.0.1 2>/dev/null \
+        | grep -oP 'Mapped public port \K[0-9]+' \
+        | head -n1)"
+
+    if [[ -n "$port" ]]; then
+        echo "$port"
+    else
+        log "Failed to get public port"
+        return 1
+    fi
+}
+
+prompt_profile() {
+    log "  1) Austria (-a)"
+    log "  2) Austria w/ port forwarding (-apf)"
+    log "  3) Hungary (-h)"
+    log "  4) Hungary w/ port forwarding (-hpf)"
+    read -rp "Profile: " pchoice
+    case "$pchoice" in
+        1) echo "-a" ;;
+        2) echo "-apf" ;;
+        3) echo "-h" ;;
+        4) echo "-hpf" ;;
+        *) return 1 ;;
+    esac
+}
+
+action="${1:-}"
+[[ $# -gt 0 ]] && shift
+
+if [[ -z "$action" ]]; then
+    log "vpnm — pick an action:"
+    log "  1) connect"
+    log "  2) disconnect"
+    log "  3) edit config"
+    log "  4) port (show forwarded port)"
+    read -rp "Choice: " choice
+    case "$choice" in
+        1|connect)    action=connect ;;
+        2|disconnect) action=disconnect ;;
+        3|edit)       action=edit ;;
+        4|port)       action=port ;;
+        *) log "Invalid choice."; exit 1 ;;
+    esac
+    if [[ "$action" == connect || "$action" == edit ]]; then
+        flag="$(prompt_profile)" || { log "Invalid profile."; exit 1; }
+        set -- "$flag"
+    fi
+fi
+
+case "$action" in
+    connect)    do_connect "${1:--a}" ;;
+    disconnect) do_disconnect ;;
+    edit)       do_edit "${1:-}" ;;
+    port)       do_port ;;
+    *) log "Usage: vpnm [connect|disconnect|edit|port] [-a|-apf|-h|-hpf]"; exit 1 ;;
+esac

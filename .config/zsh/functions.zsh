@@ -44,66 +44,6 @@ mv() {
     command mv "$@"
 }
 
-# play yt audio; -d also downloads as opus with full metadata+thumbnail to the current directory
-yt() {
-    local download=false
-    local soundcloud=false
-    local -a args
-    for arg in "$@"; do
-        case "$arg" in
-            -d)  download=true ;;
-            -sc) soundcloud=true ;;
-            *)   args+=("$arg") ;;
-        esac
-    done
-
-    if [[ "$soundcloud" == true ]]; then
-        if [[ "$download" == true ]]; then
-            yt-dlp -x --audio-format mp3 --audio-quality 0 \
-                --embed-thumbnail --embed-metadata \
-                -o "%(title)s.%(ext)s" \
-                "scsearch1:${args[*]}" &
-        fi
-        mpv --no-video \
-            --ytdl-raw-options-append="force-ipv4=" \
-            "ytdl://scsearch1:${args[*]}"
-        return
-    fi
-
-    local cookie_file="${XDG_CACHE_HOME:-$HOME/.cache}/yt-cookies.txt"
-    local -a cookie_args
-    local used_cache=false
-
-    # Use cached cookie file if < 24h old; otherwise re-extract from Firefox and save
-    if [[ -f "$cookie_file" ]] && (( $(date +%s) - $(stat -c %Y "$cookie_file") < 86400 )); then
-        cookie_args=(--cookies "$cookie_file")
-        used_cache=true
-    else
-        cookie_args=(--cookies-from-browser firefox --cookies "$cookie_file")
-    fi
-
-    if [[ "$download" == true ]]; then
-        yt-dlp -x --audio-format opus --audio-quality 0 \
-            --embed-thumbnail --embed-metadata \
-            "${cookie_args[@]}" --force-ipv4 \
-            -o "%(title)s.%(ext)s" \
-            "ytsearch1:${args[*]}" &
-    fi
-
-    mpv --no-video \
-        --ytdl-raw-options-append="cookies-from-browser=firefox" \
-        --ytdl-raw-options-append="extractor-args=youtube:player_client=web,mweb" \
-        --ytdl-raw-options-append="force-ipv4=" \
-        "ytdl://ytsearch1:${args[*]}"
-
-    # Silently refresh the cookie file in the background after each fast-path call,
-    # so the next invocation always hits the cache
-    [[ $used_cache == true ]] && \
-        yt-dlp --cookies-from-browser firefox --cookies "$cookie_file" \
-            --skip-download -q "https://www.youtube.com/watch?v=dQw4w9WgXcQ" \
-            &>/dev/null &|
-}
-
 filecount() {
   local depth="${1:-1}"
   find . -mindepth 1 -maxdepth "$depth" -type d -print0 | while IFS= read -r -d '' dir; do
@@ -273,58 +213,6 @@ cpwd() {
         print -rn -- "$target" | wl-copy
         echo "Copied: $target"
     fi
-}
-
-# Find with fd; 1 match → copy immediately, multiple → pick from less -N
-# Default: copies file path. -f: copies file contents.
-cfd() {
-    local copy_contents=false
-    local -a fd_args=()
-    for arg in "$@"; do
-        [[ "$arg" == "-f" ]] && copy_contents=true || fd_args+=("$arg")
-    done
-
-    if (( ${#fd_args[@]} == 0 )); then
-        echo "Usage: cfd [-f] <pattern> [fd-args...]" >&2
-        return 1
-    fi
-
-    local -a files=()
-    while IFS= read -r line; do
-        [[ -n "$line" ]] && files+=("$line")
-    done < <(fd -u "${fd_args[@]}")
-
-    _cfd_do_copy() {
-        local target="$1"
-        if [[ $copy_contents == true ]]; then
-            copy "$target"
-            echo "Copied contents: $target"
-        else
-            print -rn -- "$(realpath "$target")" | wl-copy
-            echo "Copied path: $(realpath "$target")"
-        fi
-    }
-
-    case ${#files[@]} in
-        0)
-            echo "cfd: no matches" >&2
-            return 1
-            ;;
-        1)
-            _cfd_do_copy "${files[1]}"
-            ;;
-        *)
-            printf '%s\n' "${files[@]}" | less -N
-            local choice
-            read "choice?Copy which? [1-${#files[@]}] " </dev/tty
-            if [[ "$choice" =~ '^[0-9]+$' ]] && (( choice >= 1 && choice <= ${#files[@]} )); then
-                _cfd_do_copy "${files[$choice]}"
-            else
-                echo "cfd: invalid selection" >&2
-                return 1
-            fi
-            ;;
-    esac
 }
 
 # Find with fd, open matches in nvim (max 10); usage: nfd <pattern> [search_dir]

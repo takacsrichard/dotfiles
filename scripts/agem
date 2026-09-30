@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# agem — single entrypoint for managing age secrets in ~/dotfiles/secrets/,
+# driven by a stdin menu when no action is given, mirroring venv_mng/vpnm.
+set -uo pipefail
+
+log() { printf '%s\n' "$*" >&2; }
+
+do_new() {
+    local name="${1:-}"
+    if [[ -z "$name" ]]; then
+        log "Usage: agem new <name>"
+        log "       echo 'KEY=val' | agem new <name>"
+        return 1
+    fi
+
+    local secrets_dir="$HOME/dotfiles/secrets"
+    local out="$secrets_dir/${name}.age"
+
+    if [[ -f "$out" ]]; then
+        log "agem: $out already exists. Delete it first with 'agem del $name'."
+        return 1
+    fi
+
+    # Extract recipient public keys from secrets.nix (all ssh-ed25519 entries)
+    local -a recipients
+    while IFS= read -r key; do
+        recipients+=(-r "$key")
+    done < <(grep -oP '(?<=")(ssh-ed25519 [^"]+)' "$secrets_dir/secrets.nix")
+
+    if [[ ${#recipients[@]} -eq 0 ]]; then
+        log "agem: could not extract recipient keys from $secrets_dir/secrets.nix"
+        return 1
+    fi
+
+    if [[ -t 0 ]]; then
+        log "Enter secret content (Ctrl-D when done):"
+    fi
+
+    age "${recipients[@]}" -o "$out" || { log "agem: encryption failed"; rm -f "$out"; return 1; }
+
+    log "Created: $out"
+    log "Next:"
+    log "  1. Add '\"${name}.age\".publicKeys = all;' to $secrets_dir/secrets.nix"
+    log "  2. Add 'age.secrets.\"${name}\" = { file = ../secrets/${name}.age; };' to configuration.nix"
+    log "  3. git add $out $secrets_dir/secrets.nix"
+}
+
+do_del() {
+    local name="${1:-}"
+    if [[ -z "$name" ]]; then
+        log "Usage: agem del <name>"
+        return 1
+    fi
+
+    local out="$HOME/dotfiles/secrets/${name}.age"
+    if [[ ! -f "$out" ]]; then
+        log "agem: $out not found"
+        return 1
+    fi
+
+    read -rp "Delete $out? [y/N] " reply
+    if [[ "$reply" =~ ^[Yy]$ ]]; then
+        rm "$out"
+        log "Deleted: $out"
+        log "Remember:"
+        log "  1. Remove '\"${name}.age\"' from ~/dotfiles/secrets/secrets.nix"
+        log "  2. Remove 'age.secrets.\"${name}\"' from configuration.nix"
+        log "  3. git rm $out"
+    else
+        log "Aborted."
+    fi
+}
+
+action="${1:-}"
+[[ $# -gt 0 ]] && shift
+
+if [[ -z "$action" ]]; then
+    log "agem — pick an action:"
+    log "  1) new secret"
+    log "  2) delete secret"
+    read -rp "Choice: " choice
+    case "$choice" in
+        1|new) action=new ;;
+        2|del) action=del ;;
+        *) log "Invalid choice."; exit 1 ;;
+    esac
+    read -rp "Secret name: " name
+    set -- "$name"
+fi
+
+case "$action" in
+    new) do_new "$@" ;;
+    del) do_del "$@" ;;
+    *) log "Usage: agem [new|del] <name>"; exit 1 ;;
+esac

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+report="/tmp/checkfs_report.txt"
+disks=()
+i=1
+
+sudo -v || exit 1
+
+echo "Scanning unmounted drives..."
+echo "(Supported: exfat, ext2/3/4, btrfs)"
+
+while IFS= read -r line; do
+    dev="${line%% *}"
+    rest="${line#* }"
+    size="${rest%% *}"
+    fstype="${rest##* }"
+    mountpoint=$(lsblk -rno MOUNTPOINT "$dev" 2>/dev/null | head -1)
+    [[ -n "$mountpoint" ]] && continue
+    disks+=("$dev $size $fstype")
+    echo "  $i) $dev  $size  [$fstype]"
+    (( i++ ))
+done < <(lsblk -rpo NAME,TYPE,SIZE,FSTYPE | \
+    awk '$2=="part" && $4~/^(exfat|ext[234]|btrfs)$/ {print $1, $3, $4}')
+
+if (( ${#disks[@]} == 0 )); then
+    echo "No unmounted partitions with supported filesystems found."
+    exit 1
+fi
+
+read -rp "Pick numbers to check (comma-separated, e.g. 1,3): " choices_raw
+
+IFS=',' read -ra choices <<< "$choices_raw"
+
+{
+    echo "checkfs report — $(date)"
+    echo "Mode: read-only / dry-run. No repairs made."
+    echo "========================================"
+
+    for choice in "${choices[@]}"; do
+        choice="${choice// /}"
+        if ! [[ "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#disks[@]} )); then
+            echo ""
+            echo "Invalid selection: '$choice', skipping."
+            continue
+        fi
+
+        entry="${disks[$((choice - 1))]}"
+        dev="${entry%% *}"
+        rest="${entry#* }"
+        size="${rest%% *}"
+        fstype="${rest##* }"
+
+        echo ""
+        echo "--- $dev  $size  [$fstype] ---"
+
+        case "$fstype" in
+            exfat)          sudo env PATH="$PATH" fsck.exfat -n -v "$dev" ;;
+            ext2|ext3|ext4) sudo env PATH="$PATH" e2fsck -n "$dev" ;;
+            btrfs)          sudo env PATH="$PATH" btrfs check --readonly "$dev" ;;
+        esac
+    done
+
+    echo ""
+    echo "========================================"
+    echo "Scan complete — $(date)"
+} > "$report" 2>&1
+
+echo "Done. Full results written to $report"
