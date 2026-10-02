@@ -12,7 +12,7 @@ svcstats() {
     if (( $# )); then
         patterns=("$@")
     else
-        patterns=(thermal-guard.service 'darkstat-*.service' wg-quick-atvpn.service)
+        patterns=(thermal-guard.service 'darkstat-*.service' wg-quick-atvpn.service auto-backup.service)
     fi
 
     local -a units
@@ -46,7 +46,11 @@ svcstats() {
 
         # CPU time consumed, as a percent of total machine capacity (all
         # cores) available since the unit started: cpu_ms / (cores * wall_ms) * 100.
-        local cpu_ms=$(( ${p[CPUUsageNSec]:-0} / 1000000 ))
+        # systemd reports "[not set]" (accounting off) or "[no data]" (never
+        # measured, e.g. a oneshot that hasn't run yet) instead of a number.
+        local cpuraw="${p[CPUUsageNSec]}"
+        [[ "$cpuraw" == "[not set]" || "$cpuraw" == "[no data]" || -z "$cpuraw" ]] && cpuraw=0
+        local cpu_ms=$(( cpuraw / 1000000 ))
         local rate="n/a"
         if [[ "${p[ActiveState]}" == "active" && -n "${p[ActiveEnterTimestamp]}" ]]; then
             local start_epoch=$(LC_ALL=C date -d "${p[ActiveEnterTimestamp]}" +%s 2>/dev/null)
@@ -56,17 +60,17 @@ svcstats() {
             fi
         fi
 
-        # IPAccounting/IOAccounting aren't enabled on every unit; systemd
-        # reports "[not set]" rather than 0 when they're off.
+        # IPAccounting/IOAccounting aren't enabled on every unit, and a unit
+        # that's never run reports "[no data]" rather than "[not set]".
         local memcur="${p[MemoryCurrent]}" mempeak="${p[MemoryPeak]}"
         local ipin="${p[IPIngressBytes]}" ipout="${p[IPEgressBytes]}"
         local ioin="${p[IOReadBytes]}" ioout="${p[IOWriteBytes]}"
-        [[ "$memcur" == "[not set]" ]] && memcur=0
-        [[ "$mempeak" == "[not set]" ]] && mempeak=0
-        [[ "$ipin" == "[not set]" ]] && ipin="-"
-        [[ "$ipout" == "[not set]" ]] && ipout="-"
-        [[ "$ioin" == "[not set]" ]] && ioin="-"
-        [[ "$ioout" == "[not set]" ]] && ioout="-"
+        [[ "$memcur" == "[not set]" || "$memcur" == "[no data]" ]] && memcur=0
+        [[ "$mempeak" == "[not set]" || "$mempeak" == "[no data]" ]] && mempeak=0
+        [[ "$ipin" == "[not set]" || "$ipin" == "[no data]" ]] && ipin="-"
+        [[ "$ipout" == "[not set]" || "$ipout" == "[no data]" ]] && ipout="-"
+        [[ "$ioin" == "[not set]" || "$ioin" == "[no data]" ]] && ioin="-"
+        [[ "$ioout" == "[not set]" || "$ioout" == "[no data]" ]] && ioout="-"
 
         local memcur_h=$(LC_ALL=C numfmt --to=iec "$memcur" 2>/dev/null)
         local mempeak_h=$(LC_ALL=C numfmt --to=iec "$mempeak" 2>/dev/null)

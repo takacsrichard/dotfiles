@@ -32,11 +32,32 @@ do_new() {
         return 1
     fi
 
+    # Capture into a private tmp file with echo off so the secret never hits
+    # the terminal, then encrypt from that file and shred it.
+    local tmp
+    tmp=$(mktemp) || { log "agem: mktemp failed"; return 1; }
+    chmod 600 "$tmp"
+    trap 'stty echo 2>/dev/null; rm -f "$tmp"' INT TERM
+
     if [[ -t 0 ]]; then
         log "Enter secret content (Ctrl-D when done):"
+        stty -echo
+        cat > "$tmp"
+        stty echo
+        printf '\n' >&2
+    else
+        cat > "$tmp"
     fi
+    trap - INT TERM
 
-    age "${recipients[@]}" -o "$out" || { log "agem: encryption failed"; rm -f "$out"; return 1; }
+    age "${recipients[@]}" -o "$out" "$tmp"
+    local rc=$?
+    rm -f "$tmp"
+    if [[ $rc -ne 0 ]]; then
+        log "agem: encryption failed"
+        rm -f "$out"
+        return 1
+    fi
 
     log "Created: $out"
     log "Next:"
@@ -71,6 +92,21 @@ do_del() {
     fi
 }
 
+do_list() {
+    local secrets_dir="$HOME/dotfiles/secrets"
+    local -a found=("$secrets_dir"/*.age)
+
+    if [[ ! -e "${found[0]}" ]]; then
+        log "agem: no secrets in $secrets_dir"
+        return 0
+    fi
+
+    local f
+    for f in "${found[@]}"; do
+        printf '%s\n' "$(basename "$f" .age)"
+    done
+}
+
 action="${1:-}"
 [[ $# -gt 0 ]] && shift
 
@@ -78,18 +114,23 @@ if [[ -z "$action" ]]; then
     log "agem — pick an action:"
     log "  1) new secret"
     log "  2) delete secret"
+    log "  3) list secrets"
     read -rp "Choice: " choice
     case "$choice" in
         1|new) action=new ;;
         2|del) action=del ;;
+        3|list) action=list ;;
         *) log "Invalid choice."; exit 1 ;;
     esac
-    read -rp "Secret name: " name
-    set -- "$name"
+    if [[ "$action" != "list" ]]; then
+        read -rp "Secret name: " name
+        set -- "$name"
+    fi
 fi
 
 case "$action" in
     new) do_new "$@" ;;
     del) do_del "$@" ;;
-    *) log "Usage: agem [new|del] <name>"; exit 1 ;;
+    list) do_list ;;
+    *) log "Usage: agem [new|del|list] <name>"; exit 1 ;;
 esac
