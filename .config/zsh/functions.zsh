@@ -9,7 +9,7 @@ oz() {
 
 # TODO test pyfilemv as an alternative
 mvln() {
-  if (( $# < 2 )); then
+  if (( $# < 2 || $# > 3 )); then
     echo "Usage: mvln <src> <dst> [root]" >&2
     return 1
   fi
@@ -21,7 +21,13 @@ mvln() {
   local src_abs dst_abs
   src_abs=$(readlink -f "$src")
   command mv "$src" "$dst"
-  dst_abs=$(readlink -f "$dst")
+  # mv moves src INTO dst when dst is an existing directory, so the
+  # real new path is dst/basename(src), not dst itself
+  if [[ -d "$dst" ]]; then
+    dst_abs=$(readlink -f "$dst/$(basename "$src_abs")")
+  else
+    dst_abs=$(readlink -f "$dst")
+  fi
   # repoint any symlink under $root whose target resolves to src_abs
   find "$root" -xtype l 2>/dev/null | while read -r link; do
     [[ "$(readlink -f "$link")" == "$src_abs" ]] && ln -sfn "$dst_abs" "$link"
