@@ -38,6 +38,7 @@ in
     deno
     translate-shell
     tree
+    pastel
     wget
     rclone
     htop
