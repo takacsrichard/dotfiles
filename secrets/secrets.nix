@@ -8,4 +8,6 @@ in {
   "huvpn.conf.age".publicKeys    = all;
   "huvpn_pf.conf.age".publicKeys = all;
   "eduroam.age".publicKeys = all;
+  "restic-password.age".publicKeys=all;
+  "rclone-password.age".publicKeys=all;
 }
