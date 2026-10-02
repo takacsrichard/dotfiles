@@ -7,12 +7,20 @@ oz() {
     zathura "$@" >/dev/null 2>&1 & disown
 }
 
-# UNTESTED, fix broken symlinks by mv during move, TODO test pyfilemv. untested TODO
+# TODO test pyfilemv as an alternative
 mvln() {
+  if (( $# < 2 )); then
+    echo "Usage: mvln <src> <dst> [root]" >&2
+    return 1
+  fi
   local src="$1" dst="$2" root="${3:-$HOME}"
+  if [[ ! -e "$src" ]]; then
+    echo "mvln: '$src' does not exist" >&2
+    return 1
+  fi
   local src_abs dst_abs
   src_abs=$(readlink -f "$src")
-  mv "$src" "$dst"
+  command mv "$src" "$dst"
   dst_abs=$(readlink -f "$dst")
   # repoint any symlink under $root whose target resolves to src_abs
   find "$root" -xtype l 2>/dev/null | while read -r link; do
