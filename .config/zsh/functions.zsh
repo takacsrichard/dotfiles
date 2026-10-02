@@ -7,6 +7,18 @@ oz() {
     zathura "$@" >/dev/null 2>&1 & disown
 }
 
+# UNTESTED, fix broken symlinks by mv during move, TODO test pyfilemv. untested TODO
+mvln() {
+  local src="$1" dst="$2" root="${3:-$HOME}"
+  local src_abs dst_abs
+  src_abs=$(readlink -f "$src")
+  mv "$src" "$dst"
+  dst_abs=$(readlink -f "$dst")
+  # repoint any symlink under $root whose target resolves to src_abs
+  find "$root" -xtype l 2>/dev/null | while read -r link; do
+    [[ "$(readlink -f "$link")" == "$src_abs" ]] && ln -sfn "$dst_abs" "$link"
+  done
+}
 
 epoch() { date -d @"$1" '+%Y-%m-%d %H:%M:%S %Z'; }
 

@@ -45,7 +45,7 @@ alias n="nvim"
 # btrfs balance
 alias reclaim="sudo btrfs balance start -dusage=50 /home"
 alias restartwaybar="pkill waybar; waybar &>/dev/null & disown"
-
+alias nc="cd ~/dotfiles/nix-config/"
 # screenshot
 alias scr='grim -g "$(slurp)" - | wl-copy'
 
