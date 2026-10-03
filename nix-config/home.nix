@@ -21,7 +21,6 @@ in
     ripgrep
     fastfetch
     bluetui
-    eza
     zoxide
     fzf
     jq
@@ -121,6 +120,11 @@ in
 
 
   home.sessionVariables.NIXOS_OZONE_WL = "1";
+
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+  };
 
   programs.zsh = {
     enable = true;

@@ -30,6 +30,7 @@ alias wt="wifitui"
 alias wifitui="nmtui"
 alias wifirec="nmcli radio wifi off && nmcli radio wifi on"
 
+alias btdu="sudo btdu --auto-mount /home"
 
 alias todo="n $HOME/Documents/sysadmin/todo.txt"
 alias gs="git status"
@@ -83,7 +84,7 @@ _ezals() {
 }
 alias ls='_ezals'
 alias l='_ezals'
-compdef _ezals=eza
+compdef _eza _ezals
 alias grep='grep --color=auto'
 alias fafe='fastfetch'
 alias please='sudo'
