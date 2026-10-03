@@ -2,6 +2,9 @@
 #  Aliases
 # ============================================================
 
+# temp
+alias getkurt="wget -r -np -N -nd -A '*.*' https://statmath.wu.ac.at/\~hornik/Comp/comp_facts.html"
+
 # multimedia 
 alias sw="swayimg"
 alias img="kitten icat"

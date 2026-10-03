@@ -574,6 +574,7 @@ $character'';
 
     "tmux/tmux.conf".text = ''
       set  -g default-terminal "screen"
+      set  -g default-shell   "${pkgs.zsh}/bin/zsh"
       set  -g base-index      0
       setw -g pane-base-index 0
 
