@@ -1,0 +1,7 @@
+[font]
+size = 20.0
+
+[[keyboard.bindings]]
+key = "ú"
+mods = "Control|Shift"
+action = "IncreaseFontSize"
