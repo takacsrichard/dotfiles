@@ -56,6 +56,7 @@ in
     pnpm
     nixfmt
     kitty
+    alacritty
     bc
     btdu
     curl
