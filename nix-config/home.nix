@@ -5,7 +5,7 @@ let
   autoConfigEntries = builtins.listToAttrs (
     builtins.map (name: {
       name = ".config/${name}";
-      value.source = config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.config/${name}";
+      value.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.config/${name}";
     }) (builtins.filter (n: !builtins.elem n autoExcluded) (builtins.attrNames dotfilesConfig))
   );
 in
@@ -646,22 +646,22 @@ $character'';
     };
 
     ".gitconfig".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.gitconfig";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.gitconfig";
 
     ".claude/settings.json".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.claude/settings.json";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.claude/settings.json";
 
     # doublecmd: only track config files, not runtime files (history, tabs, sessions)
     ".config/doublecmd/doublecmd.xml".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.config/doublecmd/doublecmd.xml";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.config/doublecmd/doublecmd.xml";
     ".config/doublecmd/shortcuts.scf".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.config/doublecmd/shortcuts.scf";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.config/doublecmd/shortcuts.scf";
     ".config/doublecmd/colors.json".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.config/doublecmd/colors.json";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.config/doublecmd/colors.json";
     ".config/doublecmd/highlighters.xml".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.config/doublecmd/highlighters.xml";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.config/doublecmd/highlighters.xml";
     ".config/doublecmd/multiarc.ini".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/richard/dotfiles/.config/doublecmd/multiarc.ini";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/.config/doublecmd/multiarc.ini";
   };
 
 }

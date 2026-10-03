@@ -10,12 +10,12 @@ update:
     if [[ "$ans" =~ ^[Yy]$ ]]; then
         nix flake update nixpkgs-r --flake ~/dotfiles/nix-config
     fi
-    sudo nixos-rebuild switch --flake 'path:/home/richard/dotfiles?dir=nix-config#nixos' --impure
+    sudo nixos-rebuild switch --flake "path:$HOME/dotfiles?dir=nix-config#nixos" --impure
     sudo systemctl restart home-manager-richard.service
 
 # Rebuild NixOS and push dotfiles on success
 rebuild:
-    sudo nixos-rebuild switch --flake 'path:/home/richard/dotfiles?dir=nix-config#nixos' --impure
+    sudo nixos-rebuild switch --flake "path:$HOME/dotfiles?dir=nix-config#nixos" --impure
     sudo systemctl restart home-manager-richard.service
 
 # push to gh
