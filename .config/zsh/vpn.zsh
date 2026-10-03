@@ -1,2 +1,2 @@
-alias wuvpnon="sudo openconnect --protocol=gp -b vpn.wu.ac.at"
+alias wuvpnon="gp-saml-gui -g -S --clientos=Linux vpn.wu.ac.at -- -b"
 alias wuvpnoff="sudo pkill openconnect"
