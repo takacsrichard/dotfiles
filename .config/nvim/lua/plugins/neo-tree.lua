@@ -13,7 +13,7 @@ return {
     { "<leader>f", "<cmd>Neotree reveal<cr>", desc = "Reveal file in Neo-tree" },
   },
   opts = {
-    close_if_last_window = false,
+    close_if_last_window = true,
     window = {
       position = "left",
       width = 30,
