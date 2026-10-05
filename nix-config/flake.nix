@@ -21,7 +21,7 @@
     pkgs-r = import nixpkgs-r {
       inherit system;
       config.allowUnfree = true;
-      config.permittedInsecurePackages = [ "electron-41.9.1" ];
+      config.permittedInsecurePackages = [ "electron-41.10.7" ];
     };
   in {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
