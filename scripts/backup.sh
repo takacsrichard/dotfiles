@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 #
-# backup: restic backup to local SSD, then sync to ProtonDrive and Google Drive.
+# backup: restic backup to SSD and/or HDD (whichever is mounted), then sync to ProtonDrive.
 
 set -uo pipefail
 
 export RESTIC_PASSWORD_FILE=/run/agenix/restic-password
 export RCLONE_CONFIG_PASS="$(cat /run/agenix/rclone-password)"
 
-SSD_MOUNT="/mnt/ssd/"
-RESTIC_REPO="${SSD_MOUNT}backups/restic_repo"
-
-mountpoint -q "$SSD_MOUNT" || { echo "SSD not mounted at $SSD_MOUNT" >&2; exit 1; }
+SSD_MOUNT="/mnt/ssd"
+HDD_MOUNT="/mnt/hdd"
+SSD_REPO="${SSD_MOUNT}/backups/restic_repo"
+HDD_REPO="${HDD_MOUNT}/backups/restic_repo"
 
 failed=()
 
@@ -26,8 +26,9 @@ run_step() {
 }
 
 restic_backup() {
-    [[ -f "$RESTIC_REPO/config" ]] || restic -r "$RESTIC_REPO" init || return 1
-    restic -r "$RESTIC_REPO" backup --verbose \
+    local repo="$1"
+    [[ -f "$repo/config" ]] || restic -r "$repo" init || return 1
+    restic -r "$repo" backup --verbose \
         --exclude "$HOME/.cache" \
         --exclude "$HOME/.nix-profile" \
         --exclude "$HOME/.nix-defexpr" \
@@ -53,7 +54,7 @@ restic_backup() {
         "$HOME"
     local backup_rc=$?
 
-    restic -r "$RESTIC_REPO" forget --keep-last 50 --prune
+    restic -r "$repo" forget --keep-last 50 --prune
     local prune_rc=$?
 
     (( backup_rc == 0 && prune_rc == 0 ))
@@ -64,16 +65,28 @@ sync_protondrive() {
         --protondrive-replace-existing-draft=true -P
 }
 
-sync_googledrive() {
-    rclone copy "$RESTIC_REPO" gdrive:restic_repo \
-        --progress --transfers 4 --checkers 8 \
-        --retries 10 --low-level-retries 20 \
-        --timeout 5m --contimeout 1m --stats 5s
-}
+ran_any_restic=0
 
-run_step "restic backup to $RESTIC_REPO" restic_backup
+if mountpoint -q "$SSD_MOUNT"; then
+    ran_any_restic=1
+    run_step "restic backup to $SSD_REPO" restic_backup "$SSD_REPO"
+else
+    echo "==> SSD not mounted at $SSD_MOUNT, skipping SSD backup." >&2
+fi
+
+if mountpoint -q "$HDD_MOUNT"; then
+    ran_any_restic=1
+    run_step "restic backup to $HDD_REPO" restic_backup "$HDD_REPO"
+else
+    echo "==> HDD not mounted at $HDD_MOUNT, skipping HDD backup." >&2
+fi
+
+if (( ! ran_any_restic )); then
+    echo "==> Neither SSD nor HDD mounted, no restic backup performed." >&2
+    failed+=("restic backup (no disks mounted)")
+fi
+
 run_step "ProtonDrive sync" sync_protondrive
-run_step "Google Drive sync" sync_googledrive
 
 if (( ${#failed[@]} )); then
     echo "==> Backup finished with failures: ${failed[*]}" >&2

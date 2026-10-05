@@ -71,6 +71,7 @@ in
     trash-cli
     graphviz
     imagemagick
+    ghostscript
     inxi
     pkgs-unstable.antigravity-cli
     hyprlock
@@ -123,7 +124,7 @@ in
 
   programs.eza = {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = false;
   };
 
   programs.zsh = {
@@ -733,12 +734,13 @@ $character'';
       set -g status-keys emacs
       set -g mode-keys   emacs
 
-      set  -g mouse             off
+      set  -g mouse             on
       set  -g focus-events      off
       setw -g aggressive-resize off
       setw -g clock-mode-style  12
       set  -s escape-time       10
       set  -g history-limit     2000
+      set  -g allow-passthrough on
 
       set -g @plugin 'tmux-plugins/tpm'
       set -g @plugin 'tmux-plugins/tmux-resurrect'
