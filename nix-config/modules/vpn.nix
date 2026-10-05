@@ -8,7 +8,7 @@ let
     "207.241.224.2"   # archive.org
     "207.241.237.3"   # web.archive.org
   ];
-
+ # TODO
   bypassAddScript = pkgs.writeShellScript "atvpn-bypass-add" ''
     for cidr in ${lib.concatStringsSep " " vpnBypassCidrs}; do
       ip rule add to "$cidr" table main priority 100 || true

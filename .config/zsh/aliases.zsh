@@ -75,16 +75,40 @@ alias t="trans"
 alias filesbyline='find . -type f -name ".*" -o -type f | xargs wc -l | sort -n'
 
 # --- Aliases with colors ---
+# wl-copy forks a daemon to hold the clipboard and keeps the fds it inherited.
+# Inside out=$(cmd 2>&1) that write end never closes, so the caller blocks
+# forever. Hand the daemon its own fds, and no-op with no compositor around.
+_clipcopy() {
+    [[ -n $WAYLAND_DISPLAY ]] && (( $+commands[wl-copy] )) || return 0
+    print -rn -- "$1" | wl-copy >/dev/null 2>&1
+}
+
 _ezals() {
     eza -la --git --header --icons -o --no-permissions "$@"
-    local target="."
-    for arg in "$@"; do [[ -e "$arg" ]] && target="$arg"; done
-    print -rn -- "$(realpath "$target")" | wl-copy
-    echo "Copied: $(realpath "$target")"
+    local target=. arg
+    for arg in "$@"; do [[ -e $arg ]] && target=$arg; done
+    local abs=${target:A}
+    _clipcopy "$abs"
+    if [[ -t 1 ]]; then print -r -- "Copied: $abs"; fi
 }
 alias ls='_ezals'
 alias l='_ezals'
-compdef _eza _ezals
+
+# compdef only exists after compinit (interactive shells), and _eza only
+# resolves if eza's completion dir reached fpath. ~/.zshrc builds fpath from
+# $NIX_PROFILES, but tmux hands new panes the environment cached when its
+# server started, and that copy is missing /etc/profiles/per-user/$USER --
+# which is where home-manager's _eza lives. Add it here and autoload by hand
+# (compinit has already run), falling back to file completion if it's absent.
+if (( $+functions[compdef] )); then
+    [[ -d /etc/profiles/per-user/$USER/share/zsh/site-functions ]] &&
+        fpath=(/etc/profiles/per-user/$USER/share/zsh/site-functions $fpath)
+    if (( $+functions[_eza] )) || autoload -Uz +X _eza 2>/dev/null; then
+        compdef _eza _ezals
+    else
+        compdef _files _ezals
+    fi
+fi
 alias grep='grep --color=auto'
 alias fafe='fastfetch'
 alias please='sudo'
@@ -144,8 +168,29 @@ lmk()  { latexmk -pdf "$1" }
 
 
 cpw() {copy "readlink -f '$1'"}
-cd() {z "$1"}
-chpwd() { eza -la --git --header --icons -o --no-permissions }
 
-mdc() { mkdir -p "$1" && print -rn -- "$(realpath "$1")" | wl-copy && echo "Copied: $(realpath "$1")" }
+# z only exists once zoxide has been initialized, i.e. interactive shells.
+# Without the builtin fallback, cd in a script is a silent no-op -- "command
+# not found: z", and the script carries on in the wrong directory.
+cd() {
+    if (( $+functions[z] )); then
+        z "$@"
+    else
+        builtin cd "$@"
+    fi
+}
+
+# Only list when there is a terminal to list to, otherwise the listing lands
+# inside every v=$(cd dir && ...) capture in anything that sources this file.
+chpwd() {
+    [[ -o interactive && -t 1 ]] || return 0
+    eza -la --git --header --icons -o --no-permissions
+}
+
+mdc() {
+    mkdir -p -- "$1" || return
+    local abs=${1:A}
+    _clipcopy "$abs"
+    if [[ -t 1 ]]; then print -r -- "Copied: $abs"; fi
+}
 

@@ -3,5 +3,6 @@
     "pdf_previewer": "none",
     "posix_terminal_shell": "bash",
     "source_with_echo": true,
-    "editor_keybindings": "vim"
+    "editor_keybindings": "vim",
+    "jobs_tab_visibility": "shown"
 }
