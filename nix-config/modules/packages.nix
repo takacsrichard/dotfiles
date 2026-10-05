@@ -9,31 +9,21 @@
     # on request from `just update` since these often rebuild from source
     (pkgs-r.rWrapper.override {
       packages = with pkgs-r.rPackages; [
-        # document rendering
         rmarkdown knitr
-        # core data wrangling & viz
         tidyverse ggplot2 dplyr tidyr readr lubridate stringr purrr
         data_table
-        # EDA & cleaning
         janitor skimr broom here fs
-        # visualization extensions
         patchwork ggthemes ggridges GGally corrplot viridis
-        # tables
         kableExtra modelsummary stargazer
-        # stats & ML
         caret forecast zoo xts
         tidymodels xgboost lightgbm glmnet
-        # econometrics
         car lme4 sandwich lmtest fixest quantreg moments urca vars
-        # quant finance
         quantmod TTR PerformanceAnalytics tidyquant tseries rugarch
         PortfolioAnalytics RQuantLib copula rmgarch slider
-        # misc utils
         plotly DT scales
-        # I/O & web
         writexl openxlsx httr vctrs
-        # interactive & data
         shiny
+	base64enc digest evaluate glue highr htmltools jsonlite knitr magrittr mime rmarkdown stringi stringr xfun yaml
       ];
     })
     pkgs-r.rstudio
