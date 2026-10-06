@@ -133,6 +133,9 @@ alias syslog='journalctl -f'
 alias slep='systemctl suspend'
 alias localip='ip -br addr show | grep -v lo'
 
+# system stats
+alias battinfo="upower -i /org/freedesktop/UPower/devices/battery_BAT0"
+
 # --- Bluetooth shortcuts ---
 alias blon='bluetoothctl power on'
 alias bloff='bluetoothctl power off'
