@@ -48,6 +48,6 @@ in
   systemd.tmpfiles.rules = [
     "d /etc/asusd 0755 root root -"
   ];
-
+ 
   environment.systemPackages = with pkgs; [ brightnessctl lm_sensors ];
 }
