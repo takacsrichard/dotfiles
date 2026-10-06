@@ -5,3 +5,8 @@ size = 12.0
 key = "ú"
 mods = "Control|Shift"
 action = "IncreaseFontSize"
+
+[general]
+import = [
+    "themes/kanagawa_dargon.toml"
+]
