@@ -21,20 +21,6 @@ hl.gesture({
     direction = "horizontal",
     action = "workspace"
 })
-hl.gesture({
-    fingers = 4,
-    direction = "up",
-    action = function()
-        hl.dispatch(hl.dsp.global("quickshell:overviewWorkspacesToggle"))
-    end
-})
-hl.gesture({
-    fingers = 4,
-    direction = "down",
-    action = function()
-        hl.dispatch(hl.dsp.global("quickshell:overviewWorkspacesToggle"))
-    end
-})
 
 hl.config({
     gestures = {
