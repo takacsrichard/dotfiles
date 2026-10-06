@@ -13,9 +13,9 @@
   boot.kernelParams = [ "reboot=efi" "amd_iommu=off" ];
   boot.kernel.sysctl."net.ipv4.tcp_mtu_probing" = 1;
   boot.kernel.sysctl."vm.vfs_cache_pressure" = 50;
-  boot.kernel.systcl."vm.dirty_writeback_centisecs" = 6000;
+  boot.kernel.sysctl."vm.dirty_writeback_centisecs" = 6000;
   boot.kernel.sysfs = {
     bus.pci.devices."0000:03:00.4".power.control = "auto";
     bus.pci.devices."0000:03:00.3".power.control = "auto";
-  }
+  };
 }
