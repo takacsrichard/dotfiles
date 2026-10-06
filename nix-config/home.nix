@@ -136,7 +136,7 @@ in
     oh-my-zsh = {
       enable = true;
       theme = "";
-      plugins = [ "git" ];
+      plugins = [ "git" "extract" ];
     };
     initContent = ''
       [ -f ~/dotfiles/.zshrc ] && source ~/dotfiles/.zshrc
