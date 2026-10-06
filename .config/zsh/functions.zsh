@@ -1,3 +1,18 @@
+ef() {
+  local line tok
+  for line in "${(@Oa)${(f)$(fc -ln 1)}}"; do
+    for tok in ${(z)line}; do
+      tok=${(Q)tok}
+      [[ $tok == \~/* ]] && tok=$HOME/${tok#\~/}
+      [[ $tok == /* && ${(L)tok} == *${(L)1}* && -f $tok ]] && {
+        ${EDITOR:-nvim} "$tok"
+        return
+      }
+    done
+  done
+  print -u2 "no match in history for: $1"
+}
+
 # run okular and disown
 o() {
     okular "$@" >/dev/null 2>&1 & disown
@@ -313,3 +328,4 @@ rmemptydirs() {
         echo "Aborted."
     fi
 }
+
