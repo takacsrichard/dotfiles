@@ -57,6 +57,8 @@
 
   programs.zsh.enable = true;
   programs.wireshark.enable = true;
+  
+  hardware.graphics.enable = true
 
   # FHS compatibility for pip/uv venvs with compiled C extensions (numpy, etc.)
   programs.nix-ld.enable = true;
