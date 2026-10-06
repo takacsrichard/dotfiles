@@ -23,6 +23,7 @@ in
     bluetui
     zoxide
     fzf
+    ytfzf
     jq
     yazi
     delta
