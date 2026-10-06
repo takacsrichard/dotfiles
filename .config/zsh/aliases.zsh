@@ -33,6 +33,7 @@ alias wifirec="nmcli radio wifi off && nmcli radio wifi on"
 alias btdu="sudo btdu --auto-mount /home"
 
 alias todo="n $HOME/Documents/sysadmin/todo.txt"
+alias jp="git add . && git commit -m 'stuff' && git push"
 alias gs="git status"
 alias gsp="git status --porcelain"
 alias pushall="git add . && { git commit -m 'update various things' || true; } && git push"
