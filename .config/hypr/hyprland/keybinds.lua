@@ -186,7 +186,7 @@ for i = 1, 2 do
     hl.bind("SUPER + SHIFT + Page_" .. keydirs[i], hl.dsp.window.move({ workspace = prefix[i] .. "1" }), {description = "Window: Send to workspace " .. descdir[i]})
 end
 for i = 1, 4 do
-    local key = { "SUPER + ALT + Page_", "CTRL + SUPER + SHIFT + " }
+    local key = { "SUPER + ALT + Page_", "SUPER + SHIFT + " }
     local keycombos = { key[1] .. "down", key[1] .. "up", key[2] .. "Right", key[2] .. "Left" }
     local prefix = { "r+", "r-", "r+", "r-" }
     hl.bind(keycombos[i], hl.dsp.window.move({ workspace = prefix[i] .. "1" })) -- # [hidden]
@@ -219,18 +219,18 @@ for i = 1, 10 do
     end)
 end
 
---#/# bind = CTRL+SUPER, ←/→,, -- Focus left/right
---#/# bind = CTRL+SUPER+ALT, ←/→,, -- # [hidden] Focus busy left/right
+--#/# bind = SUPER, ←/→,, -- Focus left/right
+--#/# bind = SUPER+ALT, ←/→,, -- # [hidden] Focus busy left/right
 for i = 1, 2 do
     local keys = { "Left", "Right" }
     local prefix = { "r-", "r+" }
     local descdir = { "left", "right" }
-    hl.bind("CTRL + SUPER + " .. keys[i], hl.dsp.focus({ workspace = prefix[i] .. "1" }), {description = "Workspace: Focus " .. descdir[i]})
+    hl.bind("SUPER + " .. keys[i], hl.dsp.focus({ workspace = prefix[i] .. "1" }), {description = "Workspace: Focus " .. descdir[i]})
 end
 for i = 1, 2 do
     local keys = { "Left", "Right" }
     local prefix = { "m-", "m+" }
-    hl.bind("CTRL + SUPER + ALT + " .. keys[i], hl.dsp.focus({ workspace = prefix[i] .. "1" }))
+    hl.bind("SUPER + ALT + " .. keys[i], hl.dsp.focus({ workspace = prefix[i] .. "1" }))
 end
 --#/# bind = SUPER, Page_↑/↓,, -- Focus left/right
 for i = 1, 4 do
