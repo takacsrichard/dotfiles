@@ -63,6 +63,7 @@
   fonts.packages = with pkgs; [
     material-symbols
     nerd-fonts.jetbrains-mono
+    corefonts
   ];
 
   systemd.tmpfiles.rules = [

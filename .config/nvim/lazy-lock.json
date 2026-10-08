@@ -20,5 +20,6 @@
   "smear-cursor.nvim": { "branch": "main", "commit": "f6cb57c342268177f719acc3968b9d8de3ecc969" },
   "snacks.nvim": { "branch": "main", "commit": "882c996cf28183f4d63640de0b4c02ec886d01f2" },
   "telescope.nvim": { "branch": "master", "commit": "40aedd8a68c78a656a10a8d62d80c54af59420fb" },
+  "tiny-glimmer.nvim": { "branch": "main", "commit": "9a48d8a7436231cb16d47c88f924702e5602870a" },
   "vimtex": { "branch": "master", "commit": "bbfa1501287b65e8803d5cc1007db2c2351c4453" }
 }
