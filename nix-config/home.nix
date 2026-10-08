@@ -736,8 +736,8 @@ $character'';
       set  -g base-index      0
       setw -g pane-base-index 0
 
-      set -g status-keys emacs
-      set -g mode-keys   emacs
+      set -g status-keys vi
+      set -g mode-keys vi
 
       set  -g mouse             on
       set  -g focus-events      off

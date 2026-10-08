@@ -22,36 +22,8 @@ oz() {
     zathura "$@" >/dev/null 2>&1 & disown
 }
 
-# TODO test pyfilemv as an alternative
-mvln() {
-  if (( $# < 2 || $# > 3 )); then
-    echo "Usage: mvln <src> <dst> [root]" >&2
-    return 1
-  fi
-  local src="$1" dst="$2" root="${3:-$HOME}"
-  if [[ ! -e "$src" ]]; then
-    echo "mvln: '$src' does not exist" >&2
-    return 1
-  fi
-  local src_abs dst_abs
-  src_abs=$(readlink -f "$src")
-  command mv "$src" "$dst"
-  # mv moves src INTO dst when dst is an existing directory, so the
-  # real new path is dst/basename(src), not dst itself
-  if [[ -d "$dst" ]]; then
-    dst_abs=$(readlink -f "$dst/$(basename "$src_abs")")
-  else
-    dst_abs=$(readlink -f "$dst")
-  fi
-  # repoint any symlink under $root whose target resolves to src_abs
-  find "$root" -xtype l 2>/dev/null | while read -r link; do
-    [[ "$(readlink -f "$link")" == "$src_abs" ]] && ln -sfn "$dst_abs" "$link"
-  done
-}
 
 epoch() { date -d @"$1" '+%Y-%m-%d %H:%M:%S %Z'; }
-
-mvp() { mkdir -p "$(dirname "${@: -1}")" && command mv "$@"; }
 
 mv() {
     local -a plain
@@ -104,18 +76,7 @@ temps() {
   '
 }
 
-mpv() {
-    local -a args
-    for arg in "$@"; do
-        case "$arg" in
-		--shf) args+=(--shuffle) ;;
-            --nv) args+=(--no-video) ;;
-            --na) args+=(--no-audio) ;;
-            *)    args+=("$arg") ;;
-        esac
-    done
-    command mpv "${args[@]}"
-}
+
 
 # --- script wrappers ---
 
@@ -131,20 +92,6 @@ mkcd() {
 # Kill by name
 killn() {
     kill ${(f)"$(pgrep "$1")"}
-}
-
-# Check files if identical
-sametest() {
-    if (( $# != 2 )); then
-        echo "Usage: sametest <file1> <file2>"
-        return 1
-    fi
-
-    if cmp -s "$1" "$2"; then
-        echo "✓ Identical"
-    else
-        echo "✗ Different"
-    fi
 }
 
 # IP info
@@ -194,53 +141,6 @@ copylast() {
     fc -ln -1 | sed 's/^[[:space:]]*//' | wl-copy
 }
 
-toppct() {
-    local include_hidden=false
-    local dir=""
-    local arg
-    for arg in "$@"; do
-        if [[ "$arg" == "-a" ]]; then
-            include_hidden=true
-        else
-            dir="$arg"
-        fi
-    done
-
-    [[ -z "$dir" ]] && dir="$PWD"
-
-    if [[ "$include_hidden" == true ]]; then
-        find "$dir" -type f -print0 | xargs -0 du -b | sort -rn | awk '
-        BEGIN { top5=0; top10=0; total=0; count=0 }
-        { size[count]=$1; total+=$1; count++ }
-        END {
-            for(i=0;i<count;i++) {
-                if(i<5) top5+=size[i]
-                if(i<10) top10+=size[i]
-            }
-            printf "Top 5  files: %.1f%% of total\n", (top5/total)*100
-            printf "Top 10 files: %.1f%% of total\n", (top10/total)*100
-        }'
-    else
-        find "$dir" -type f -not -path '*/.*' -print0 | xargs -0 du -b | sort -rn | awk '
-        BEGIN { top5=0; top10=0; total=0; count=0 }
-        { size[count]=$1; total+=$1; count++ }
-        END {
-            for(i=0;i<count;i++) {
-                if(i<5) top5+=size[i]
-                if(i<10) top10+=size[i]
-            }
-            printf "Top 5  files: %.1f%% of total\n", (top5/total)*100
-            printf "Top 10 files: %.1f%% of total\n", (top10/total)*100
-        }'
-    fi
-}
-
-
-# Jump to zoxide target and copy the resulting path to clipboard
-zcpwd() {
-    z "$@" && copy pwd
-}
-
 # Copy full path of cwd, or of a given file/folder, to clipboard
 cpwd() {
     if (( $# == 0 )); then
@@ -252,38 +152,6 @@ cpwd() {
         print -rn -- "$target" | wl-copy
         echo "Copied: $target"
     fi
-}
-
-# Find with fd, open matches in nvim (max 10); usage: nfd <pattern> [search_dir]
-nfd() {
-    if (( $# == 0 )); then
-        echo "Usage: nfd <pattern> [search_dir]" >&2
-        return 1
-    fi
-
-    local pattern="$1"
-    local search_dir="${2:-.}"
-    local -a files
-
-    while IFS= read -r line; do
-        [[ -n "$line" ]] && files+=("$line")
-    done < <(fd -H -- "$pattern" "$search_dir")
-
-    local count=${#files[@]}
-
-    if (( count == 0 )); then
-        echo "nfd: no matches for '$pattern'" >&2
-        return 1
-    fi
-
-    if (( count > 10 )); then
-        echo "nfd: $count matches, opening first 10" >&2
-        files=("${files[1,10]}")
-    else
-        echo "nfd: $count match(es)" >&2
-    fi
-
-    nvim "${files[@]}"
 }
 
 # Remove all empty directories under a given path (depth-first, with confirmation)
@@ -326,6 +194,23 @@ rmemptydirs() {
         echo "Removed $count empty director$([[ $count -eq 1 ]] && echo y || echo ies)."
     else
         echo "Aborted."
+    fi
+}
+
+
+# --- R / LaTeX ---
+rr()   { Rscript "$1" }
+rrmd() { Rscript -e "rmarkdown::render('$1', output_format='pdf_document')" }
+lmk()  { latexmk -pdf "$1" }
+
+# z only exists once zoxide has been initialized, i.e. interactive shells.
+# Without the builtin fallback, cd in a script is a silent no-op -- "command
+# not found: z", and the script carries on in the wrong directory.
+cd() {
+    if (( $+functions[z] )); then
+        z "$@"
+    else
+        builtin cd "$@"
     fi
 }
 
