@@ -22,6 +22,10 @@ oz() {
     zathura "$@" >/dev/null 2>&1 & disown
 }
 
+chpwd() {
+    [[ -o interactive && -t 1 ]] || return 0
+    _ezals
+}
 
 epoch() { date -d @"$1" '+%Y-%m-%d %H:%M:%S %Z'; }
 

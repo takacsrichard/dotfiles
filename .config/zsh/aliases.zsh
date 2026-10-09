@@ -2,9 +2,6 @@
 #  Aliases
 # ============================================================
 
-# temp
-alias getkurt="wget -r -np -N -nd -A '*.*' https://statmath.wu.ac.at/\~hornik/Comp/comp_facts.html"
-
 # multimedia 
 alias sw="swayimg"
 alias img="kitten icat"
@@ -19,7 +16,6 @@ alias ccusage="npx ccusage@latest --json"
 
 alias btdu="sudo btdu --auto-mount /home"
 
-alias todo="n $HOME/Documents/sysadmin/todo.txt"
 alias jp="git add . && { git commit -m 'update various things' || true; } && git push"
 
 # dotfiles
@@ -43,7 +39,6 @@ alias funcs="nvim $HOME/dotfiles/.config/zsh/functions.zsh"
 alias n="nvim"
 
 # btrfs balance
-alias restartwaybar="pkill waybar; waybar &>/dev/null & disown"
 # screenshot
 alias scr='grim -g "$(slurp)" - | wl-copy'
 

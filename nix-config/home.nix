@@ -26,54 +26,31 @@ in
     ytfzf
     jq
     yazi
-    delta
     bat
     sd
-    rm-improved
-    cowsay
     direnv
     libqalculate
-    cmatrix
     yt-dlp
-    deno
     translate-shell
     tree
-    pastel
     wget
     rclone
     htop
     rsync
-    speedtest-cli
     sysstat
     unzip
-    unrar
-    p7zip
     github-cli
     yq-go
     python3
     uv
     libreoffice-still
-    pnpm
-    nixfmt
     kitty
     alacritty
     bc
-    btdu
     curl
     less
-    dust
-    choose
     file-rename
-    pyright
-    strace
     psmisc
-    testdisk
-    tesseract
-    trash-cli
-    graphviz
-    imagemagick
-    ghostscript
-    inxi
     pkgs-unstable.antigravity-cli
     hyprlock
     hypridle
@@ -83,8 +60,6 @@ in
     slurp
     wf-recorder
     waybar
-    mako
-    cliphist
     claude-code
     doublecmd
     restic
@@ -94,7 +69,6 @@ in
     mpv
     anki
     qbittorrent
-    tuxguitar
     wl-clipboard
     rbw
     pinentry-qt
@@ -104,20 +78,14 @@ in
     fd
     syncthing
     gdu
-    jdupes
-    rustc
-    cargo
+    btdu
     gcc
-    tree-sitter
-    nodejs
     librsvg
     tmux
-    hyperfine
     tldr
     procs
     duf
     btop
-    lazygit
   ];
 
 

@@ -12,5 +12,5 @@ setopt APPEND_HISTORY
 HISTSIZE=500000
 SAVEHIST=500000
 
-alias sz="sourcezsh"
+alias sz="source ~/dotfiles/.zshrc"
 

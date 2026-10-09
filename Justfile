@@ -18,19 +18,6 @@ rebuild:
     sudo nixos-rebuild switch --flake "path:$HOME/dotfiles?dir=nix-config#nixos" --impure
     sudo systemctl restart home-manager-richard.service
 
-# push to gh
-push:
-    #!/usr/bin/env zsh
-    cd ~/dotfiles
-    git add .
-    printf "Commit message (blank = 'update dotfiles'): "
-    read msg
-    msg="${msg:-update dotfiles}"
-    { git commit -m "$msg" || true; }
-    git push
-
-
-
 # Remove generations older than 7 days, GC store, optimise, delete caches, organize and tidy up
 putzfrau:
     ~/dotfiles/scripts/putzfrau.sh
