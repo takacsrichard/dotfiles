@@ -10,4 +10,5 @@ in {
   "eduroam.age".publicKeys = all;
   "restic-password.age".publicKeys=all;
   "rclone-password.age".publicKeys=all;
+  "gh-token.age".publicKeys = all;
 }

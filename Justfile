@@ -22,5 +22,18 @@ rebuild:
 backup:
     ~/dotfiles/scripts/backup.sh
 
+# Rotate the gh CLI token: paste the new one, re-encrypts secrets/gh-token.age
+set-gh-token:
+    #!/usr/bin/env zsh
+    set -euo pipefail
+    printf "New GitHub token: "
+    read -rs token
+    echo
+    printf '%s' "$token" | age \
+        -r "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJJ+P9vVrcs/+sE0waSj0r6n27R+Ay20CQ+TvMbmZjKG" \
+        -r "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHgJXEIeGmiXHaF5VL2ud1QH9MF2krC2VB50RAsPGfyw" \
+        -o ~/dotfiles/secrets/gh-token.age
+    echo "secrets/gh-token.age updated. Now run: just rebuild"
+
 
 

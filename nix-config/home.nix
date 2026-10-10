@@ -38,7 +38,6 @@ in
     rsync
     sysstat
     unzip
-    github-cli
     yq-go
     python3
     uv
@@ -110,8 +109,18 @@ in
       plugins = [ "git" "extract" ];
     };
     initContent = ''
+      export GH_TOKEN="$(cat /run/agenix/gh-token 2>/dev/null)"
       [ -f ~/dotfiles/.zshrc ] && source ~/dotfiles/.zshrc
     '';
+  };
+
+  # git itself is configured manually via ~/.gitconfig (libsecret), not
+  # home-manager's programs.git, so gh's credential helper has nothing to
+  # hook into — leave it disabled and rely on GH_TOKEN for `gh` auth only.
+  # TODO: THIS WAS DONE BY AI
+  programs.gh = {
+    enable = true;
+    gitCredentialHelper.enable = false;
   };
 
 
