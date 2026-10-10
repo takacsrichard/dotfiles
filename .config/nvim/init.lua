@@ -15,6 +15,8 @@ vim.keymap.set("n", "+", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
 end, { desc = "Copy absolute path of current file" })
 
+vim.keymap.set("v", "+", '"+y', { desc = "Copy selection to system clipboard" })
+
 vim.api.nvim_create_autocmd("TermOpen", {
   callback = function()
     vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { buffer = true, nowait = true, desc = "Exit terminal mode" })
