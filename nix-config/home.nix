@@ -109,7 +109,9 @@ in
       plugins = [ "git" "extract" ];
     };
     initContent = ''
-      export GH_TOKEN="$(cat /run/agenix/gh-token 2>/dev/null)"
+      # Token is only exported to the `gh` process itself, not the whole shell,
+      # so other programs (and `ps`/env dumps) can't see it.
+      gh() { GH_TOKEN="$(cat /run/agenix/gh-token 2>/dev/null)" command gh "$@"; }
       [ -f ~/dotfiles/.zshrc ] && source ~/dotfiles/.zshrc
     '';
   };
