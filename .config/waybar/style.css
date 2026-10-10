@@ -141,6 +141,12 @@ window#waybar {
 /*                   AUDIO & NETWORKING                        */
 /* ─────────────────────────────────────────────────────────── */
 
+#backlight {
+    color: #e6e1e1;
+    padding: 0 10px;
+    margin: 0 1px;
+}
+
 #wireplumber {
     color: #e6e1e1;
     padding: 0 10px;

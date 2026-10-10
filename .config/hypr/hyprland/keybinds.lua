@@ -24,7 +24,7 @@ hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO
     { locked = true, repeating = true })
 
     --  removed pkill mako; waybar & mako & 
-hl.bind("CTRL + SUPER + R", hl.dsp.exec_cmd("pkill waybar;"),
+hl.bind("CTRL + SUPER + R", hl.dsp.exec_cmd("pkill waybar; waybar &"),
     { description = "Shell: Restart widgets" })
 
 --##! Utilities

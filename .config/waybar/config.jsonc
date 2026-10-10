@@ -10,6 +10,7 @@
     "modules-right": [
         "custom/power-button",
         "custom/mic-toggle",
+        "backlight",
         "wireplumber",
         "custom/sep-network",
         "bluetooth",
@@ -72,6 +73,17 @@
         "format-charging": "+{capacity}%",
         "format-plugged": "={capacity}%",
         "tooltip-format": "{timeTo}"
+    },
+
+    // ── BRIGHTNESS CONTROL ────────────────────────────────────
+
+    "backlight": {
+        "device": "amdgpu_bl1",
+        "format": "{icon} {percent}%",
+        "format-icons": ["󰃞", "󰃟", "󰃠"],
+        "on-scroll-up": "brightnessctl set 5%+",
+        "on-scroll-down": "brightnessctl set 5%-",
+        "tooltip-format": "Brightness: {percent}%"
     },
 
     // ── AUDIO CONTROL ─────────────────────────────────────────
