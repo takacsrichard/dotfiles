@@ -48,16 +48,6 @@
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings.http-connections = 25;
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
-  nix.optimise = {
-    automatic = true;
-    dates = ["weekly"];
-  };
-
   virtualisation.docker.enable = true;
 
   programs.zsh.enable = true;
@@ -94,12 +84,6 @@
       "0 */12 * * * richard ${pkgs.rclone}/bin/rclone lsjson pdrive: --max-depth 1 > /dev/null 2>&1"
     ];
   };
-
-  services.journald.extraConfig = ''
-    SystemMaxUse=100T
-    SystemKeepFree=0
-    MaxRetentionSec=2weeks
-  '';
-
+  
   system.stateVersion = "26.05";
 }

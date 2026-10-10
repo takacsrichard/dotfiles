@@ -63,6 +63,24 @@
     interval = "weekly";
   };
 
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
+  nix.optimise = {
+    automatic = true;
+    dates = ["weekly"];
+  };
+
+
+  services.journald.extraConfig = ''
+    SystemMaxUse=100T
+    SystemKeepFree=0
+    MaxRetentionSec=2weeks
+  '';
+
+
   # Btrfs: hourly snapshots of /home via snapper
   # persistentTimer ensures one snapshot runs on next boot if laptop was off
   services.snapper.persistentTimer = true;
