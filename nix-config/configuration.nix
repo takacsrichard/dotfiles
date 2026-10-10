@@ -51,9 +51,13 @@
   nix.gc = {
     automatic = true;
     dates = "weekly";
-    options = "--delete-older-than 30d";
+    options = "--delete-older-than 7d";
   };
-  
+  nix.optimise = {
+    automatic = true;
+    dates = ["weekly"];
+  };
+
   virtualisation.docker.enable = true;
 
   programs.zsh.enable = true;
@@ -94,6 +98,7 @@
   services.journald.extraConfig = ''
     SystemMaxUse=100T
     SystemKeepFree=0
+    MaxRetentionSec=2weeks
   '';
 
   system.stateVersion = "26.05";

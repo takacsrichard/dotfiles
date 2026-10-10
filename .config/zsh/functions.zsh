@@ -13,6 +13,14 @@ ef() {
   print -u2 "no match in history for: $1"
 }
 
+cdd() {
+  if [[ -d "$1" ]]; then
+    cd "$1"
+  else
+    cd "${1:h}"
+  fi
+}
+
 # run okular and disown
 o() {
     okular "$@" >/dev/null 2>&1 & disown
