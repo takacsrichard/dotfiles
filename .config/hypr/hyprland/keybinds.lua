@@ -7,6 +7,9 @@ end
 local hyprScripts = "$HOME/.config/hypr/hyprland/scripts"
 local qsIpcCall = "qs -c $qsConfig ipc call"
 
+hl.bind("SUPER + SUPER_L", hl.dsp.exec_cmd("pkill fuzzel || fuzzel"))
+hl.bind("SUPER + SUPER_R", hl.dsp.exec_cmd("pkill fuzzel || fuzzel"))
+
 hl.bind("SUPER + B", hl.dsp.exec_cmd("pkill -SIGUSR1 waybar || waybar &"), { description = "Shell: Toggle bar" })
 hl.bind("CTRL + ALT + Delete", hl.dsp.exec_cmd("pkill wlogout || wlogout -p layer-shell"))
 hl.bind("SHIFT + SUPER + ALT + Slash", hl.dsp.exec_cmd("qs -p $HOME/.config/quickshell/$qsConfig/welcome.qml"))

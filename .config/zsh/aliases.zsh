@@ -45,7 +45,7 @@ alias scr='grim -g "$(slurp)" - | wl-copy'
 alias ffmstats="ffprobe -v quiet -print_format json -show_streams -show_format"
 
 # --- Hyprland shortcuts ---
-alias hrel='hyprctl reload'
+alias hrel='hyprland --verify-config && hyprctl reload'
 alias hl='hyprlock'
 alias slep='systemctl suspend'
 
