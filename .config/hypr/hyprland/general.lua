@@ -61,7 +61,7 @@ hl.config({
         rounding = 0,
 
         blur = {
-            enabled = true,
+            enabled = false,
             xray = false,
             special = false,
             new_optimizations = true,
@@ -78,7 +78,7 @@ hl.config({
             input_methods_ignorealpha = 0.8
         },
         shadow = {
-            enabled = true,
+            enabled = false,
             range = 20,
             offset = {0, 2},
             render_power = 10,
@@ -91,7 +91,7 @@ hl.config({
         dim_special = 0.2
     },
     animations = {
-        enabled = true
+        enabled = false
     },
     dwindle = {
         preserve_split = true,
