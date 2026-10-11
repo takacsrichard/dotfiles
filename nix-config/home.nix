@@ -10,7 +10,7 @@ let
   );
 in
 {
-  imports = [ ./modules/firefox.nix ];
+  imports = [ ./modules/firefox.nix ./modules/libreoffice.nix ];
 
   home.username = "richard";
   home.homeDirectory = "/home/richard";
@@ -41,7 +41,6 @@ in
     yq-go
     python3
     uv
-    libreoffice-still
     kitty
     alacritty
     bc
@@ -125,6 +124,20 @@ in
     gitCredentialHelper.enable = false;
   };
 
+  programs.libreoffice = {
+    enable = true;
+    package = pkgs.libreoffice-still;
+    settings = {
+      "/org.openoffice.Office.Common/Misc" = {
+        SymbolSet = 0;
+        SymbolStyle = "colibre";
+      };
+      "/org.openoffice.Office.Common/Appearance" = {
+        LibreOfficeTheme = 1;
+        ApplicationAppearance = 1;
+      };
+    };
+  };
 
   programs.starship = {
     enable = true;

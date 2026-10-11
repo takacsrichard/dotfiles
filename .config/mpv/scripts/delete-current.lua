@@ -2,15 +2,10 @@ local function delete_current()
     local path = mp.get_property("path")
     if not path then return end
 
-    local result = mp.command_native({
-        name = "subprocess",
-        args = { "/etc/profiles/per-user/richard/bin/trash-put", path },
-        capture_stderr = true,
-        capture_stdout = true,
-    })
+    local ok, err = os.remove(path)
 
-    if result.status == 0 then
-        mp.osd_message("Trashed: " .. path)
+    if ok then
+        mp.osd_message("Deleted: " .. path)
         local count = mp.get_property_number("playlist-count", 1)
         if count <= 1 then
             mp.commandv("quit")
@@ -18,8 +13,7 @@ local function delete_current()
             mp.commandv("playlist-next", "force")
         end
     else
-        local msg = result.stderr ~= "" and result.stderr or result.stdout ~= "" and result.stdout or ("exit code " .. tostring(result.status))
-        mp.osd_message("Trash failed: " .. msg)
+        mp.osd_message("Delete failed: " .. tostring(err))
     end
 end
 
