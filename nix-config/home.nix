@@ -17,74 +17,89 @@ in
   home.stateVersion = "24.05";
   targets.genericLinux.enable = true;
 
-  home.packages = with pkgs; [
-    ripgrep
-    fastfetch
-    bluetui
-    zoxide
-    fzf
-    jq
-    yazi
-    bat
-    sd
-    direnv
-    libqalculate
-    yt-dlp
-    translate-shell
-    tree
-    wget
-    rclone
-    htop
-    rsync
-    sysstat
-    unzip
-    yq-go
-    python3
-    uv
-    kitty
-    alacritty
-    bc
-    curl
-    less
-    file-rename
-    psmisc
-    pkgs-unstable.antigravity-cli
-    hyprlock
-    hypridle
-    wlogout
-    fuzzel
-    grim
-    slurp
-    wf-recorder
-    waybar
-    claude-code
-    doublecmd
-    restic
-    git
-    libnatpmp
-    swayimg
-    mpv
-    anki
-    qbittorrent
-    wl-clipboard
-    rbw
-    pinentry-qt
-    just
-    zathura
-    neovim
-    fd
-    syncthing
-    gdu
-    btdu
-    gcc
-    librsvg
-    tmux
-    tldr
-    procs
-    duf
-    btop
-  ];
+home.packages = with pkgs; [
+  # shell & CLI utilities
+  ripgrep
+  fd
+  fzf
+  zoxide
+  bat
+  sd
+  jq
+  yq-go
+  tree
+  less
+  tldr
+  bc
+  libqalculate
+  psmisc
+  just
+  tmux
+  yazi
+  doublecmd
 
+  # system monitoring & disk usage
+  fastfetch
+  htop
+  btop
+  procs
+  sysstat
+  duf
+  gdu
+  btdu
+
+  # networking & downloads
+  curl
+  wget
+  yt-dlp
+  translate-shell
+  qbittorrent
+  libnatpmp
+
+  # files, sync & backup
+  rclone
+  rsync
+  restic
+  syncthing
+
+  # terminals & editors
+  kitty
+  alacritty
+  neovim
+
+  # development
+  git
+  gcc
+  python3
+  uv
+  claude-code
+  pkgs-unstable.antigravity-cli
+
+  # hyprland desktop
+  hyprlock
+  hypridle
+  wlogout
+  waybar
+  fuzzel
+  bluetui
+
+  # screenshots & recording
+  grim
+  slurp
+  wf-recorder
+
+  # clipboard & passwords
+  wl-clipboard
+  rbw
+  pinentry-qt
+
+  # media & documents
+  mpv
+  swayimg
+  zathura
+  anki
+  librsvg
+];
 
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
