@@ -106,6 +106,18 @@ home.packages = with pkgs; [
     EDITOR = "nvim";
     VISUAL = "nvim";
   };
+  
+  
+  programs.obsidian = {
+    enable = true;
+
+    vaults.notes.target = "Documents/Obsidian";
+    defaultSettings.app = {
+      alwaysUpdateLinks = true;
+    };
+   };
+   
+
 
   programs.eza = {
     enable = true;
@@ -752,6 +764,10 @@ $character'';
       set  -s escape-time       10
       set  -g history-limit     2000
       set  -g allow-passthrough on
+
+      bind-key -n S-Up copy-mode -e \; send-keys -X -N 1 scroll-up
+      bind-key -T copy-mode-vi S-Up send-keys -X -N 1 scroll-up
+      bind-key -T copy-mode-vi S-Down send-keys -X -N 1 scroll-down
 
       set -g @plugin 'tmux-plugins/tpm'
       set -g @plugin 'tmux-plugins/tmux-resurrect'

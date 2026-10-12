@@ -64,7 +64,7 @@ _clipcopy() {
 }
 
 _ezals() {
-    eza -la --git --header --icons -o --no-permissions "$@"
+    eza -la --git --header --no-user --no-permissions --icons -o --no-permissions "$@"
     local target=. arg
     for arg in "$@"; do [[ -e $arg ]] && target=$arg; done
     local abs=${target:A}

@@ -6,6 +6,16 @@ key = "ú"
 mods = "Control|Shift"
 action = "IncreaseFontSize"
 
+[[keyboard.bindings]]
+key = "Up"
+mods = "Shift"
+action = "ScrollLineUp"
+
+[[keyboard.bindings]]
+key = "Down"
+mods = "Shift"
+action = "ScrollLineDown"
+
 [general]
 import = [
     "themes/kanagawa_dargon.toml"
