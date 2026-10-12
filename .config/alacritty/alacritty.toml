@@ -9,11 +9,13 @@ action = "IncreaseFontSize"
 [[keyboard.bindings]]
 key = "Up"
 mods = "Shift"
+mode = "~Alt"
 action = "ScrollLineUp"
 
 [[keyboard.bindings]]
 key = "Down"
 mods = "Shift"
+mode = "~Alt"
 action = "ScrollLineDown"
 
 [general]
