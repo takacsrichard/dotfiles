@@ -99,6 +99,9 @@ home.packages = with pkgs; [
   zathura
   anki
   librsvg
+
+  # productivity
+  pkgs-unstable.todoist-cli
 ];
 
   home.sessionVariables = {
