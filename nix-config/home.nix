@@ -74,6 +74,8 @@ home.packages = with pkgs; [
   uv
   claude-code
   pkgs-unstable.antigravity-cli
+  typst
+  tinymist
 
   # hyprland desktop
   hyprlock
