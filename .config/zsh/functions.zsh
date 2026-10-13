@@ -166,6 +166,14 @@ cpwd() {
     fi
 }
 
+# Fuzzy-search zoxide history and copy the best-matching path to clipboard
+cpwdf() {
+    local target
+    target=$(zoxide query -- "$@") || return 1
+    print -rn -- "$target" | wl-copy
+    echo "Copied: $target"
+}
+
 # Remove all empty directories under a given path (depth-first, with confirmation)
 # Usage: rmemptydirs [path]   (defaults to current dir)
 rmemptydirs() {
@@ -214,6 +222,13 @@ rmemptydirs() {
 rr()   { Rscript "$1" }
 rrmd() { Rscript -e "rmarkdown::render('$1', output_format='pdf_document')" }
 lmk()  { latexmk -pdf "$1" }
+
+# --- git ---
+gac()  { git add -A && git commit -m "$1" }
+gacp() { git add -A && git commit -m "$1" && git push }
+
+# --- todoist shorthand (ta = task add, pl = project list, -d/-p flags, fuzzy project names) ---
+td() { ~/dotfiles/scripts/utils/td-wrapper "$@" }
 
 # z only exists once zoxide has been initialized, i.e. interactive shells.
 # Without the builtin fallback, cd in a script is a silent no-op -- "command

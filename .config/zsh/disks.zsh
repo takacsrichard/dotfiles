@@ -1,11 +1,11 @@
 mntiphone() {
 	idevicepair pair
-	mkdir -p ~/iphone
+	mkdir -p /mnt/iphone
 	ifuse ~/iphone
 }
 
 unmntiphone(){
-    fusermount -u ~/iphone
+    fusermount -u /mnt/iphone
 }
 
 mntdisk() {

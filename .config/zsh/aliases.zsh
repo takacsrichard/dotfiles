@@ -2,11 +2,17 @@
 #  Aliases
 # ============================================================
 
+alias ...="cd ../.."
+
 # multimedia 
 alias sw="swayimg"
 alias img="kitten icat"
 alias mpl="mpv . --shf --loop-playlist"
 alias mpvnr="find . -maxdepth 1 -type f -print0 | xargs -0 mpv"
+
+# todoist
+alias tda="td task add"
+alias tdl="td task list"
 
 #ai 
 alias cla="claude"
@@ -31,7 +37,6 @@ alias fd="fd -E /staging/"
 alias fdh="fd -H -E /staging/"
 
 alias cp='cp --reflink=auto'
-
 
 alias aliases="nvim $HOME/dotfiles/.config/zsh/aliases.zsh"
 alias funcs="nvim $HOME/dotfiles/.config/zsh/functions.zsh"
