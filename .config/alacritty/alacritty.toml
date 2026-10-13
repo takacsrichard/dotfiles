@@ -18,6 +18,9 @@ mods = "Shift"
 mode = "~Alt"
 action = "ScrollLineDown"
 
+[terminal.shell]
+program = "tmux"
+
 [general]
 import = [
     "themes/kanagawa_dargon.toml"

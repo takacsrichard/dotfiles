@@ -13,7 +13,7 @@
     ./modules/input.nix
     ./modules/packages.nix
     ./modules/storage.nix
-    ./modules/net-monitoring.nix
+    # ./modules/net-monitoring.nix unneeded right now
     ./modules/backup.nix
     ./modules/gh.nix
   ];
