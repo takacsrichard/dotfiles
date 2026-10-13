@@ -1,7 +1,12 @@
 hl.config({
     misc = {
         background_color = "rgba(000000FF)",
-    }
+    },
+	--    input = {
+	--        accel_profile = "flat",
+	-- force_no_accel = true;
+	       -- sensitivity = -0.05
+	--    }
 })
 
 -- Built-in display at 2x scale (HiDPI)
