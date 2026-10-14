@@ -237,6 +237,7 @@ window#waybar {
 
 #custom-terminal,
 #custom-scr,
+#custom-scr-full,
 #custom-mic-toggle,
 #custom-power-button {
     color: #e6e1e1;
@@ -249,6 +250,7 @@ window#waybar {
 
 #custom-terminal:hover,
 #custom-scr:hover,
+#custom-scr-full:hover,
 #custom-mic-toggle:hover,
 #custom-power-button:hover {
     background: #1a1a1a;
@@ -257,6 +259,11 @@ window#waybar {
 
 #custom-scr {
     margin-left: 10px;
+}
+
+#custom-scr-full.flash {
+    color: #7fb87f;
+    font-weight: bold;
 }
 
 #custom-mic-toggle.muted {

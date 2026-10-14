@@ -5,7 +5,7 @@
     "position": "top",
     "height": 36,
     "spacing": 0,
-    "modules-left": ["hyprland/workspaces", "custom/terminal", "custom/scr"],
+    "modules-left": ["hyprland/workspaces", "custom/terminal", "custom/scr", "custom/scr-full"],
     "modules-center": ["clock"],
     "modules-right": [
         "custom/power-button",
@@ -179,6 +179,14 @@
         "interval": "once",
         "return-type": "json",
         "tooltip": "Screenshot region → clipboard"
+    },
+
+    "custom/scr-full": {
+        "format": "{}",
+        "exec": "~/scripts/school/scr-full-icon.sh",
+        "on-click": "~/scripts/school/screenshot-full.sh",
+        "signal": 8,
+        "return-type": "json",
     },
 
     "custom/power-button": {
