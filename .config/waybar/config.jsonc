@@ -59,7 +59,7 @@
     "custom/temps": {
         "exec": "~/.config/waybar/scripts/temps.sh",
         "return-type": "json",
-        "interval": 2,
+        "interval": 30,
         "format": "{}",
         "tooltip": true
     },
@@ -147,19 +147,19 @@
 
     // ── TOGGLE BUTTONS ────────────────────────────────────────
 
-    "custom/mic-toggle": {
-        "format": "{}",
-        "exec": "~/.config/waybar/scripts/mic-toggle.sh show",
-        "on-click": "~/.config/waybar/scripts/mic-toggle.sh toggle",
-        "interval": 2,
-        "return-type": "json",
-        "tooltip": "Microphone toggle"
-    },
-
+    // "custom/mic-toggle": {
+    //     "format": "{}",
+    //     "exec": "~/.config/waybar/scripts/mic-toggle.sh show",
+    //     "on-click": "~/.config/waybar/scripts/mic-toggle.sh toggle",
+    //     "interval": 30,
+    //     "return-type": "json",
+    //     "tooltip": "Microphone toggle"
+    // },
+    //
     "custom/notif-badge": {
         "format": "{}",
         "exec": "~/.config/waybar/scripts/notif-badge.sh",
-        "interval": 2,
+        "interval": 30,
         "return-type": "json",
         "tooltip": "Unread notifications"
     },
