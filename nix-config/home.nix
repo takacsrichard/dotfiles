@@ -775,9 +775,9 @@ $character'';
       bind-key -T copy-mode-vi S-Up send-keys -X -N 1 scroll-up
       bind-key -T copy-mode-vi S-Down send-keys -X -N 1 scroll-down
 
-      bind-key -n C-S-Space copy-mode
+      bind-key -T prefix Space copy-mode
       bind-key -T copy-mode-vi v send-keys -X begin-selection
-      bind-key -T copy-mode-vi C-+ send-keys -X copy-pipe-and-cancel "wl-copy"
+      bind-key -T copy-mode-vi + send-keys -X copy-pipe-and-cancel "wl-copy"
 
       set -g @plugin 'tmux-plugins/tpm'
       set -g @plugin 'tmux-plugins/tmux-resurrect'
