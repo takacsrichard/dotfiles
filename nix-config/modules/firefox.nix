@@ -40,6 +40,7 @@
         "dom.timeout.background_budget_regeneration_rate"         = 1000;
         "dom.timeout.background_throttling_max_budget"            = 10;
         "dom.timeout.budget_throttling_max_delay"                 = 60000;
+        "ui.prefersReducedMotion"                                 = 1;
       };
       extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
         ublock-origin
