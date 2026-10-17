@@ -43,6 +43,9 @@ alias funcs="nvim $HOME/dotfiles/.config/zsh/functions.zsh"
 
 alias n="nvim"
 
+
+alias notmux="alacritty -e $SHELL"
+
 # btrfs balance
 # screenshot
 alias scr='grim -g "$(slurp)" - | wl-copy'
