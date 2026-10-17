@@ -2,7 +2,7 @@
 // Ported from Quickshell taskbar for pixel-perfect fidelity
 {
     "layer": "top",
-    "position": "top",
+    "position": "bottom",
     "height": 36,
     "spacing": 0,
     "modules-left": ["hyprland/workspaces", "custom/terminal", "custom/scr", "custom/scr-full"],

@@ -10,10 +10,7 @@
   # kernel INFO messages ("reboot: Power down") when diagnosing shutdown hangs.
   boot.kernelPackages = pkgs.linuxPackages;
   boot.consoleLogLevel = 1;
-  # amdgpu.dcfeaturemask=0x8 = DC_PSR_MASK: Renoir/Cezanne APUs ship Panel
-  # Self Refresh gated off by default (flicker bugs on some panel firmware);
-  # opt-in to test eDP PSR for static-screen power savings.
-  boot.kernelParams = [ "reboot=efi" "amd_iommu=off" "amdgpu.dcfeaturemask=0x8" ];
+  boot.kernelParams = [ "reboot=efi" "amd_iommu=off" ];
   boot.kernel.sysctl."net.ipv4.tcp_mtu_probing" = 1;
   boot.kernel.sysctl."vm.vfs_cache_pressure" = 50;
   boot.kernel.sysctl."vm.dirty_writeback_centisecs" = 6000;
