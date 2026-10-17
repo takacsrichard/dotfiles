@@ -259,6 +259,7 @@ hl.config({
     misc = {
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
+        disable_autoreload = true,
         background_color = 0xFFF2DFCE,
         vrr = 0,
         mouse_move_enables_dpms = true,

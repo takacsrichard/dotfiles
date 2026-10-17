@@ -28,7 +28,7 @@ hl.bind("CTRL + SUPER + R", hl.dsp.exec_cmd("pkill waybar; waybar &"),
     { description = "Shell: Restart widgets" })
 
 --##! Utilities
---# Screenshot, Record, OCR, Color picker, Clipboard history
+--# Screenshot, Record, OCR, Color picker
 hl.bind("SUPER + SHIFT + S",
     hl.dsp.exec_cmd("pidof slurp || grim -g \"$(slurp)\" - | wl-copy"), { description = "Utilities: Screen snip" })
 hl.bind("SUPER + SHIFT + A", hl.dsp.exec_cmd("pidof slurp || " .. hyprScripts .. "/snip_to_search.sh"),

@@ -75,7 +75,7 @@
 
 
   services.journald.extraConfig = ''
-    SystemMaxUse=100T
+    SystemMaxUse=200M
     SystemKeepFree=0
     MaxRetentionSec=2weeks
   '';
