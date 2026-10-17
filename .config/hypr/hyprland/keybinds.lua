@@ -26,6 +26,8 @@ hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO
     --  removed pkill mako; waybar & mako & 
 hl.bind("CTRL + SUPER + R", hl.dsp.exec_cmd("pkill waybar; waybar &"),
     { description = "Shell: Restart widgets" })
+hl.bind("CTRL + SUPER + B", hl.dsp.exec_cmd(hyprScripts .. "/waybar-toggle-position.sh"),
+    { description = "Shell: Toggle waybar top/bottom" })
 
 --##! Utilities
 --# Screenshot, Record, OCR, Color picker
