@@ -10,9 +10,11 @@ hl.config({
 })
 
 -- Built-in display at 2x scale (HiDPI)
+-- 60Hz default to cut Hyprland's vblank wakeup rate; toggle to 90Hz via the
+-- waybar custom/refresh-toggle button (runs hyprctl eval hl.monitor(...) at runtime)
 hl.monitor({
     output = "eDP-1",
-    mode = "2880x1800@90",
+    mode = "2880x1800@60",
     position = "0x0",
     scale = 2
 })

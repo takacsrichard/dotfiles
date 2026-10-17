@@ -9,6 +9,7 @@
     "modules-center": ["clock"],
     "modules-right": [
         "custom/power-button",
+        "custom/refresh-toggle",
         "custom/mic-toggle",
         "backlight",
         "wireplumber",
@@ -187,5 +188,15 @@
         "interval": "once",
         "return-type": "json",
         "tooltip": "Power menu (wlogout)"
+    },
+
+    "custom/refresh-toggle": {
+        "format": "{}",
+        "exec": "~/.config/waybar/scripts/refresh-toggle.sh status",
+        "on-click": "~/.config/waybar/scripts/refresh-toggle.sh toggle",
+        "interval": "once",
+        "signal": 9,
+        "return-type": "json",
+        "tooltip": true
     }
 }
