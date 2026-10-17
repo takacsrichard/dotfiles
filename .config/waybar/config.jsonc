@@ -15,7 +15,6 @@
         "custom/sep-network",
         "bluetooth",
         "network",
-        "custom/notif-badge",
         "tray",
         "custom/sep-battery",
         "battery",
@@ -46,20 +45,20 @@
 
     "cpu": {
         "format": "C {usage}%",
-        "interval": 2,
+        "interval": 30,
         "tooltip": false
     },
 
     "memory": {
         "format": "R {percentage}%",
-        "interval": 5,
+        "interval": 240,
         "tooltip-format": "{used:0.1f}G / {total:0.1f}G\nSwap: {swapUsed:0.1f}G / {swapTotal:0.1f}G"
     },
 
     "custom/temps": {
         "exec": "~/.config/waybar/scripts/temps.sh",
         "return-type": "json",
-        "interval": 30,
+        "interval": 60,
         "format": "{}",
         "tooltip": true
     },
@@ -156,14 +155,6 @@
     //     "tooltip": "Microphone toggle"
     // },
     //
-    "custom/notif-badge": {
-        "format": "{}",
-        "exec": "~/.config/waybar/scripts/notif-badge.sh",
-        "interval": 30,
-        "return-type": "json",
-        "tooltip": "Unread notifications"
-    },
-
     "custom/terminal": {
         "format": "{}",
         "exec": "~/.config/waybar/scripts/terminal-icon.sh",
