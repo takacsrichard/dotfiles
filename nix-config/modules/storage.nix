@@ -78,6 +78,7 @@
     SystemMaxUse=200M
     SystemKeepFree=0
     MaxRetentionSec=2weeks
+    MaxLevelStore=4
   '';
 
 
