@@ -51,6 +51,7 @@
   virtualisation.docker.enable = true;
 
   programs.zsh.enable = true;
+  programs.zsh.enableGlobalCompInit = false; # oh-my-zsh (home-manager) already runs compinit
   programs.wireshark.enable = true;
   
   hardware.graphics.enable = true;

@@ -71,16 +71,11 @@ _clipcopy() {
     print -rn -- "$1" | wl-copy >/dev/null 2>&1
 }
 
-_ezals() {
-    eza -la --git --header --no-user --no-permissions --icons -o --no-permissions "$@"
-    local target=. arg
-    for arg in "$@"; do [[ -e $arg ]] && target=$arg; done
-    local abs=${target:A}
-    _clipcopy "$abs"
-    if [[ -t 1 ]]; then print -r -- "Copied: $abs"; fi
-}
-alias ls='_ezals'
-alias l='_ezals'
+
+alias lsa='eza -la --git --header --no-user --no-permissions --icons -o --no-permissions "$@"'
+alias la='eza -la --git --header --no-user --no-permissions --icons -o --no-permissions "$@"'
+alias ls='eza -l --git --header --no-user --no-permissions --icons -o --no-permissions "$@"'
+alias l='eza -l --git --header --no-user --no-permissions --icons -o --no-permissions "$@"'
 
 # compdef only exists after compinit (interactive shells), and _eza only
 # resolves if eza's completion dir reached fpath. ~/.zshrc builds fpath from
