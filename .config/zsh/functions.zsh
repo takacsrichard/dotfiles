@@ -32,7 +32,7 @@ oz() {
 
 chpwd() {
     [[ -o interactive && -t 1 ]] || return 0
-    _ezals
+    lsa
 }
 
 epoch() { date -d @"$1" '+%Y-%m-%d %H:%M:%S %Z'; }
