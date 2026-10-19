@@ -63,6 +63,29 @@
     interval = "weekly";
   };
 
+  # putzfrau: weekly cleanup of caches, nix generations, etc. (see
+  # ~/sys/sys/putzfrau.sh). Persistent=true catches up a missed run if the
+  # laptop was off at the scheduled time.
+  systemd.timers."putzfrau" = {
+    description = "weekly putzfrau cleanup timer";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "Sat *-*-* 11:00:00";
+      AccuracySec = "1h";
+      Persistent = true;
+    };
+  };
+  systemd.services."putzfrau" = {
+    description = "putzfrau cleanup";
+    serviceConfig = {
+      Type = "oneshot";
+      Nice = 19;
+      IOSchedulingClass = "idle";
+      Environment = "HOME=/home/richard";
+      ExecStart = "/home/richard/sys/jobs/putzfrau.sh";
+    };
+  };
+
   nix.gc = {
     automatic = true;
     dates = "weekly";

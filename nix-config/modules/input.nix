@@ -6,9 +6,13 @@ let
 
   reset-touchpad = pkgs.writeShellScriptBin "reset-touchpad"
     (builtins.readFile ../../scripts/reset-touchpad);
+
+  touchpad-irq = pkgs.writers.writePython3Bin "touchpad-irq"
+    { flakeIgnore = [ "E265" "E501" ]; }
+    (builtins.readFile ../../../sys/trackers/touchpad_irq.py);
 in
 {
-  environment.systemPackages = [ touchpad-filter reset-touchpad ];
+  environment.systemPackages = [ touchpad-filter reset-touchpad touchpad-irq ];
 
   # udev: allow input group to access uinput (needed by touchpad-filter)
   services.udev.extraRules = ''
@@ -43,6 +47,26 @@ in
       StandardOutput = "journal";
       StandardError = "journal";
       SyslogIdentifier = "touchpad-filter";
+    };
+  };
+
+  # Personal tracker: logs ASUE120B touchpad IRQ counter every 5min
+  systemd.user.services.touchpad-irq = {
+    description = "Touchpad IRQ counter tracker";
+    wantedBy = [ "default.target" ];
+    after = [ "default.target" ];
+    unitConfig = {
+      StartLimitIntervalSec = "120s";
+      StartLimitBurst = 5;
+    };
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${touchpad-irq}/bin/touchpad-irq";
+      Restart = "on-failure";
+      RestartSec = "3s";
+      StandardOutput = "journal";
+      StandardError = "journal";
+      SyslogIdentifier = "touchpad-irq";
     };
   };
 }
