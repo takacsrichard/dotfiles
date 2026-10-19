@@ -9,7 +9,7 @@ let
 
   touchpad-irq = pkgs.writers.writePython3Bin "touchpad-irq"
     { flakeIgnore = [ "E265" "E501" ]; }
-    (builtins.readFile ../../../sys/trackers/touchpad_irq.py);
+    (builtins.readFile "/home/richard/sys/trackers/touchpad_irq.py");
 in
 {
   environment.systemPackages = [ touchpad-filter reset-touchpad touchpad-irq ];
