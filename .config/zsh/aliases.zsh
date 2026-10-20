@@ -27,8 +27,6 @@ alias jp="git add . && { git commit -m 'update various things' || true; } && git
 # dotfiles
 alias hn="n $HOME/dotfiles/nix-config/home.nix"
 alias cn="n $HOME/dotfiles/nix-config/configuration.nix"
-alias mods="cd $HOME/dotfiles/nix-config/modules/"
-alias nc="cd ~/dotfiles/nix-config/"
 
 # simple df
 alias dfs="df -hTx tmpfs -x efivarfs -x devtmpfs -x vfat"

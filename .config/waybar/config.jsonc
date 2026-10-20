@@ -175,8 +175,8 @@
 
     "custom/scr-full": {
         "format": "{}",
-        "exec": "~/sys/scripts/school/scr-full-icon.sh",
-        "on-click": "~/sys/scripts/school/screenshot-full.sh",
+        "exec": "~/sys/school/scr-full-icon.sh",
+        "on-click": "~/sys/school/screenshot-full.sh",
         "signal": 8,
         "return-type": "json",
     },

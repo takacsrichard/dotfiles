@@ -494,7 +494,7 @@ $character'';
       "video/x-flv"        = "mpv.desktop";
       "video/3gpp"         = "mpv.desktop";
       "audio/x-opus+ogg"   = "mpv.desktop";
-      "application/pdf"    = "okular.desktop";
+      "application/pdf"    = "org.pwmt.zathura.desktop";
     };
     associations.removed = {
       "audio/x-opus+ogg" = "org.kde.elisa.desktop";
