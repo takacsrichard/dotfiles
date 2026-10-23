@@ -12,6 +12,7 @@
     ./modules/power.nix
     ./modules/input.nix
     ./modules/packages.nix
+    ./modules/mathematica.nix
     ./modules/storage.nix
     # ./modules/net-monitoring.nix unneeded right now
     ./modules/backup.nix

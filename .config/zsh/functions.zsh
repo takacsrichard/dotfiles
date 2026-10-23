@@ -1,3 +1,15 @@
+mathcli() {
+    # Resolve the symlink of wolfram to its true location in the Nix store
+    local real_wolfram=$(readlink -f $(which wolfram))
+    # Traverse up to the main package directory and point to the Executables folder
+    local math_dir=$(dirname $(dirname $real_wolfram))
+    
+
+    
+    "$math_dir/Executables/wolframscript" -code "$1"
+}
+
+
 ef() {
   local line tok
   for line in "${(@Oa)${(f)$(fc -ln 1)}}"; do
