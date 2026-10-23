@@ -10,9 +10,21 @@ let
   touchpad-irq = pkgs.writers.writePython3Bin "touchpad-irq"
     { flakeIgnore = [ "E265" "E501" ]; }
     (builtins.readFile "/home/richard/sys/trackers/touchpad_irq.py");
+
+  keycounts = pkgs.stdenv.mkDerivation {
+    pname = "keycounts";
+    version = "unstable-2026-10-23";
+    src = /home/richard/sys/trackers/keycounts;
+    installPhase = ''
+      install -d $out/bin $out/share/keycounts
+      install keycounts $out/bin
+      install keyboards/uk-header.svg $out/share/keycounts/
+      install keyboards/uk-footer.svg $out/share/keycounts/
+    '';
+  };
 in
 {
-  environment.systemPackages = [ touchpad-filter reset-touchpad touchpad-irq ];
+  environment.systemPackages = [ touchpad-filter reset-touchpad touchpad-irq keycounts ];
 
   # udev: allow input group to access uinput (needed by touchpad-filter)
   services.udev.extraRules = ''
@@ -67,6 +79,27 @@ in
       StandardOutput = "journal";
       StandardError = "journal";
       SyslogIdentifier = "touchpad-irq";
+    };
+  };
+
+  # Keyboard keypress-count heatmap data. Needs raw /dev/input access, so
+  # unlike the trackers above this runs as a system (root) service, not a
+  # per-user one.
+  systemd.tmpfiles.rules = [
+    "d /var/lib/keycounts 0755 root root -"
+  ];
+  systemd.services.keycounts = {
+    description = "Keyboard keypress count tracker";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "local-fs.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${keycounts}/bin/keycounts record";
+      Restart = "on-failure";
+      RestartSec = "3s";
+      StandardOutput = "journal";
+      StandardError = "journal";
+      SyslogIdentifier = "keycounts";
     };
   };
 }
