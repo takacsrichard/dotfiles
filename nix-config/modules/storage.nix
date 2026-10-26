@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   fileSystems."/mnt/hdd" = {
     device = "/dev/disk/by-uuid/00FD-8196";
@@ -75,13 +75,29 @@
       Persistent = true;
     };
   };
+  # passwordless sudo for the one root-only step in putzfrau.sh (journal vacuum)
+  security.sudo.extraRules = [
+    {
+      users = [ "richard" ];
+      commands = [{
+        command = "${config.systemd.package}/bin/journalctl --vacuum-time=2weeks";
+        options = [ "NOPASSWD" ];
+      }];
+    }
+  ];
+
   systemd.services."putzfrau" = {
     description = "putzfrau cleanup";
+    path = [ "/run/wrappers" ] ++ (with pkgs; [ bash restic docker python3 go nodejs uv procps ]);
     serviceConfig = {
       Type = "oneshot";
+      User = "richard";
       Nice = 19;
       IOSchedulingClass = "idle";
       Environment = "HOME=/home/richard";
+      # journald drops info-level stdout (MaxLevelStore=4 below), so log this
+      # unit's output at warning instead or failures show up with no reason
+      SyslogLevel = "warning";
       ExecStart = "/home/richard/sys/jobs/putzfrau.sh";
     };
   };

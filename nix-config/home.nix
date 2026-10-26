@@ -517,42 +517,6 @@ $character'';
       Period = zoom +10
     '';
 
-    "mako/config".text = ''
-      background-color=#1a1a1a
-      text-color=#e6e1e1
-      border-color=#49464a
-      border-size=1
-      border-radius=10
-      padding=12
-      margin=8
-
-      font=Google Sans Flex 12
-      max-icon-size=32
-      icon-path=/usr/share/icons/hicolor
-
-      default-timeout=5000
-      ignore-timeout=0
-      max-visible=5
-
-      layer=overlay
-      anchor=top-right
-
-      [urgency=low]
-      border-color=#49464a
-      default-timeout=3000
-
-      [urgency=normal]
-      border-color=#49464a
-
-      [urgency=high]
-      border-color=#ffb4ab
-      text-color=#ffdad6
-      default-timeout=0
-
-      [mode=do-not-disturb]
-      invisible=1
-    '';
-
     "fastfetch/config.jsonc".text = ''
       {
     "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
@@ -800,25 +764,6 @@ $character'';
         </match>
       </fontconfig>
     '';
-  };
-
-  systemd.user.services.touchpad-filter = {
-    Unit = {
-      Description = "Touchpad BTN_LEFT filter (drops stuck-click ELAN firmware bug)";
-      After = [ "graphical-session.target" ];
-      StartLimitIntervalSec = 120;
-      StartLimitBurst = 5;
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "/usr/local/bin/touchpad-filter";
-      Restart = "on-failure";
-      RestartSec = "3";
-      StandardOutput = "journal";
-      StandardError = "journal";
-      SyslogIdentifier = "touchpad-filter";
-    };
-    Install.WantedBy = [ "default.target" ];
   };
 
   # Auto-symlink everything from ~/dotfiles/.config/ except entries managed
