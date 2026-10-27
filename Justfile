@@ -18,6 +18,9 @@ rebuild:
     sudo nixos-rebuild switch --flake "path:$HOME/dotfiles?dir=nix-config#nixos" --impure
     sudo systemctl restart home-manager-richard.service
 
+check:
+  nix flake check ./nix-config 
+
 # Run all backups: restic to local SSD, then sync to ProtonDrive and Google Drive
 backup:
     ~/dotfiles/scripts/backup.sh
