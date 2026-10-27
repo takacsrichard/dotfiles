@@ -6,6 +6,10 @@
     serviceConfig = {
       Type = "oneshot";
       User = "richard";
+      # journald drops info-level stdout (MaxLevelStore=4 in storage.nix), so
+      # log at warning instead or the script's own success/failure summary
+      # line gets silently dropped
+      SyslogLevel = "warning";
       ExecStart = "/home/richard/dotfiles/scripts/backup.sh";
     };
   };

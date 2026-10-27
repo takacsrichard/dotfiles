@@ -5,9 +5,9 @@
     "position": "top",
     "height": 36,
     "spacing": 0,
-    "modules-left": ["hyprland/workspaces", "custom/terminal", "custom/scr", "custom/scr-full"],
+    "modules-left": ["hyprland/workspaces", "custom/terminal", "custom/scr"],
     "modules-center": ["clock"],
-    "modules-right": [
+    "modules-right": ["custom/scr-full",
         "custom/power-button",
         "custom/refresh-toggle",
         "custom/mic-toggle",

@@ -30,6 +30,9 @@
     interval = "*-*-1 16:00:00";
     fileSystems = [ "/" ];
   };
+  # journald drops info-level stdout (MaxLevelStore=4 below), so log at
+  # warning instead or we can never tell if a scrub found/fixed errors
+  systemd.services."btrfs-scrub--".serviceConfig.SyslogLevel = "warning";
 
   # Btrfs: monthly balance to reclaim space from partially-empty block
   # groups (dusage=50 only rewrites chunks that are <50% full, so this is
@@ -53,6 +56,9 @@
       Type = "oneshot";
       Nice = 19;
       IOSchedulingClass = "idle";
+      # journald drops info-level stdout (MaxLevelStore=4 below), so log at
+      # warning instead or failures show up with no reason
+      SyslogLevel = "warning";
       ExecStart = "${pkgs.btrfs-progs}/bin/btrfs balance start -dusage=50 /";
     };
   };
@@ -62,6 +68,8 @@
     enable = true;
     interval = "weekly";
   };
+  # same journald info-level filtering issue as the other two jobs above
+  systemd.services.fstrim.serviceConfig.SyslogLevel = "warning";
 
   # putzfrau: weekly cleanup of caches, nix generations, etc. (see
   # ~/sys/sys/putzfrau.sh). Persistent=true catches up a missed run if the

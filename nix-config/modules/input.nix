@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, trackers-src, ... }:
 let
   touchpad-filter = pkgs.writers.writePython3Bin "touchpad-filter"
     { libraries = with pkgs.python3Packages; [ evdev ]; flakeIgnore = [ "E265" "E501" ]; }
@@ -9,12 +9,12 @@ let
 
   touchpad-irq = pkgs.writers.writePython3Bin "touchpad-irq"
     { flakeIgnore = [ "E265" "E501" ]; }
-    (builtins.readFile "/home/richard/sys/trackers/touchpad_irq.py");
+    (builtins.readFile "${trackers-src}/touchpad_irq.py");
 
   keycounts = pkgs.stdenv.mkDerivation {
     pname = "keycounts";
     version = "unstable-2026-10-23";
-    src = /home/richard/sys/trackers/keycounts;
+    src = "${trackers-src}/keycounts";
     installPhase = ''
       install -d $out/bin $out/share/keycounts
       install keycounts $out/bin
@@ -43,24 +43,25 @@ in
   ];
 
   # Touchpad BTN_LEFT filter (ASUS VivoBook stuck-click firmware bug)
-  systemd.user.services.touchpad-filter = {
-    description = "Touchpad BTN_LEFT filter";
-    wantedBy = [ "default.target" ];
-    after = [ "default.target" ];
-    unitConfig = {
-      StartLimitIntervalSec = "120s";
-      StartLimitBurst = 5;
-    };
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${touchpad-filter}/bin/touchpad-filter";
-      Restart = "on-failure";
-      RestartSec = "3s";
-      StandardOutput = "journal";
-      StandardError = "journal";
-      SyslogIdentifier = "touchpad-filter";
-    };
-  };
+  # disabled: not needed right now, commented out so it doesn't even try to start
+  # systemd.user.services.touchpad-filter = {
+  #   description = "Touchpad BTN_LEFT filter";
+  #   wantedBy = [ "default.target" ];
+  #   after = [ "default.target" ];
+  #   unitConfig = {
+  #     StartLimitIntervalSec = "120s";
+  #     StartLimitBurst = 5;
+  #   };
+  #   serviceConfig = {
+  #     Type = "simple";
+  #     ExecStart = "${touchpad-filter}/bin/touchpad-filter";
+  #     Restart = "on-failure";
+  #     RestartSec = "3s";
+  #     StandardOutput = "journal";
+  #     StandardError = "journal";
+  #     SyslogIdentifier = "touchpad-filter";
+  #   };
+  # };
 
   # Personal tracker: logs ASUE120B touchpad IRQ counter every 5min
   systemd.user.services.touchpad-irq = {

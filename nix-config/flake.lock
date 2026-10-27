@@ -272,7 +272,8 @@
         "nixpkgs-r": "nixpkgs-r",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
-        "ragenix": "ragenix"
+        "ragenix": "ragenix",
+        "trackers-src": "trackers-src"
       }
     },
     "rust-overlay": {
@@ -324,6 +325,19 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "trackers-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793137076,
+        "narHash": "sha256-HX2cgxvoa/PDCfQFkkJFbHJeQp9Evs+5tss8wZ5NR1s=",
+        "path": "/home/richard/sys/trackers",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/richard/sys/trackers",
+        "type": "path"
       }
     }
   },

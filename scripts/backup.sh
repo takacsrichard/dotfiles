@@ -41,7 +41,6 @@ restic_backup() {
         --exclude "$HOME/.config/discord" \
         --exclude "$HOME/.config/Code" \
         --exclude "$HOME/.config/libreoffice" \
-        --exclude "$HOME/.config/.venv" \
         --exclude "$HOME/.local/share/Trash" \
         --exclude "$HOME/.local/share/baloo" \
         --exclude "$HOME/.local/share/nvim" \
@@ -49,7 +48,7 @@ restic_backup() {
         --exclude "$HOME/.claude/paste-cache" \
         --exclude "$HOME/.zcompdump*" \
         --exclude "$HOME/.Copy (1) config" \
-        --exclude "**/.venv/" \
+        --exclude "*.venv*" \
         --exclude "*.lock" \
         "$HOME"
     local backup_rc=$?
@@ -61,7 +60,8 @@ restic_backup() {
 }
 
 sync_protondrive() {
-    rclone copy "$HOME/Documents/" pdrive:backup/documents \
+    local src="$1" dest="$2"
+    rclone copy "$src" "pdrive:$dest" \
         --protondrive-replace-existing-draft=true -P
 }
 
@@ -86,7 +86,9 @@ if (( ! ran_any_restic )); then
     failed+=("restic backup (no disks mounted)")
 fi
 
-run_step "ProtonDrive sync" sync_protondrive
+run_step "ProtonDrive sync (documents)" sync_protondrive "$HOME/Documents/" "backup/documents"
+run_step "ProtonDrive sync (uni)" sync_protondrive "$HOME/uni/" "backup/uni"
+run_step "ProtonDrive sync (life)" sync_protondrive "$HOME/life/" "backup/life"
 
 if (( ${#failed[@]} )); then
     echo "==> Backup finished with failures: ${failed[*]}" >&2

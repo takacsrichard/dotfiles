@@ -10,8 +10,9 @@
     };
     ragenix.url = "github:yaxitech/ragenix";
     nur.url = "github:nix-community/NUR";
+    trackers-src = { url = "path:/home/richard/sys/trackers"; flake = false; };
   };
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-r, home-manager, ragenix, nur, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-r, home-manager, ragenix, nur, trackers-src, ... }:
   let
     system = "x86_64-linux";
     pkgs-unstable = import nixpkgs-unstable {
@@ -26,7 +27,7 @@
   in {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       inherit system;
-      specialArgs = { inherit ragenix pkgs-r; };
+      specialArgs = { inherit ragenix pkgs-r trackers-src; };
       modules = [
         ./configuration.nix
         ragenix.nixosModules.default
