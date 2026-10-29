@@ -10,9 +10,9 @@
     "modules-right": ["custom/scr-full",
         "custom/power-button",
         "custom/refresh-toggle",
-        "custom/mic-toggle",
         "backlight",
         "wireplumber",
+        "custom/mic-toggle",
         "custom/sep-network",
         "bluetooth",
         "network",
@@ -147,15 +147,16 @@
 
     // ── TOGGLE BUTTONS ────────────────────────────────────────
 
-    // "custom/mic-toggle": {
-    //     "format": "{}",
-    //     "exec": "~/.config/waybar/scripts/mic-toggle.sh show",
-    //     "on-click": "~/.config/waybar/scripts/mic-toggle.sh toggle",
-    //     "interval": 30,
-    //     "return-type": "json",
-    //     "tooltip": "Microphone toggle"
-    // },
-    //
+    "custom/mic-toggle": {
+        "format": "{}",
+        "exec": "~/.config/waybar/scripts/mic-toggle.sh status",
+        "on-click": "~/.config/waybar/scripts/mic-toggle.sh toggle",
+        "interval": "once",
+        "signal": 10,
+        "return-type": "json",
+        "tooltip": true
+    },
+
     "custom/terminal": {
         "format": "{}",
         "exec": "~/.config/waybar/scripts/terminal-icon.sh",
