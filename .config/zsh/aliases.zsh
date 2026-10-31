@@ -4,6 +4,7 @@
 
 alias ...="cd ../.."
 
+alias b="bat"
 # multimedia 
 alias sw="swayimg"
 alias img="kitten icat"

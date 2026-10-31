@@ -108,6 +108,12 @@ libcalc() {
     libreoffice --calc "$@"
 }
 
+lc() {
+    libreoffice --calc "$@"
+}
+
+
+
 # mkdir + cd in one
 mkcd() {
     mkdir -p "$1" && cd "$1" && cpwd 
