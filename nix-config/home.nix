@@ -735,6 +735,8 @@ $character'';
       set  -g history-limit     2000
       set  -g allow-passthrough on
 
+      bind-key -n C-n select-pane -t :.+
+
       bind-key -n S-Up copy-mode -e \; send-keys -X -N 1 scroll-up
       bind-key -T copy-mode-vi S-Up send-keys -X -N 1 scroll-up
       bind-key -T copy-mode-vi S-Down send-keys -X -N 1 scroll-down
