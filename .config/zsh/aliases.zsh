@@ -44,6 +44,7 @@ alias n="nvim"
 
 
 alias notmux="alacritty -e $SHELL"
+alias tmuxrel="tmux source-file ~/.config/tmux/tmux.conf"
 
 # btrfs balance
 # screenshot
