@@ -12,7 +12,7 @@
 }
 
 window#waybar {
-    background-color: #111111;
+    background-image: linear-gradient(90deg, #0d0a0f, #1a1020);
     color: #e6e1e1;
     border-bottom: 1px solid #49464a;
 }
