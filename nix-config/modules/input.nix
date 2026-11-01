@@ -11,6 +11,14 @@ let
     { flakeIgnore = [ "E265" "E501" ]; }
     (builtins.readFile "${trackers-src}/touchpad_irq.py");
 
+  bluetooth-tracker = pkgs.writers.writePython3Bin "bluetooth-tracker"
+    { flakeIgnore = [ "E265" "E501" ]; }
+    (builtins.readFile "${trackers-src}/bluetooth_tracker.py");
+
+  workspaces-tracker = pkgs.writers.writePython3Bin "workspaces-tracker"
+    { flakeIgnore = [ "E265" "E501" ]; }
+    (builtins.readFile "${trackers-src}/workspaces_tracker.py");
+
   keycounts = pkgs.stdenv.mkDerivation {
     pname = "keycounts";
     version = "unstable-2026-10-23";
@@ -24,7 +32,7 @@ let
   };
 in
 {
-  environment.systemPackages = [ touchpad-filter reset-touchpad touchpad-irq keycounts ];
+  environment.systemPackages = [ touchpad-filter reset-touchpad touchpad-irq bluetooth-tracker workspaces-tracker keycounts ];
 
   # udev: allow input group to access uinput (needed by touchpad-filter)
   services.udev.extraRules = ''
@@ -80,6 +88,46 @@ in
       StandardOutput = "journal";
       StandardError = "journal";
       SyslogIdentifier = "touchpad-irq";
+    };
+  };
+
+  # Personal tracker: logs connected bluetooth devices every 2min
+  systemd.user.services.bluetooth-tracker = {
+    description = "Bluetooth connection tracker";
+    wantedBy = [ "default.target" ];
+    after = [ "default.target" ];
+    unitConfig = {
+      StartLimitIntervalSec = "120s";
+      StartLimitBurst = 5;
+    };
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${bluetooth-tracker}/bin/bluetooth-tracker";
+      Restart = "on-failure";
+      RestartSec = "3s";
+      StandardOutput = "journal";
+      StandardError = "journal";
+      SyslogIdentifier = "bluetooth-tracker";
+    };
+  };
+
+  # Personal tracker: logs count of active hyprland workspaces every 2min
+  systemd.user.services.workspaces-tracker = {
+    description = "Hyprland active workspace count tracker";
+    wantedBy = [ "default.target" ];
+    after = [ "default.target" ];
+    unitConfig = {
+      StartLimitIntervalSec = "120s";
+      StartLimitBurst = 5;
+    };
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${workspaces-tracker}/bin/workspaces-tracker";
+      Restart = "on-failure";
+      RestartSec = "3s";
+      StandardOutput = "journal";
+      StandardError = "journal";
+      SyslogIdentifier = "workspaces-tracker";
     };
   };
 
