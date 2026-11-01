@@ -330,8 +330,8 @@
     "trackers-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1793137076,
-        "narHash": "sha256-HX2cgxvoa/PDCfQFkkJFbHJeQp9Evs+5tss8wZ5NR1s=",
+        "lastModified": 1793575578,
+        "narHash": "sha256-viI2f9o1o8cKvZFCRSFv1j/uE9QKqDsWN4x2G3Xn0JI=",
         "path": "/home/richard/sys/trackers",
         "type": "path"
       },
