@@ -19,6 +19,10 @@ let
     { flakeIgnore = [ "E265" "E501" ]; }
     (builtins.readFile "${trackers-src}/workspaces_tracker.py");
 
+  keylog = pkgs.writers.writePython3Bin "keylog"
+    { libraries = with pkgs.python3Packages; [ evdev ]; flakeIgnore = [ "E265" "E501" ]; }
+    (builtins.readFile "${trackers-src}/keylog/keylog.py");
+
   keycounts = pkgs.stdenv.mkDerivation {
     pname = "keycounts";
     version = "unstable-2026-10-23";
@@ -32,7 +36,7 @@ let
   };
 in
 {
-  environment.systemPackages = [ touchpad-filter reset-touchpad touchpad-irq bluetooth-tracker workspaces-tracker keycounts ];
+  environment.systemPackages = [ touchpad-filter reset-touchpad touchpad-irq bluetooth-tracker workspaces-tracker keylog keycounts ];
 
   # udev: allow input group to access uinput (needed by touchpad-filter)
   services.udev.extraRules = ''
@@ -130,6 +134,26 @@ in
       StandardOutput = "journal";
       StandardError = "journal";
       SyslogIdentifier = "workspaces-tracker";
+    };
+  };
+
+  # Personal tracker: logs every keystroke (timestamp, key, up/down/repeat)
+  systemd.user.services.keylog = {
+    description = "Keystroke logger";
+    wantedBy = [ "default.target" ];
+    after = [ "default.target" ];
+    unitConfig = {
+      StartLimitIntervalSec = "120s";
+      StartLimitBurst = 5;
+    };
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${keylog}/bin/keylog";
+      Restart = "on-failure";
+      RestartSec = "3s";
+      StandardOutput = "journal";
+      StandardError = "journal";
+      SyslogIdentifier = "keylog";
     };
   };
 
