@@ -96,6 +96,7 @@ in
     description = "Bluetooth connection tracker";
     wantedBy = [ "default.target" ];
     after = [ "default.target" ];
+    path = [ pkgs.bluez ];
     unitConfig = {
       StartLimitIntervalSec = "120s";
       StartLimitBurst = 5;
@@ -116,6 +117,7 @@ in
     description = "Hyprland active workspace count tracker";
     wantedBy = [ "default.target" ];
     after = [ "default.target" ];
+    path = [ pkgs.hyprland ];
     unitConfig = {
       StartLimitIntervalSec = "120s";
       StartLimitBurst = 5;
