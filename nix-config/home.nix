@@ -101,7 +101,7 @@ home.packages = with pkgs; [
   zathura
   anki
   librsvg
-  strawberry
+  gapless
 
   # productivity
   pkgs-unstable.todoist-cli
