@@ -16,4 +16,9 @@ hl.on("hyprland.start", function ()
     -- Cursor
     hl.exec_cmd("hyprctl setcursor Bibata-Modern-Classic 24")
 
+    -- Docker services (restart policy alone won't bring these back if they
+    -- were left stopped at last shutdown, e.g. mid dev-iteration)
+    hl.exec_cmd("docker compose -f /home/richard/dashboard/docker-compose.yml up -d")
+    hl.exec_cmd("docker compose -f /home/richard/code/todoist-enhanced/compose.yml up -d")
+
 end)
