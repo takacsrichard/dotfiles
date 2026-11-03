@@ -105,7 +105,7 @@
         "format-disconnected": "󰤭",
         "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}",
         "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr}",
-        "on-click": "kitty -1 -e nmtui"
+        "on-click": "alacritty -e nmtui"
     },
 
     "bluetooth": {
@@ -115,7 +115,7 @@
         "format-off": "󰂲",
         "tooltip-format": "{status}",
         "tooltip-format-connected": "{device_alias}",
-        "on-click": "kitty -1 bluetui"
+        "on-click": "alacritty -e bluetui"
     },
 
     // ── SYSTEM TRAY ───────────────────────────────────────────
