@@ -16,6 +16,7 @@
     ./modules/storage.nix
     ./modules/backup.nix
     ./modules/gh.nix
+    ./modules/monitoring.nix
   ];
 
   # Run home-manager activation after graphical.target instead of before it,

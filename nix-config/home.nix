@@ -47,6 +47,8 @@ home.packages = with pkgs; [
   duf
   gdu
   btdu
+  smartmontools
+  btrfs-heatmap
 
   # networking & downloads
   curl
