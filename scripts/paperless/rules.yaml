@@ -1,0 +1,39 @@
+# declarative tag taxonomy + filename-based auto-classify rules for paperless-ngx.
+# edit this file, then run ./sync.py to push it to the running instance (idempotent).
+#
+# each entry becomes:
+#  - a Tag (plain, no content-matching -- content OCR matching is unreliable for
+#    scans, so classification happens on filename instead via a Workflow)
+#  - a Workflow with one "consumption started" trigger per filename glob, which
+#    assigns the tag to any newly consumed file whose name matches.
+#
+# globs are case-insensitive, * wildcards, matched against the filename only.
+
+paperless_url: http://localhost:8000
+tags:
+  health_records:
+    globs: ["*bloodwork*", "*dental*", "*orthodontic*", "*ankle*", "*nosebleed*",
+            "*chemical_burn*", "*astigmatism*", "*color_deficiency*", "*xray*",
+            "*immunization*"]
+  vaccination:
+    globs: ["*vaccination*", "*impfpass*", "*eimpfpass*"]
+  insurance:
+    globs: ["*insurance*", "*versicherung*", "*jogviszony*", "*taj_invalidation*"]
+  identity:
+    globs: ["*passport*", "*ecard*", "*icard*", "*ausweis*", "*azonosito*",
+            "*strafregister*", "*signature*", "*bankcard*"]
+  residence:
+    globs: ["*meldezettel*", "*anmeldebescheinigung*", "*lease*", "*dormy*",
+            "*accommodation_contract*", "*heimstatut*"]
+  visa:
+    globs: ["*visa*", "*ds160*", "*ds_2019*", "*i94*", "*sevis*", "*dv26*",
+            "*i_901*"]
+  security:
+    globs: ["*pin_puk*", "*bitwarden*", "*authenticator*", "*_recovery_*"]
+  financial:
+    globs: ["*financial*", "*sponsor*", "*funds_confirmation*", "*payment_acceptance*"]
+  education:
+    globs: ["*lebenslauf*", "*cv_*", "*studierendenausweis*", "*notice_of_admission*",
+            "*uiuc*"]
+  duplicate:
+    globs: ["*duplicate*"]
