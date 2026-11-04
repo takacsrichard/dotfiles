@@ -749,7 +749,7 @@ $character'';
       set -g @plugin 'tmux-plugins/tmux-resurrect'
       set -g @plugin 'tmux-plugins/tmux-continuum'
 
-      set -g @continuum-restore 'on'
+      set -g @continuum-restore 'off'
       set -g @continuum-save-interval '10'
 
       run '~/.tmux/plugins/tpm/tpm'
