@@ -37,3 +37,44 @@ tags:
             "*uiuc*"]
   duplicate:
     globs: ["*duplicate*"]
+
+  # --- general everyday categories (gdrive:paperless dump folder) ---------
+  invoices_receipts:
+    globs: ["*rechnung*", "*quittung*", "*beleg*", "*kassenbon*", "*kassazettel*",
+            "*invoice*", "*receipt*", "*bill*", "*szamla*", "*nyugta*", "*blokk*"]
+  supermarket:
+    globs: ["*spar*", "*hofer*", "*billa*", "*penny*", "*lidl*"]
+  bank_statements:
+    globs: ["*kontoauszug*", "*bankauszug*", "*bank_statement*", "*bankstatement*",
+            "*szamlakivonat*", "*bankszamlakivonat*"]
+  utilities:
+    globs: ["*strom*", "*gas_*", "*_gas*", "*wasser*", "*telefon*", "*internet*",
+            "*rezsi*", "*kozuzemi*", "*utility*", "*nebenkosten*"]
+  payslips:
+    globs: ["*lohnzettel*", "*lohnabrechnung*", "*gehaltsabrechnung*", "*payslip*",
+            "*fizetesi*", "*berpapir*", "*berjegyzek*"]
+  tax:
+    globs: ["*steuer*", "*finanzamt*", "*tax_*", "*_tax*", "*adobevallas*",
+            "*ado_*", "*_ado*"]
+  contracts:
+    globs: ["*vertrag*", "*contract*", "*szerzodes*"]
+  warranty:
+    globs: ["*garantie*", "*warranty*", "*garancia*"]
+  manuals:
+    globs: ["*anleitung*", "*bedienungsanleitung*", "*handbuch*", "*manual*",
+            "*instructions*", "*kezikonyv*", "*utmutato*"]
+  certificates:
+    globs: ["*zeugnis*", "*diplom*", "*certificate*", "*urkunde*",
+            "*bizonyitvany*", "*oklevel*"]
+  correspondence:
+    globs: ["*brief*", "*letter*", "*schreiben*", "*level_*", "*_level*"]
+  subscriptions:
+    globs: ["*abo_*", "*_abo*", "*abonnement*", "*subscription*", "*elofizetes*"]
+  real_estate:
+    globs: ["*miete*", "*mietvertrag*", "*rent_*", "*_rent*", "*lease*",
+            "*berleti*"]
+  vehicle:
+    globs: ["*kfz*", "*fahrzeug*", "*vehicle*", "*gepjarmu*", "*forgalmi*"]
+  employment:
+    globs: ["*arbeitsvertrag*", "*dienstvertrag*", "*employment_contract*",
+            "*munkaszerzodes*"]

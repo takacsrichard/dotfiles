@@ -10,7 +10,7 @@ let
   );
 in
 {
-  imports = [ ./modules/firefox.nix ./modules/libreoffice.nix ];
+  imports = [ ./modules/firefox.nix ./modules/libreoffice.nix ./modules/paperless-dump.nix ];
 
   home.username = "richard";
   home.homeDirectory = "/home/richard";
@@ -505,7 +505,10 @@ $character'';
   xdg.configFile."mimeapps.list".force = true;
 
   xdg.configFile = {
-    "zathura/zathurarc".text = "set selection-clipboard clipboard\n";
+    "zathura/zathurarc".text = ''
+      set selection-clipboard clipboard
+      set guioptions shv
+    '';
 
     "swayimg/config".text = ''
       [list]

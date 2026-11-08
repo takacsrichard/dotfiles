@@ -38,8 +38,20 @@ o() {
     okular "$@" >/dev/null 2>&1 & disown
 }
 
-oz() {
+oz () {
+	zathura "$@" > /dev/null 2>&1 &
+	disown
+}
+
+
+oza() {
+# TODO
     zathura "$@" >/dev/null 2>&1 & disown
+    if [[ -n "$TMUX" ]]; then
+        tmux kill-window
+    else
+        exit
+    fi
 }
 
 chpwd() {
