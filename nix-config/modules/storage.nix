@@ -42,7 +42,7 @@
     description = "regular btrfs balance timer on /";
     wantedBy = [ "timers.target" ];
     timerConfig = {
-      OnCalendar = "*-*-2 16:00:00";
+      OnCalendar = "Sat *-*-* 16:00:00";
       AccuracySec = "1d";
       Persistent = true;
     };
@@ -59,7 +59,7 @@
       # journald drops info-level stdout (MaxLevelStore=4 below), so log at
       # warning instead or failures show up with no reason
       SyslogLevel = "warning";
-      ExecStart = "${pkgs.btrfs-progs}/bin/btrfs balance start -dusage=50 /";
+      ExecStart = "${pkgs.btrfs-progs}/bin/btrfs balance start -dusage=30 /";
     };
   };
 
