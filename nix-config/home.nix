@@ -72,7 +72,6 @@ home.packages = with pkgs; [
   # development
   git
   gcc
-  python3
   uv
   claude-code
   pkgs-unstable.antigravity-cli
