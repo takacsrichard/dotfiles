@@ -51,6 +51,17 @@ let
     # workflow / compiled-code deps that many packages assume present
     devtools remotes renv conflicted tictoc furrr Rcpp RcppArmadillo
   ];
+
+  # ad hoc numeric/data science scripts — one interpreter with everything
+  # linked in, same idea as rPkgs above. bump by adding to this list.
+  pyEnv = pkgs.python3.withPackages (ps: with ps; [
+    numpy pandas scipy sympy
+    matplotlib seaborn plotly
+    statsmodels scikit-learn
+    requests beautifulsoup4 lxml
+    openpyxl xlrd
+    jupyter ipython
+  ]);
 in
 {
   environment.systemPackages = with pkgs; [
@@ -62,6 +73,7 @@ in
     # on request from `just update` since these often rebuild from source
     (pkgs-r.rWrapper.override { packages = rPkgs; })
     (pkgs-r.rstudioWrapper.override { packages = rPkgs; })
+    pyEnv
     (texlive.combine {
       inherit (texlive)
         scheme-medium
