@@ -65,6 +65,7 @@ let
 in
 {
   environment.systemPackages = with pkgs; [
+    spotify
     age
     ffmpeg
     gnucash
