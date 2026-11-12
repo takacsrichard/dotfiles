@@ -2,7 +2,11 @@
 # collects local mount + rclone remote usage once a day, writing json for the
 # dashboard's sys tab. mounts/remotes that fail (eg. ssd/hdd not plugged in)
 # keep their last known numbers instead of disappearing.
-import json, os, shutil, subprocess, time
+import json
+import os
+import shutil
+import subprocess
+import time
 
 OUT = "/home/richard/dashboard/data/disks.json"
 RCLONE_PASSWORD_FILE = "/run/agenix/rclone-password"
@@ -36,8 +40,12 @@ def local_usage(path):
 
 def rclone_usage(remote):
     try:
-        res = subprocess.run(["rclone", "about", remote, "--json"],
-                              capture_output=True, text=True, timeout=60)
+        res = subprocess.run(
+            ["rclone", "about", remote, "--json"],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
         return json.loads(res.stdout) if res.returncode == 0 else None
     except Exception:
         return None

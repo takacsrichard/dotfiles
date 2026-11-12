@@ -1,18 +1,25 @@
 { pkgs, ... }:
 {
-  environment.systemPackages = with pkgs; [ smartmontools btrfs-heatmap ];
+  environment.systemPackages = with pkgs; [
+    smartmontools
+    btrfs-heatmap
+  ];
 
   systemd.tmpfiles.rules = [
     "d /home/richard/dashboard/data 0755 richard users -"
   ];
 
- # services.tailscale.enable = true; # not worth it, dashboard stays laptop-only
+  # services.tailscale.enable = true; # not worth it, dashboard stays laptop-only
 
   # smartctl: short self-test on the nvme drive every 5 days, result dumped
   # as json for the dashboard sys tab
   systemd.services."smartctl-test" = {
     description = "short smartctl self-test on nvme0n1";
-    path = with pkgs; [ smartmontools bash coreutils ];
+    path = with pkgs; [
+      smartmontools
+      bash
+      coreutils
+    ];
     serviceConfig = {
       Type = "oneshot";
       Nice = 19;
@@ -34,7 +41,11 @@
   # btrfs-heatmap: chunk heatmap png of / every 2 days, for the dashboard sys tab
   systemd.services."btrfs-heatmap" = {
     description = "generate btrfs heatmap png for /";
-    path = with pkgs; [ btrfs-heatmap bash coreutils ];
+    path = with pkgs; [
+      btrfs-heatmap
+      bash
+      coreutils
+    ];
     serviceConfig = {
       Type = "oneshot";
       Nice = 19;
@@ -57,7 +68,10 @@
   # same rclone config password secret as auto-backup.
   systemd.services."disk-usage" = {
     description = "collect local + rclone disk usage for dashboard";
-    path = with pkgs; [ python3 rclone ];
+    path = with pkgs; [
+      python3
+      rclone
+    ];
     serviceConfig = {
       Type = "oneshot";
       Nice = 19;

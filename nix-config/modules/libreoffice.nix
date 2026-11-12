@@ -35,7 +35,7 @@ let
       # Expected output: [ "xx.xx" ]
       lib.match "^([[:digit:]]+[.][[:digit:]]+)[.]?.*$"
     ) packageVersion;
-    generatedVersion = nullFallback (lib.head) matchedVersions;
+    generatedVersion = nullFallback lib.head matchedVersions;
     hasExplicitVersion = lib.hasAttrByPath [ versionPath versionKey ] cfg.settings;
   };
 in

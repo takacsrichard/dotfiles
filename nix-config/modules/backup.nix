@@ -2,7 +2,10 @@
 {
   systemd.services.auto-backup = {
     description = "sync to pdrive";
-    path = [ pkgs.rclone pkgs.bash ];
+    path = [
+      pkgs.rclone
+      pkgs.bash
+    ];
     serviceConfig = {
       Type = "oneshot";
       User = "richard";
@@ -31,7 +34,12 @@
   # one-time state transition, not a persistent condition
   systemd.services.backup-ssd = {
     description = "restic backup to ssd";
-    path = [ pkgs.restic pkgs.bash pkgs.util-linux pkgs.coreutils ];
+    path = [
+      pkgs.restic
+      pkgs.bash
+      pkgs.util-linux
+      pkgs.coreutils
+    ];
     after = [ "mnt-ssd.mount" ];
     serviceConfig = {
       Type = "oneshot";
@@ -50,7 +58,12 @@
 
   systemd.services.backup-hdd = {
     description = "restic backup to hdd";
-    path = [ pkgs.restic pkgs.bash pkgs.util-linux pkgs.coreutils ];
+    path = [
+      pkgs.restic
+      pkgs.bash
+      pkgs.util-linux
+      pkgs.coreutils
+    ];
     after = [ "mnt-hdd.mount" ];
     serviceConfig = {
       Type = "oneshot";

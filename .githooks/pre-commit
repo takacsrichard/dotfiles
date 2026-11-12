@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# auto-format before commit: runs `just fmt`, then re-stages only the files
+# that were already staged for this commit (so it never pulls in unrelated
+# unstaged edits sitting elsewhere in the tree).
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+staged_before="$(git diff --cached --name-only)"
+
+just fmt
+
+while IFS= read -r f; do
+    [ -n "$f" ] && [ -f "$f" ] && git add -- "$f"
+done <<< "$staged_before"

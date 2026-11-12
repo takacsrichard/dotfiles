@@ -1,7 +1,17 @@
-{ config, pkgs, pkgs-unstable, ... }:
+{
+  config,
+  pkgs,
+  pkgs-unstable,
+  ...
+}:
 let
   dotfilesConfig = builtins.readDir ../.config;
-  autoExcluded = [ "systemd" "mimeapps.list" "fontconfig" "doublecmd" ];
+  autoExcluded = [
+    "systemd"
+    "mimeapps.list"
+    "fontconfig"
+    "doublecmd"
+  ];
   autoConfigEntries = builtins.listToAttrs (
     builtins.map (name: {
       name = ".config/${name}";
@@ -10,111 +20,114 @@ let
   );
 in
 {
-  imports = [ ./modules/firefox.nix ./modules/libreoffice.nix ./modules/paperless-dump.nix ];
+  imports = [
+    ./modules/firefox.nix
+    ./modules/libreoffice.nix
+    ./modules/paperless-dump.nix
+  ];
 
   home.username = "richard";
   home.homeDirectory = "/home/richard";
   home.stateVersion = "24.05";
   targets.genericLinux.enable = true;
 
-home.packages = with pkgs; [
-  # shell & CLI utilities
-  ripgrep
-  fd
-  fzf
-  zoxide
-  bat
-  sd
-  jq
-  yq-go
-  tree
-  less
-  tldr
-  bc
-  libqalculate
-  psmisc
-  just
-  tmux
-  yazi
-  doublecmd
+  home.packages = with pkgs; [
+    # shell & CLI utilities
+    ripgrep
+    fd
+    fzf
+    zoxide
+    bat
+    sd
+    jq
+    yq-go
+    tree
+    less
+    tldr
+    bc
+    libqalculate
+    psmisc
+    just
+    tmux
+    yazi
+    doublecmd
 
-  # system monitoring & disk usage
-  fastfetch
-  htop
-  btop
-  procs
-  sysstat
-  duf
-  gdu
-  btdu
-  smartmontools
-  btrfs-heatmap
+    # system monitoring & disk usage
+    fastfetch
+    htop
+    btop
+    procs
+    sysstat
+    duf
+    gdu
+    btdu
+    smartmontools
+    btrfs-heatmap
 
-  # networking & downloads
-  curl
-  wget
-  yt-dlp
-  translate-shell
-  qbittorrent
-  libnatpmp
+    # networking & downloads
+    curl
+    wget
+    yt-dlp
+    translate-shell
+    qbittorrent
+    libnatpmp
 
-  # files, sync & backup
-  rclone
-  rsync
-  restic
-  syncthing
+    # files, sync & backup
+    rclone
+    rsync
+    restic
+    syncthing
 
-  # terminals & editors
-  kitty
-  alacritty
-  neovim
+    # terminals & editors
+    kitty
+    alacritty
+    neovim
 
-  # development
-  git
-  gcc
-  uv
-  claude-code
-  pkgs-unstable.antigravity-cli
-  typst
-  tinymist
+    # development
+    git
+    gcc
+    uv
+    claude-code
+    pkgs-unstable.antigravity-cli
+    typst
+    tinymist
 
-  # hyprland desktop
-  hyprlock
-  hypridle
-  wlogout
-  waybar
-  fuzzel
-  bluetui
+    # hyprland desktop
+    hyprlock
+    hypridle
+    wlogout
+    waybar
+    fuzzel
+    bluetui
 
-  # screenshots & recording
-  grim
-  slurp
-  wf-recorder
+    # screenshots & recording
+    grim
+    slurp
+    wf-recorder
 
-  # clipboard & passwords
-  wl-clipboard
-  rbw
-  pinentry-qt
+    # clipboard & passwords
+    wl-clipboard
+    rbw
+    pinentry-qt
 
-  # media & documents
-  mpv
-  swayimg
-  zathura
-  anki
-  librsvg
-  gapless
+    # media & documents
+    mpv
+    swayimg
+    zathura
+    anki
+    librsvg
+    gapless
 
-  # productivity
-  pkgs-unstable.todoist-cli
-];
+    # productivity
+    pkgs-unstable.todoist-cli
+  ];
 
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     EDITOR = "nvim";
     VISUAL = "nvim";
   };
-  
-  
+
   programs.obsidian = {
     enable = true;
 
@@ -122,9 +135,7 @@ home.packages = with pkgs; [
     defaultSettings.app = {
       alwaysUpdateLinks = true;
     };
-   };
-   
-
+  };
 
   programs.eza = {
     enable = true;
@@ -139,7 +150,10 @@ home.packages = with pkgs; [
     oh-my-zsh = {
       enable = true;
       theme = "";
-      plugins = [ "git" "extract" ];
+      plugins = [
+        "git"
+        "extract"
+      ];
     };
     initContent = ''
       # Token is only exported to the `gh` process itself, not the whole shell,
@@ -178,10 +192,10 @@ home.packages = with pkgs; [
     enableZshIntegration = true;
 
     settings = {
-      "$schema" = ''https://starship.rs/config-schema.json'';
+      "$schema" = "https://starship.rs/config-schema.json";
       format = ''
-$directory$git_branch$git_status$python $time
-$character'';
+        $directory$git_branch$git_status$python $time
+        $character'';
       aws = {
         format = ''\[[$symbol($profile)(\($region\))(\[$duration\])]($style)\]'';
       };
@@ -446,7 +460,7 @@ $character'';
       };
       time = {
         format = ''\[[$time]($style)\]'';
-        time_format = ''%H:%M'';
+        time_format = "%H:%M";
         disabled = false;
       };
       typst = {
@@ -476,26 +490,26 @@ $character'';
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "image/jpeg"         = "swayimg.desktop";
-      "image/png"          = "swayimg.desktop";
-      "image/gif"          = "swayimg.desktop";
-      "image/webp"         = "swayimg.desktop";
-      "image/bmp"          = "swayimg.desktop";
-      "image/tiff"         = "swayimg.desktop";
-      "image/svg+xml"      = "swayimg.desktop";
-      "image/x-icon"       = "swayimg.desktop";
-      "video/mp4"          = "mpv.desktop";
-      "video/x-matroska"   = "mpv.desktop";
-      "video/webm"         = "mpv.desktop";
-      "video/avi"          = "mpv.desktop";
-      "video/quicktime"    = "mpv.desktop";
-      "video/x-msvideo"    = "mpv.desktop";
-      "video/mpeg"         = "mpv.desktop";
-      "video/ogg"          = "mpv.desktop";
-      "video/x-flv"        = "mpv.desktop";
-      "video/3gpp"         = "mpv.desktop";
-      "audio/x-opus+ogg"   = "mpv.desktop";
-      "application/pdf"    = "org.pwmt.zathura.desktop";
+      "image/jpeg" = "swayimg.desktop";
+      "image/png" = "swayimg.desktop";
+      "image/gif" = "swayimg.desktop";
+      "image/webp" = "swayimg.desktop";
+      "image/bmp" = "swayimg.desktop";
+      "image/tiff" = "swayimg.desktop";
+      "image/svg+xml" = "swayimg.desktop";
+      "image/x-icon" = "swayimg.desktop";
+      "video/mp4" = "mpv.desktop";
+      "video/x-matroska" = "mpv.desktop";
+      "video/webm" = "mpv.desktop";
+      "video/avi" = "mpv.desktop";
+      "video/quicktime" = "mpv.desktop";
+      "video/x-msvideo" = "mpv.desktop";
+      "video/mpeg" = "mpv.desktop";
+      "video/ogg" = "mpv.desktop";
+      "video/x-flv" = "mpv.desktop";
+      "video/3gpp" = "mpv.desktop";
+      "audio/x-opus+ogg" = "mpv.desktop";
+      "application/pdf" = "org.pwmt.zathura.desktop";
     };
     associations.removed = {
       "audio/x-opus+ogg" = "org.kde.elisa.desktop";
@@ -522,182 +536,182 @@ $character'';
     '';
 
     "fastfetch/config.jsonc".text = ''
-      {
-    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
-    "display": {
-        "separator": " "
-    },
-    "modules": [
-        {
-            "type": "host",
-            "key": "╭─󰌢",
-            "keyColor": "green"
-        },
-        {
-            "type": "cpu",
-            "key": "├─󰻠",
-            "keyColor": "green"
-        },
-        {
-            "type": "gpu",
-            "key": "├─󰍛",
-            "keyColor": "green"
-        },
-        {
-            "type": "disk",
-            "key": "├─",
-            "keyColor": "green"
-        },
-        {
-            "type": "memory",
-            "key": "├─󰑭",
-            "keyColor": "green"
-        },
-        {
-            "type": "swap",
-            "key": "├─󰓡",
-            "keyColor": "green"
-        },
-        {
-            "type": "display",
-            "key": "├─󰍹",
-            "keyColor": "green"
-        },
-        {
-            "type": "brightness",
-            "key": "├─󰃞",
-            "keyColor": "green"
-        },
-        {
-            "type": "battery",
-            "key": "├─",
-            "keyColor": "green"
-        },
-        {
-            "type": "poweradapter",
-            "key": "├─",
-            "keyColor": "green"
-        },
-        {
-            "type": "gamepad",
-            "key": "├─",
-            "keyColor": "green"
-        },
-        {
-            "type": "bluetooth",
-            "key": "├─",
-            "keyColor": "green"
-        },
-        {
-            "type": "sound",
-            "key": "╰─",
-            "keyColor": "green"
-        },
-        "break",
+            {
+          "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+          "display": {
+              "separator": " "
+          },
+          "modules": [
+              {
+                  "type": "host",
+                  "key": "╭─󰌢",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "cpu",
+                  "key": "├─󰻠",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "gpu",
+                  "key": "├─󰍛",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "disk",
+                  "key": "├─",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "memory",
+                  "key": "├─󰑭",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "swap",
+                  "key": "├─󰓡",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "display",
+                  "key": "├─󰍹",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "brightness",
+                  "key": "├─󰃞",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "battery",
+                  "key": "├─",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "poweradapter",
+                  "key": "├─",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "gamepad",
+                  "key": "├─",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "bluetooth",
+                  "key": "├─",
+                  "keyColor": "green"
+              },
+              {
+                  "type": "sound",
+                  "key": "╰─",
+                  "keyColor": "green"
+              },
+              "break",
 
-        {
-            "type": "shell",
-            "key": "╭─",
-            "keyColor": "yellow"
-        },
-        {
-            "type": "terminal",
-            "key": "├─",
-            "keyColor": "yellow"
-        },
-        {
-            "type": "terminalfont",
-            "key": "├─",
-            "keyColor": "yellow"
-        },
-        {
-            "type": "lm",
-            "key": "├─󰧨",
-            "keyColor": "yellow"
-        },
-        {
-            "type": "de",
-            "key": "├─",
-            "keyColor": "yellow"
-        },
-        {
-            "type": "wm",
-            "key": "├─",
-            "keyColor": "yellow"
-        },
-        {
-            "type": "theme",
-            "key": "├─󰉼",
-            "keyColor": "yellow"
-        },
-        {
-            "type": "icons",
-            "key": "├─󰀻",
-            "keyColor": "yellow"
-        },
-        {
-            "type": "wallpaper",
-            "key": "╰─󰸉",
-            "keyColor": "yellow"
-        },
-        "break",
+              {
+                  "type": "shell",
+                  "key": "╭─",
+                  "keyColor": "yellow"
+              },
+              {
+                  "type": "terminal",
+                  "key": "├─",
+                  "keyColor": "yellow"
+              },
+              {
+                  "type": "terminalfont",
+                  "key": "├─",
+                  "keyColor": "yellow"
+              },
+              {
+                  "type": "lm",
+                  "key": "├─󰧨",
+                  "keyColor": "yellow"
+              },
+              {
+                  "type": "de",
+                  "key": "├─",
+                  "keyColor": "yellow"
+              },
+              {
+                  "type": "wm",
+                  "key": "├─",
+                  "keyColor": "yellow"
+              },
+              {
+                  "type": "theme",
+                  "key": "├─󰉼",
+                  "keyColor": "yellow"
+              },
+              {
+                  "type": "icons",
+                  "key": "├─󰀻",
+                  "keyColor": "yellow"
+              },
+              {
+                  "type": "wallpaper",
+                  "key": "╰─󰸉",
+                  "keyColor": "yellow"
+              },
+              "break",
 
-        {
-            "type": "title",
-            "key": "╭─",
-            "format": "{user-name}@{host-name}",
-            "keyColor": "blue"
-        },
-        {
-            "type": "os",
-            "key": "├─{icon}", // Just get your distro's logo off nerdfonts.com
-            "keyColor": "blue"
-        },
-        {
-            "type": "kernel",
-            "key": "├─",
-            "keyColor": "blue"
-        },
-        {
-            "type": "packages",
-            "key": "├─󰏖",
-            "keyColor": "blue"
-        },
-        {
-            "type": "uptime",
-            "key": "├─󰅐",
-            "keyColor": "blue"
-        },
-        {
-            "type": "media",
-            "key": "├─󰝚",
-            "keyColor": "blue"
-        },
-        {
-            "type": "localip",
-            "key": "├─󰩟",
-            "compact": true,
-            "keyColor": "blue"
-        },
-        {
-            "type": "publicip",
-            "key": "├─󰩠",
-            "keyColor": "blue",
-            "timeout": 1000
-        },
-        {
-            "type": "wifi",
-            "key": "├─",
-            "format": "{ssid}",
-            "keyColor": "blue"
-        },
-        {
-            "type": "locale",
-            "key": "╰─",
-            "keyColor": "blue"
-        }
-    ]
-}    '';
+              {
+                  "type": "title",
+                  "key": "╭─",
+                  "format": "{user-name}@{host-name}",
+                  "keyColor": "blue"
+              },
+              {
+                  "type": "os",
+                  "key": "├─{icon}", // Just get your distro's logo off nerdfonts.com
+                  "keyColor": "blue"
+              },
+              {
+                  "type": "kernel",
+                  "key": "├─",
+                  "keyColor": "blue"
+              },
+              {
+                  "type": "packages",
+                  "key": "├─󰏖",
+                  "keyColor": "blue"
+              },
+              {
+                  "type": "uptime",
+                  "key": "├─󰅐",
+                  "keyColor": "blue"
+              },
+              {
+                  "type": "media",
+                  "key": "├─󰝚",
+                  "keyColor": "blue"
+              },
+              {
+                  "type": "localip",
+                  "key": "├─󰩟",
+                  "compact": true,
+                  "keyColor": "blue"
+              },
+              {
+                  "type": "publicip",
+                  "key": "├─󰩠",
+                  "keyColor": "blue",
+                  "timeout": 1000
+              },
+              {
+                  "type": "wifi",
+                  "key": "├─",
+                  "format": "{ssid}",
+                  "keyColor": "blue"
+              },
+              {
+                  "type": "locale",
+                  "key": "╰─",
+                  "keyColor": "blue"
+              }
+          ]
+      }    '';
 
     "fuzzel/fuzzel.ini".text = ''
       font=Google Sans Flex:weight=medium
@@ -752,6 +766,7 @@ $character'';
       set -g @plugin 'tmux-plugins/tpm'
       set -g @plugin 'tmux-plugins/tmux-resurrect'
       set -g @plugin 'tmux-plugins/tmux-continuum'
+      set -g @plugin 'vaaleyard/tmux-dotbar'
 
       set -g @continuum-restore 'off'
       set -g @continuum-save-interval '10'
@@ -777,16 +792,16 @@ $character'';
   # To add a new app: drop its config into ~/dotfiles/.config/ and rebuild.
   home.file = autoConfigEntries // {
     ".config/rbw/config.json".text = builtins.toJSON {
-      email             = "takacs.richard121@gmail.com";
-      sso_id            = null;
-      base_url          = "https://api.bitwarden.eu";
-      identity_url      = "https://identity.bitwarden.eu";
-      ui_url            = "https://vault.bitwarden.eu";
+      email = "takacs.richard121@gmail.com";
+      sso_id = null;
+      base_url = "https://api.bitwarden.eu";
+      identity_url = "https://identity.bitwarden.eu";
+      ui_url = "https://vault.bitwarden.eu";
       notifications_url = "https://notifications.bitwarden.eu";
-      lock_timeout      = 3600;
-      sync_interval     = 3600;
-      pinentry          = "pinentry";
-      client_cert_path  = null;
+      lock_timeout = 3600;
+      sync_interval = 3600;
+      pinentry = "pinentry";
+      client_cert_path = null;
     };
 
     ".gitconfig".source =

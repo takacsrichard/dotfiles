@@ -3,13 +3,23 @@
   fileSystems."/mnt/hdd" = {
     device = "/dev/disk/by-uuid/00FD-8196";
     fsType = "exfat";
-    options = [ "uid=1000" "gid=100" "nofail" "noauto" ];
+    options = [
+      "uid=1000"
+      "gid=100"
+      "nofail"
+      "noauto"
+    ];
   };
 
   fileSystems."/mnt/ssd" = {
     device = "/dev/disk/by-uuid/6AE7-F045";
     fsType = "exfat";
-    options = [ "uid=1000" "gid=100" "nofail" "noauto" ];
+    options = [
+      "uid=1000"
+      "gid=100"
+      "nofail"
+      "noauto"
+    ];
   };
 
   systemd.tmpfiles.rules = [
@@ -50,8 +60,14 @@
   systemd.services."btrfs-balance-root" = {
     description = "btrfs balance on /";
     documentation = [ "man:btrfs-balance(8)" ];
-    conflicts = [ "shutdown.target" "sleep.target" ];
-    before = [ "shutdown.target" "sleep.target" ];
+    conflicts = [
+      "shutdown.target"
+      "sleep.target"
+    ];
+    before = [
+      "shutdown.target"
+      "sleep.target"
+    ];
     serviceConfig = {
       Type = "oneshot";
       Nice = 19;
@@ -87,16 +103,30 @@
   security.sudo.extraRules = [
     {
       users = [ "richard" ];
-      commands = [{
-        command = "${config.systemd.package}/bin/journalctl --vacuum-time=2weeks";
-        options = [ "NOPASSWD" ];
-      }];
+      commands = [
+        {
+          command = "${config.systemd.package}/bin/journalctl --vacuum-time=2weeks";
+          options = [ "NOPASSWD" ];
+        }
+      ];
     }
   ];
 
   systemd.services."putzfrau" = {
     description = "putzfrau cleanup";
-    path = [ "/run/wrappers" ] ++ (with pkgs; [ bash restic docker python3 go nodejs uv procps ]);
+    path = [
+      "/run/wrappers"
+    ]
+    ++ (with pkgs; [
+      bash
+      restic
+      docker
+      python3
+      go
+      nodejs
+      uv
+      procps
+    ]);
     serviceConfig = {
       Type = "oneshot";
       User = "richard";
@@ -117,9 +147,30 @@
   };
   nix.optimise = {
     automatic = true;
-    dates = ["weekly"];
+    dates = [ "weekly" ];
   };
 
+  # trim richard's `nix profile` history (separate from nix.gc above, which
+  # only collects garbage - this drops old profile generations themselves)
+  systemd.services."nix-profile-wipe-history" = {
+    description = "trim richard's nix profile history older than 60 days";
+    path = [ pkgs.nix ];
+    serviceConfig = {
+      Type = "oneshot";
+      User = "richard";
+      Nice = 19;
+      SyslogLevel = "warning";
+      ExecStart = "${pkgs.nix}/bin/nix profile wipe-history --older-than 60d";
+    };
+  };
+  systemd.timers."nix-profile-wipe-history" = {
+    description = "weekly nix profile history trim";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "weekly";
+      Persistent = true;
+    };
+  };
 
   services.journald.extraConfig = ''
     SystemMaxUse=200M
@@ -127,7 +178,6 @@
     MaxRetentionSec=2weeks
     MaxLevelStore=4
   '';
-
 
   # Btrfs: hourly snapshots of /home via snapper
   # persistentTimer ensures one snapshot runs on next boot if laptop was off

@@ -25,13 +25,24 @@ NOUN_ALIASES = {
 # noun -> {single-letter verb code: real subcommand}
 VERBS = {
     "task": {
-        "a": "add", "l": "list", "v": "view", "u": "update",
-        "d": "delete", "c": "complete", "m": "move", "r": "reschedule",
+        "a": "add",
+        "l": "list",
+        "v": "view",
+        "u": "update",
+        "d": "delete",
+        "c": "complete",
+        "m": "move",
+        "r": "reschedule",
         "b": "browse",
     },
     "project": {
-        "l": "list", "v": "view", "c": "create", "d": "delete",
-        "u": "update", "a": "archive", "m": "move",
+        "l": "list",
+        "v": "view",
+        "c": "create",
+        "d": "delete",
+        "u": "update",
+        "a": "archive",
+        "m": "move",
     },
 }
 
@@ -79,13 +90,19 @@ def load_project_cache():
     try:
         out = subprocess.run(
             ["td", "project", "list", "--json"],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         data = json.loads(out.stdout)
     except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
         return None
 
-    projects = data if isinstance(data, list) else data.get("projects", data.get("results", []))
+    projects = (
+        data
+        if isinstance(data, list)
+        else data.get("projects", data.get("results", []))
+    )
     names = [p["name"] for p in projects if isinstance(p, dict) and "name" in p]
 
     try:

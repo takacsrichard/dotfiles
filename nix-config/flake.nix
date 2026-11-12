@@ -10,37 +10,62 @@
     };
     ragenix.url = "github:yaxitech/ragenix";
     nur.url = "github:nix-community/NUR";
-    trackers-src = { url = "path:/home/richard/sys/trackers"; flake = false; };
-  };
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-r, home-manager, ragenix, nur, trackers-src, ... }:
-  let
-    system = "x86_64-linux";
-    pkgs-unstable = import nixpkgs-unstable {
-      inherit system;
-      config.allowUnfree = true;
-    };
-    pkgs-r = import nixpkgs-r {
-      inherit system;
-      config.allowUnfree = true;
-      config.permittedInsecurePackages = [ "electron-41.10.7" ];
-    };
-  in {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = { inherit ragenix pkgs-r trackers-src; };
-      modules = [
-        ./configuration.nix
-        ragenix.nixosModules.default
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.richard = import ./home.nix;
-          home-manager.extraSpecialArgs = { inherit pkgs-unstable; };
-          nixpkgs.config.allowUnfree = true;
-          nixpkgs.overlays = [ nur.overlays.default (import ./overlays/gdu.nix) ];
-        }
-      ];
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    trackers-src = {
+      url = "path:/home/richard/sys/trackers";
+      flake = false;
     };
   };
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-unstable,
+      nixpkgs-r,
+      home-manager,
+      ragenix,
+      nur,
+      treefmt-nix,
+      trackers-src,
+      ...
+    }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs-unstable = import nixpkgs-unstable {
+        inherit system;
+        config.allowUnfree = true;
+      };
+      pkgs-r = import nixpkgs-r {
+        inherit system;
+        config.allowUnfree = true;
+        config.permittedInsecurePackages = [ "electron-41.10.7" ];
+      };
+      treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
+    in
+    {
+      formatter.${system} = treefmtEval.config.build.wrapper;
+      checks.${system}.treefmt = treefmtEval.config.build.check self;
+
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit ragenix pkgs-r trackers-src; };
+        modules = [
+          ./configuration.nix
+          ragenix.nixosModules.default
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.richard = import ./home.nix;
+            home-manager.extraSpecialArgs = { inherit pkgs-unstable; };
+            nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = [
+              nur.overlays.default
+              (import ./overlays/gdu.nix)
+            ];
+          }
+        ];
+      };
+    };
 }

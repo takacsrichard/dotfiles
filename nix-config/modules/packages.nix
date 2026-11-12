@@ -7,61 +7,174 @@ let
   # KernSmooth class spatial codetools come free via the wrappers'
   # `recommendedPackages`, so they are deliberately not listed here.
   rPkgs = with pkgs-r.rPackages; [
-    rmarkdown knitr
-    tidyverse ggplot2 dplyr tidyr readr lubridate stringr purrr
+    rmarkdown
+    knitr
+    tidyverse
+    ggplot2
+    dplyr
+    tidyr
+    readr
+    lubridate
+    stringr
+    purrr
     data_table
-    janitor skimr broom here fs
-    patchwork ggthemes ggridges GGally corrplot viridis
-    kableExtra modelsummary stargazer
-    caret forecast zoo xts
-    tidymodels xgboost lightgbm glmnet
-    car lme4 sandwich lmtest fixest quantreg moments urca vars
-    quantmod TTR PerformanceAnalytics tidyquant tseries rugarch
-    PortfolioAnalytics RQuantLib copula rmgarch slider
-    plotly DT scales
-    writexl openxlsx httr vctrs
+    janitor
+    skimr
+    broom
+    here
+    fs
+    patchwork
+    ggthemes
+    ggridges
+    GGally
+    corrplot
+    viridis
+    kableExtra
+    modelsummary
+    stargazer
+    caret
+    forecast
+    zoo
+    xts
+    tidymodels
+    xgboost
+    lightgbm
+    glmnet
+    car
+    lme4
+    sandwich
+    lmtest
+    fixest
+    quantreg
+    moments
+    urca
+    vars
+    quantmod
+    TTR
+    PerformanceAnalytics
+    tidyquant
+    tseries
+    rugarch
+    PortfolioAnalytics
+    RQuantLib
+    copula
+    rmgarch
+    slider
+    plotly
+    DT
+    scales
+    writexl
+    openxlsx
+    httr
+    vctrs
     shiny
-    base64enc digest evaluate glue highr htmltools jsonlite magrittr mime stringi xfun yaml
+    base64enc
+    digest
+    evaluate
+    glue
+    highr
+    htmltools
+    jsonlite
+    magrittr
+    mime
+    stringi
+    xfun
+    yaml
 
     # data import — course handouts ship .xlsx and Stata/SPSS files
-    readxl haven
+    readxl
+    haven
     # machine learning beyond the boosted trees above
-    randomForest ranger e1071 rpart_plot pROC ROCR
+    randomForest
+    ranger
+    e1071
+    rpart_plot
+    pROC
+    ROCR
     # econometrics: panel data, IV, structural breaks, regression tables
-    plm AER ivreg estimatr dynlm strucchange texreg nortest
+    plm
+    AER
+    ivreg
+    estimatr
+    dynlm
+    strucchange
+    texreg
+    nortest
     # modern tidy time series alongside forecast/zoo/xts
-    tsibble fable feasts
+    tsibble
+    fable
+    feasts
     # quant finance: GARCH variants, Rmetrics stack, derivatives, heuristics
-    fGarch timeSeries fPortfolio derivmkts NMOF FinTS
+    fGarch
+    timeSeries
+    fPortfolio
+    derivmkts
+    NMOF
+    FinTS
     # portfolio optimisation solvers
-    CVXR quadprog ROI nloptr
+    CVXR
+    quadprog
+    ROI
+    nloptr
     # missing data and descriptive statistics
-    mice naniar psych Hmisc
+    mice
+    naniar
+    psych
+    Hmisc
     # inference helpers
-    emmeans multcomp performance
+    emmeans
+    multcomp
+    performance
     # visualisation staples assumed by most ggplot2 material
-    ggrepel gridExtra cowplot RColorBrewer
+    ggrepel
+    gridExtra
+    cowplot
+    RColorBrewer
     # reporting: books, dashboards, journal templates
     # NOTE: gt/gtsummary omitted — they pull r-V8, which fails to build in this
     # nixpkgs pin (ICU ABI mismatch: undefined symbol _ZN6icu_78...). Publication
     # tables are covered by modelsummary/kableExtra/stargazer above.
-    bookdown flexdashboard rticles tinytex
+    bookdown
+    flexdashboard
+    rticles
+    tinytex
     # databases
-    DBI RSQLite dbplyr
+    DBI
+    RSQLite
+    dbplyr
     # workflow / compiled-code deps that many packages assume present
-    devtools remotes renv conflicted tictoc furrr Rcpp RcppArmadillo
+    devtools
+    remotes
+    renv
+    conflicted
+    tictoc
+    furrr
+    Rcpp
+    RcppArmadillo
   ];
 
   # ad hoc numeric/data science scripts — one interpreter with everything
   # linked in, same idea as rPkgs above. bump by adding to this list.
-  pyEnv = pkgs.python3.withPackages (ps: with ps; [
-    numpy pandas scipy sympy
-    matplotlib seaborn plotly
-    statsmodels scikit-learn
-    requests beautifulsoup4 lxml
-    openpyxl xlrd
-    jupyter ipython
-  ]);
+  pyEnv = pkgs.python3.withPackages (
+    ps: with ps; [
+      numpy
+      pandas
+      scipy
+      sympy
+      matplotlib
+      seaborn
+      plotly
+      statsmodels
+      scikit-learn
+      requests
+      beautifulsoup4
+      lxml
+      openpyxl
+      xlrd
+      jupyter
+      ipython
+    ]
+  );
 in
 {
   environment.systemPackages = with pkgs; [
@@ -85,19 +198,29 @@ in
         preprint
         titlesec
         # bibliography
-        biblatex biber csquotes
+        biblatex
+        biber
+        csquotes
         # cross-references
         cleveref
         # math & science
-        siunitx mathtools thmtools
+        siunitx
+        mathtools
+        thmtools
         # tables
         multirow
         # code & algorithms
-        minted algorithm2e
+        minted
+        algorithm2e
         # document structure
-        appendix glossaries todonotes pdfpages
+        appendix
+        glossaries
+        todonotes
+        pdfpages
         # boxes & text
-        tcolorbox soul;
+        tcolorbox
+        soul
+        ;
     })
     pandoc
   ];

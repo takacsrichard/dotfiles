@@ -78,10 +78,14 @@ def run():
             if event.type == ecodes.EV_KEY and event.code == ecodes.BTN_LEFT:
                 if event.value == 1:
                     dropped_presses += 1
-                    log.debug(f"Dropped BTN_LEFT press  (total dropped: {dropped_presses})")
+                    log.debug(
+                        f"Dropped BTN_LEFT press  (total dropped: {dropped_presses})"
+                    )
                 else:
                     dropped_releases += 1
-                    log.debug(f"Dropped BTN_LEFT release (total dropped: {dropped_releases})")
+                    log.debug(
+                        f"Dropped BTN_LEFT release (total dropped: {dropped_releases})"
+                    )
                 # Do not forward — just discard.
             else:
                 ui.write_event(event)

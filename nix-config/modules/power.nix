@@ -2,7 +2,11 @@
 let
   thermal-guard = pkgs.writeShellApplication {
     name = "thermal-guard";
-    runtimeInputs = with pkgs; [ lm_sensors jq gawk ];
+    runtimeInputs = with pkgs; [
+      lm_sensors
+      jq
+      gawk
+    ];
     text = builtins.readFile ../../scripts/thermal-guard.sh;
   };
 in
@@ -48,6 +52,9 @@ in
   systemd.tmpfiles.rules = [
     "d /etc/asusd 0755 root root -"
   ];
- 
-  environment.systemPackages = with pkgs; [ brightnessctl lm_sensors ];
+
+  environment.systemPackages = with pkgs; [
+    brightnessctl
+    lm_sensors
+  ];
 }

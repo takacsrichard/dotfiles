@@ -9,7 +9,12 @@
     Unit.Description = "sync gdrive:paperless into paperless";
     Service = {
       Type = "oneshot";
-      Environment = "PATH=${lib.makeBinPath [ pkgs.rclone pkgs.coreutils ]}";
+      Environment = "PATH=${
+        lib.makeBinPath [
+          pkgs.rclone
+          pkgs.coreutils
+        ]
+      }";
       ExecStart = "${pkgs.python3}/bin/python3 /home/richard/dotfiles/scripts/paperless-dump-sync.py";
       # journald MaxLevelStore=4 drops info-level stdout, so a quiet success
       # run would otherwise vanish entirely -- log at warning instead

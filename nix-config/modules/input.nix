@@ -1,31 +1,56 @@
 { pkgs, trackers-src, ... }:
 let
-  touchpad-filter = pkgs.writers.writePython3Bin "touchpad-filter"
-    { libraries = with pkgs.python3Packages; [ evdev ]; flakeIgnore = [ "E265" "E501" ]; }
-    (builtins.readFile ../../scripts/touchpad-filter);
+  touchpad-filter = pkgs.writers.writePython3Bin "touchpad-filter" {
+    libraries = with pkgs.python3Packages; [ evdev ];
+    flakeIgnore = [
+      "E265"
+      "E501"
+    ];
+  } (builtins.readFile ../../scripts/touchpad-filter);
 
-  reset-touchpad = pkgs.writeShellScriptBin "reset-touchpad"
-    (builtins.readFile ../../scripts/reset-touchpad);
+  reset-touchpad = pkgs.writeShellScriptBin "reset-touchpad" (
+    builtins.readFile ../../scripts/reset-touchpad
+  );
 
-  touchpad-irq = pkgs.writers.writePython3Bin "touchpad-irq"
-    { flakeIgnore = [ "E265" "E501" ]; }
-    (builtins.readFile "${trackers-src}/touchpad_irq.py");
+  touchpad-irq = pkgs.writers.writePython3Bin "touchpad-irq" {
+    flakeIgnore = [
+      "E265"
+      "E501"
+    ];
+  } (builtins.readFile "${trackers-src}/touchpad_irq.py");
 
-  bluetooth-tracker = pkgs.writers.writePython3Bin "bluetooth-tracker"
-    { flakeIgnore = [ "E265" "E501" ]; }
-    (builtins.readFile "${trackers-src}/bluetooth_tracker.py");
+  bluetooth-tracker = pkgs.writers.writePython3Bin "bluetooth-tracker" {
+    flakeIgnore = [
+      "E265"
+      "E501"
+    ];
+  } (builtins.readFile "${trackers-src}/bluetooth_tracker.py");
 
-  workspaces-tracker = pkgs.writers.writePython3Bin "workspaces-tracker"
-    { flakeIgnore = [ "E265" "E501" ]; }
-    (builtins.readFile "${trackers-src}/workspaces_tracker.py");
+  workspaces-tracker = pkgs.writers.writePython3Bin "workspaces-tracker" {
+    flakeIgnore = [
+      "E265"
+      "E501"
+    ];
+  } (builtins.readFile "${trackers-src}/workspaces_tracker.py");
 
-  keylog = pkgs.writers.writePython3Bin "keylog"
-    { libraries = with pkgs.python3Packages; [ evdev ]; flakeIgnore = [ "E265" "E501" ]; }
-    (builtins.readFile "${trackers-src}/keylog/keylog.py");
+  keylog = pkgs.writers.writePython3Bin "keylog" {
+    libraries = with pkgs.python3Packages; [ evdev ];
+    flakeIgnore = [
+      "E265"
+      "E501"
+    ];
+  } (builtins.readFile "${trackers-src}/keylog/keylog.py");
 
 in
 {
-  environment.systemPackages = [ touchpad-filter reset-touchpad touchpad-irq bluetooth-tracker workspaces-tracker keylog ];
+  environment.systemPackages = [
+    touchpad-filter
+    reset-touchpad
+    touchpad-irq
+    bluetooth-tracker
+    workspaces-tracker
+    keylog
+  ];
 
   # udev: allow input group to access uinput (needed by touchpad-filter)
   services.udev.extraRules = ''
@@ -36,10 +61,12 @@ in
   security.sudo.extraRules = [
     {
       users = [ "richard" ];
-      commands = [{
-        command = "${reset-touchpad}/bin/reset-touchpad";
-        options = [ "NOPASSWD" ];
-      }];
+      commands = [
+        {
+          command = "${reset-touchpad}/bin/reset-touchpad";
+          options = [ "NOPASSWD" ];
+        }
+      ];
     }
   ];
 

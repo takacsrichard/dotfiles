@@ -2,6 +2,6 @@
 # Override TOUCHPAD_DEVICE env var to target a different device.
 # Default is the ASUS VivoBook ELAN touchpad (i2c-ASUE120B:00).
 DEVICE="${TOUCHPAD_DEVICE:-i2c-ASUE120B:00}"
-echo "$DEVICE" > /sys/bus/i2c/drivers/i2c_hid_acpi/unbind
+echo "$DEVICE" >/sys/bus/i2c/drivers/i2c_hid_acpi/unbind
 sleep 0.2
-echo "$DEVICE" > /sys/bus/i2c/drivers/i2c_hid_acpi/bind
+echo "$DEVICE" >/sys/bus/i2c/drivers/i2c_hid_acpi/bind

@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 # let
 #   # SDDM theme derivation — uncomment alongside the SDDM block below to roll back
 #   sddm-sugar-candy = pkgs.stdenv.mkDerivation {
@@ -12,7 +17,10 @@
 # in
 {
   services.xserver.enable = true;
-  services.xserver.xkb = { layout = "hu"; variant = ""; };
+  services.xserver.xkb = {
+    layout = "hu";
+    variant = "";
+  };
 
   # SDDM (sugar-candy) — kept for easy rollback, swap comments to re-enable
   # services.displayManager.sddm = {

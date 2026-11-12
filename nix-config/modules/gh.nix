@@ -1,5 +1,4 @@
-{ ... }:
-{
+_: {
   age.secrets.gh-token = {
     file = ../../secrets/gh-token.age;
     owner = "richard";

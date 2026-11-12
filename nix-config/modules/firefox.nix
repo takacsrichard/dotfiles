@@ -26,21 +26,21 @@
         default = "google";
       };
       settings = {
-        "browser.startup.page"                                           = 3;
-        "browser.newtabpage.activity-stream.feeds.topsites"             = false;
+        "browser.startup.page" = 3;
+        "browser.newtabpage.activity-stream.feeds.topsites" = false;
         "browser.newtabpage.activity-stream.newtabWallpapers.wallpaper" = "light-panda";
-        "accessibility.typeaheadfind.flashBar"                          = 0;
-        "toolkit.legacyUserProfileCustomizations.stylesheets"           = true;
+        "accessibility.typeaheadfind.flashBar" = 0;
+        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
 
-        "browser.newtab.preload"                                  = false;
-        "browser.sessionstore.interval"                           = 600000;
-        "dom.ipc.processCount"                                    = 2;
-        "dom.ipc.processCount.webIsolated"                        = 2;
-        "dom.timeout.defer_during_load"                           = true;
-        "dom.timeout.background_budget_regeneration_rate"         = 1000;
-        "dom.timeout.background_throttling_max_budget"            = 10;
-        "dom.timeout.budget_throttling_max_delay"                 = 60000;
-        "ui.prefersReducedMotion"                                 = 1;
+        "browser.newtab.preload" = false;
+        "browser.sessionstore.interval" = 600000;
+        "dom.ipc.processCount" = 2;
+        "dom.ipc.processCount.webIsolated" = 2;
+        "dom.timeout.defer_during_load" = true;
+        "dom.timeout.background_budget_regeneration_rate" = 1000;
+        "dom.timeout.background_throttling_max_budget" = 10;
+        "dom.timeout.budget_throttling_max_delay" = 60000;
+        "ui.prefersReducedMotion" = 1;
       };
       extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
         ublock-origin

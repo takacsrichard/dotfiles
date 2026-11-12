@@ -17,9 +17,17 @@
   networking.networkmanager.ensureProfiles = {
     environmentFiles = [ config.age.secrets."eduroam".path ];
     profiles.eduroam = {
-      connection = { id = "eduroam"; type = "wifi"; };
-      wifi = { mode = "infrastructure"; ssid = "eduroam"; };
-      wifi-security = { key-mgmt = "wpa-eap"; };
+      connection = {
+        id = "eduroam";
+        type = "wifi";
+      };
+      wifi = {
+        mode = "infrastructure";
+        ssid = "eduroam";
+      };
+      wifi-security = {
+        key-mgmt = "wpa-eap";
+      };
       "802-1x" = {
         eap = "peap;";
         identity = "h12313036@wu.ac.at";
@@ -30,12 +38,19 @@
         password = "$EDUROAM_PASSWORD";
         password-flags = "0";
       };
-      ipv4 = { method = "auto"; };
-      ipv6 = { method = "auto"; };
+      ipv4 = {
+        method = "auto";
+      };
+      ipv6 = {
+        method = "auto";
+      };
     };
   };
 
   services.resolved.enable = true;
 
-  environment.systemPackages = with pkgs; [ wireguard-tools iw];
+  environment.systemPackages = with pkgs; [
+    wireguard-tools
+    iw
+  ];
 }

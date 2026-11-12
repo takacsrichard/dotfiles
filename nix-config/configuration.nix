@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -26,35 +26,41 @@
   # symlinks may not be fully applied yet — roll back if this is a problem.
   # lib.mkForce risk: if another module also sets these with mkForce, last one wins silently
   systemd.services."home-manager-richard" = {
-    after    = lib.mkForce [ "graphical.target" "nix-daemon.socket" ];
-    before   = lib.mkForce [];
+    after = lib.mkForce [
+      "graphical.target"
+      "nix-daemon.socket"
+    ];
+    before = lib.mkForce [ ];
     wantedBy = lib.mkForce [ "graphical.target" ];
   };
 
   time.timeZone = "Europe/Vienna";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
-    LC_ADDRESS        = "de_AT.UTF-8";
+    LC_ADDRESS = "de_AT.UTF-8";
     LC_IDENTIFICATION = "de_AT.UTF-8";
-    LC_MEASUREMENT    = "de_AT.UTF-8";
-    LC_MONETARY       = "de_AT.UTF-8";
-    LC_NAME           = "de_AT.UTF-8";
-    LC_NUMERIC        = "de_AT.UTF-8";
-    LC_PAPER          = "de_AT.UTF-8";
-    LC_TELEPHONE      = "de_AT.UTF-8";
-    LC_TIME           = "de_AT.UTF-8";
+    LC_MEASUREMENT = "de_AT.UTF-8";
+    LC_MONETARY = "de_AT.UTF-8";
+    LC_NAME = "de_AT.UTF-8";
+    LC_NUMERIC = "de_AT.UTF-8";
+    LC_PAPER = "de_AT.UTF-8";
+    LC_TELEPHONE = "de_AT.UTF-8";
+    LC_TIME = "de_AT.UTF-8";
   };
   console.keyMap = "hu";
 
   nixpkgs.config.allowUnfree = true;
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nix.settings.http-connections = 25;
   virtualisation.docker.enable = true;
 
   programs.zsh.enable = true;
   programs.zsh.enableGlobalCompInit = false; # oh-my-zsh (home-manager) already runs compinit
   programs.wireshark.enable = true;
-  
+
   hardware.graphics.enable = true;
 
   # FHS compatibility for pip/uv venvs with compiled C extensions (numpy, etc.)
@@ -68,7 +74,15 @@
   users.users."richard" = {
     isNormalUser = true;
     description = "richard";
-    extraGroups = [ "networkmanager" "wheel" "input" "video" "plocate" "wireshark" "docker" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "input"
+      "video"
+      "plocate"
+      "wireshark"
+      "docker"
+    ];
     shell = pkgs.zsh;
     packages = with pkgs; [ kdePackages.kate ];
   };
@@ -86,6 +100,6 @@
       "0 */12 * * * richard ${pkgs.rclone}/bin/rclone lsjson pdrive: --max-depth 1 > /dev/null 2>&1"
     ];
   };
-  
+
   system.stateVersion = "26.05";
 }

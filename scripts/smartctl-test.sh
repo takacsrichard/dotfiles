@@ -12,9 +12,9 @@ smartctl -t short "$DEV" >/dev/null
 
 # nvme short self-tests usually finish within ~2 minutes - poll until done
 for _ in $(seq 1 60); do
-    sleep 10
-    smartctl -l selftest "$DEV" | grep -q "No self-test in progress" && break
+  sleep 10
+  smartctl -l selftest "$DEV" | grep -q "No self-test in progress" && break
 done
 
 mkdir -p "$(dirname "$OUT")"
-smartctl -a -j "$DEV" > "$OUT.tmp" && mv "$OUT.tmp" "$OUT"
+smartctl -a -j "$DEV" >"$OUT.tmp" && mv "$OUT.tmp" "$OUT"
