@@ -52,18 +52,35 @@ check:
 backup:
     ~/dotfiles/scripts/backup.sh
 
-# Rotate the gh CLI token: paste the new one, re-encrypts secrets/gh-token.age
-set-gh-token:
+# Encrypt a typed value (tokens, passwords) to secrets/<name>.age, using the
+# recipients already declared for it in secrets/secrets.nix - e.g.
+# `just set-secret gh-token`
+set-secret name:
     #!/usr/bin/env zsh
     set -euo pipefail
-    printf "New GitHub token: "
-    read -rs token
+    name="{{name}}"
+    keys=("${(@f)$(nix eval --impure --raw --expr "let s = import ./secrets/secrets.nix; in builtins.concatStringsSep \"\n\" s.\"${name}.age\".publicKeys")}")
+    args=()
+    for k in "${keys[@]}"; do args+=(-r "$k"); done
+    printf "Value for %s: " "$name"
+    read -rs val
     echo
-    printf '%s' "$token" | age \
-        -r "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJJ+P9vVrcs/+sE0waSj0r6n27R+Ay20CQ+TvMbmZjKG" \
-        -r "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHgJXEIeGmiXHaF5VL2ud1QH9MF2krC2VB50RAsPGfyw" \
-        -o ~/dotfiles/secrets/gh-token.age
-    echo "secrets/gh-token.age updated. Now run: just rebuild"
+    printf '%s' "$val" | age "${args[@]}" -o "secrets/${name}.age"
+    echo "secrets/${name}.age updated. Now run: just rebuild"
+
+# Encrypt an existing file (VPN configs, etc.) to secrets/<name>.age, using the
+# recipients already declared for it in secrets/secrets.nix - e.g.
+# `just set-secret-file atvpn.conf ~/Downloads/atvpn.conf`
+set-secret-file name path:
+    #!/usr/bin/env zsh
+    set -euo pipefail
+    name="{{name}}"
+    path="{{path}}"
+    keys=("${(@f)$(nix eval --impure --raw --expr "let s = import ./secrets/secrets.nix; in builtins.concatStringsSep \"\n\" s.\"${name}.age\".publicKeys")}")
+    args=()
+    for k in "${keys[@]}"; do args+=(-r "$k"); done
+    age "${args[@]}" -o "secrets/${name}.age" "$path"
+    echo "secrets/${name}.age updated. Now run: just rebuild"
 
 
 
