@@ -29,14 +29,14 @@ update:
         nix flake update nixpkgs-r --flake ~/dotfiles/nix-config
     fi
     just fmt
-    nix flake check ./nix-config
+    nix flake check ./nix-config --impure
     sudo nixos-rebuild switch --flake "path:$HOME/dotfiles?dir=nix-config#nixos" --impure
     sudo systemctl restart home-manager-richard.service
 
 # Rebuild NixOS and push dotfiles on success
 rebuild:
     just fmt
-    nix flake check ./nix-config
+    nix flake check ./nix-config --impure
     sudo nixos-rebuild switch --flake "path:$HOME/dotfiles?dir=nix-config#nixos" --impure
     sudo systemctl restart home-manager-richard.service
 
@@ -46,7 +46,7 @@ rollback:
     sudo systemctl restart home-manager-richard.service
 
 check:
-  nix flake check ./nix-config
+  nix flake check ./nix-config --impure
 
 # Run all backups: restic to local SSD, then sync to ProtonDrive and Google Drive
 backup:

@@ -289,7 +289,6 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
         "ragenix": "ragenix",
-        "trackers-src": "trackers-src",
         "treefmt-nix": "treefmt-nix"
       }
     },
@@ -342,19 +341,6 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
-      }
-    },
-    "trackers-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1794409617,
-        "narHash": "sha256-V66wfrAwfO33km+1ULHLWOyMFHLy6Yv2BtqZx5ZE94Q=",
-        "path": "/home/richard/sys/trackers",
-        "type": "path"
-      },
-      "original": {
-        "path": "/home/richard/sys/trackers",
-        "type": "path"
       }
     },
     "treefmt-nix": {

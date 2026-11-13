@@ -11,10 +11,6 @@
     ragenix.url = "github:yaxitech/ragenix";
     nur.url = "github:nix-community/NUR";
     treefmt-nix.url = "github:numtide/treefmt-nix";
-    trackers-src = {
-      url = "path:/home/richard/sys/trackers";
-      flake = false;
-    };
   };
   outputs =
     {
@@ -26,7 +22,6 @@
       ragenix,
       nur,
       treefmt-nix,
-      trackers-src,
       ...
     }:
     let
@@ -49,7 +44,7 @@
 
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = { inherit ragenix pkgs-r trackers-src; };
+        specialArgs = { inherit ragenix pkgs-r; };
         modules = [
           ./configuration.nix
           ragenix.nixosModules.default
