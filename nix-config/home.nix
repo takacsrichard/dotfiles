@@ -738,6 +738,7 @@ in
 
     "tmux/tmux.conf".text = ''
       set  -g default-terminal "screen"
+      setw  -g xterm-keys on
       set  -g default-shell   "${pkgs.zsh}/bin/zsh"
       set  -g base-index      0
       setw -g pane-base-index 0
@@ -753,10 +754,10 @@ in
       set  -g history-limit     2000
       set  -g allow-passthrough on
 
-      bind key -n M-Left select-pane -L
-      bind key -n M-Right select-pane -R
-      bind key -n M-Up select-pane -U
-      bind key -n M-Down select-pane -D
+      bind-key -n M-Left select-pane -L
+      bind-key -n M-Right select-pane -R
+      bind-key -n M-Up select-pane -U
+      bind-key -n M-Down select-pane -D
 
       bind-key -n S-Up copy-mode -e \; send-keys -X -N 1 scroll-up
       bind-key -T copy-mode-vi S-Up send-keys -X -N 1 scroll-up

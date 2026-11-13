@@ -1,26 +1,37 @@
-require("config.lazy")
+vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
+vim.g.mapleader = " "
 
-vim.opt.number = true
-vim.opt.relativenumber = true
+-- bootstrap lazy and all plugins
+local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 
--- show relative number (blank on cursor line) plus the absolute number on every line,
--- each padded to a fixed width so the column doesn't jitter between single/double digits
-vim.opt.statuscolumn = "%s%=%{printf('%4d ', v:lnum)}%{v:relnum == 0 ? '     ' : printf('%4d ', v:relnum)}"
+if not vim.uv.fs_stat(lazypath) then
+  local repo = "https://github.com/folke/lazy.nvim.git"
+  vim.fn.system { "git", "clone", "--filter=blob:none", repo, "--branch=stable", lazypath }
+end
 
-vim.opt.whichwrap:append("<,>,h,l")
+vim.opt.rtp:prepend(lazypath)
 
-vim.opt.clipboard = "unnamedplus"
+local lazy_config = require "configs.lazy"
 
-vim.keymap.set("n", "+", function()
-  vim.fn.setreg("+", vim.fn.expand("%:p"))
-end, { desc = "Copy absolute path of current file" })
+-- load plugins
+require("lazy").setup({
+  {
+    "NvChad/NvChad",
+    lazy = false,
+    branch = "v2.5",
+    import = "nvchad.plugins",
+  },
 
-vim.keymap.set("v", "+", '"+y', { desc = "Copy selection to system clipboard" })
+  { import = "plugins" },
+}, lazy_config)
 
-vim.api.nvim_create_autocmd("TermOpen", {
-  callback = function()
-    vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { buffer = true, nowait = true, desc = "Exit terminal mode" })
-  end,
-})
+-- load theme
+dofile(vim.g.base46_cache .. "defaults")
+dofile(vim.g.base46_cache .. "statusline")
 
-vim.cmd.colorscheme("unokai")
+require "options"
+require "autocmds"
+
+vim.schedule(function()
+  require "mappings"
+end)
