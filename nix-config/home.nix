@@ -82,6 +82,7 @@ in
     kitty
     alacritty
     neovim
+    radian
 
     # development
     git
