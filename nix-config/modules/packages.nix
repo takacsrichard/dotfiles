@@ -80,6 +80,8 @@ let
     stringi
     xfun
     yaml
+    nleqslv
+    lpSolve
 
     # data import — course handouts ship .xlsx and Stata/SPSS files
     readxl
@@ -116,6 +118,7 @@ let
     quadprog
     ROI
     nloptr
+    BB
     # missing data and descriptive statistics
     mice
     naniar
