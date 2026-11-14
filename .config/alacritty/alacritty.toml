@@ -23,5 +23,6 @@ program = "tmux"
 
 [general]
 import = [
-    "themes/kanagawa_dargon.toml"
+    #"themes/kanagawa_dragon.toml"
+    #"themes/baitong.toml"
 ]
