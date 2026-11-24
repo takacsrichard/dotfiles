@@ -223,6 +223,7 @@ in
         # boxes & text
         tcolorbox
         soul
+        sectsty
         ;
     })
     pandoc

@@ -4,6 +4,11 @@
 
 alias ...="cd ../.."
 
+
+alias R="radian"
+alias hgrep="history | grep"
+
+
 alias b="bat"
 # multimedia 
 alias sw="swayimg"
