@@ -1,11 +1,30 @@
 { pkgs, ... }:
 {
+  # dump paperless's docker-volume-only document store out to ~/paperless/export
+  # (a bind mount into the container) so it's plain files that rclone/restic can
+  # actually see -- otherwise the real documents only exist in a docker volume
+  # that no backup job touches
+  systemd.services.paperless-export = {
+    description = "export paperless documents to ~/paperless/export";
+    path = [ pkgs.docker ];
+    serviceConfig = {
+      Type = "oneshot";
+      User = "richard";
+      SyslogLevel = "warning";
+      ExecStart = "${pkgs.docker}/bin/docker exec paperless document_exporter /usr/src/paperless/export";
+    };
+  };
+
   systemd.services.auto-backup = {
     description = "sync to pdrive";
     path = [
       pkgs.rclone
       pkgs.bash
     ];
+    # run the paperless export first and wait for it, so the sync below
+    # picks up a fresh dump instead of whatever was last exported
+    wants = [ "paperless-export.service" ];
+    after = [ "paperless-export.service" ];
     serviceConfig = {
       Type = "oneshot";
       User = "richard";

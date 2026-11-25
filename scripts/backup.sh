@@ -40,6 +40,7 @@ run_step "ProtonDrive sync (documents)" sync_protondrive "$HOME/Documents/" "bac
 run_step "ProtonDrive sync (uni)" sync_protondrive "$HOME/uni/" "backup/uni"
 run_step "ProtonDrive sync (life)" sync_protondrive "$HOME/life/" "backup/life"
 run_step "ProtonDrive sync (sys)" sync_protondrive "$HOME/sys/" "backup/sys"
+run_step "ProtonDrive sync (paperless)" sync_protondrive "$HOME/paperless/export/" "backup/paperless"
 
 if ((${#failed[@]})); then
   echo "==> Backup finished with failures: ${failed[*]}" >&2
