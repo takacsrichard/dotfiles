@@ -20,9 +20,19 @@ run_step() {
   fi
 }
 
+exclude_patterns=(
+  --exclude ".venv/**" --exclude "venv/**"
+  --exclude ".git/**"
+  --exclude "node_modules/**"
+  --exclude "__pycache__/**" --exclude "*.pyc"
+  --exclude ".uv/**" --exclude ".cache/**"
+  --exclude ".direnv/**"
+)
+
 sync_protondrive() {
   local src="$1" dest="$2"
   rclone copy "$src" "pdrive:$dest" \
+    "${exclude_patterns[@]}" \
     --protondrive-replace-existing-draft=true -P
 }
 

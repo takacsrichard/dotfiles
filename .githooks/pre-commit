@@ -10,5 +10,7 @@ staged_before="$(git diff --cached --name-only)"
 just fmt
 
 while IFS= read -r f; do
-    [ -n "$f" ] && [ -f "$f" ] && git add -- "$f"
+    if [ -n "$f" ] && [ -f "$f" ]; then
+        git add -- "$f"
+    fi
 done <<< "$staged_before"
