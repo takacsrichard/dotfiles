@@ -56,6 +56,18 @@
   ];
   nix.settings.http-connections = 25;
   virtualisation.docker.enable = true;
+  # docker still autostarts, just not synchronously -- multi-user.target
+  # (and the login prompt behind it) no longer waits on dockerd finishing
+  # init. the timer kicks it off a few seconds after boot in the background.
+  systemd.services.docker.wantedBy = lib.mkForce [ ];
+  systemd.timers.docker-autostart = {
+    description = "start docker shortly after boot, off the critical boot path";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "10s";
+      Unit = "docker.service";
+    };
+  };
 
   programs.zsh.enable = true;
   programs.zsh.enableGlobalCompInit = false; # oh-my-zsh (home-manager) already runs compinit

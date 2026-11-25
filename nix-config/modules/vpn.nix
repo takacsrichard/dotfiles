@@ -72,6 +72,10 @@ in
   systemd.services."wg-quick-atvpn" = {
     restartIfChanged = false;
     stopIfChanged = false;
+    # autostart still happens, just triggered by network-online.target
+    # instead of multi-user.target -- so it fires once nm actually reports
+    # online, but doesn't block the login prompt from waiting on it
+    wantedBy = lib.mkForce [ "network-online.target" ];
     serviceConfig = {
       ExecStartPost = "${bypassAddScript}";
       ExecStopPre = "${bypassDelScript}";

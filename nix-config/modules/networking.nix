@@ -7,6 +7,11 @@
   };
   networking.networkmanager.dns = "systemd-resolved";
 
+  # nm still connects in the background regardless -- this just stops boot
+  # (and the login prompt) from waiting up to 2min for "online" to show up,
+  # which matters most with no wifi around (eduroam-less middle of nowhere)
+  systemd.services.NetworkManager-wait-online.enable = false;
+
   age.secrets."eduroam" = {
     file = ../../secrets/eduroam.age;
     mode = "0600";
