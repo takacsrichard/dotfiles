@@ -176,7 +176,7 @@
     SystemMaxUse=200M
     SystemKeepFree=0
     MaxRetentionSec=2weeks
-    MaxLevelStore=4
+    MaxLevelStore=6
   '';
 
   # Btrfs: hourly snapshots of /home via snapper

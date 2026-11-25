@@ -28,8 +28,11 @@ Debug WITHOUT rebuilding: replicate the unit env with
 `env -i HOME=/home/richard PATH="$(systemctl show UNIT -p Environment --value|tr ' ' '\n'|grep ^PATH=|cut -d= -f2-)" bash script`.
 Scripts referenced by absolute path (not store path) need no rebuild to edit.
 
-Traps: journald `MaxLevelStore=4` silently drops info-level stdout, so failures
-log no reason — set `SyslogLevel="warning"` per unit. Units get a minimal PATH,
+Traps: journald was `MaxLevelStore=4` (now raised to `6` in storage.nix to let
+bootstats see boot-milestone info logs again), which silently drops stdout
+above that level, so failures can log no reason — some units still set
+`SyslogLevel="warning"` from when this bit them, now redundant but harmless.
+Units get a minimal PATH,
 not the login one; add `bash` (for `env` shebangs), `procps`, `"/run/wrappers"`
 (sudo) to `path`. No `User=` means root, so `sudo` dies with no TTY. Pin sudoers
 commands to `config.systemd.package`, not `pkgs.systemd` — different store paths,
