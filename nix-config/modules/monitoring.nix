@@ -71,6 +71,7 @@
     path = with pkgs; [
       python3
       rclone
+      util-linux
     ];
     serviceConfig = {
       Type = "oneshot";
@@ -78,7 +79,9 @@
       SyslogLevel = "warning";
       # no User= (root, for /mnt + nvme access) means $HOME defaults to /root,
       # so rclone can't find richard's ~/.config/rclone/rclone.conf unless we
-      # point HOME at it explicitly - same trap as the putzfrau service above
+      # point HOME at it explicitly - same trap as the putzfrau service above.
+      # the rclone call itself now runs as richard (via runuser) so a token
+      # refresh can't rewrite rclone.conf as root and break auto-backup
       Environment = "HOME=/home/richard";
       ExecStart = "/home/richard/dotfiles/scripts/disk-usage.py";
     };

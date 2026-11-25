@@ -39,9 +39,22 @@ def local_usage(path):
 
 
 def rclone_usage(remote):
+    # run as richard, not root - this service has no User= (needs root for
+    # /mnt access), but rclone can rewrite rclone.conf on token refresh, which
+    # would flip its ownership to root and break the 19:00 auto-backup
     try:
         res = subprocess.run(
-            ["rclone", "about", remote, "--json"],
+            [
+                "runuser",
+                "-u",
+                "richard",
+                "--whitelist-environment=RCLONE_CONFIG_PASS",
+                "--",
+                "rclone",
+                "about",
+                remote,
+                "--json",
+            ],
             capture_output=True,
             text=True,
             timeout=60,
