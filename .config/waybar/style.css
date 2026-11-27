@@ -238,6 +238,7 @@ window#waybar {
 #custom-terminal,
 #custom-scr,
 #custom-scr-full,
+#custom-screenrecord,
 #custom-mic-toggle,
 #custom-power-button {
     color: #e6e1e1;
@@ -251,10 +252,16 @@ window#waybar {
 #custom-terminal:hover,
 #custom-scr:hover,
 #custom-scr-full:hover,
+#custom-screenrecord:hover,
 #custom-mic-toggle:hover,
 #custom-power-button:hover {
     background: #1a1a1a;
     color: #e6e1e1;
+}
+
+#custom-screenrecord.recording {
+    color: #e06c75;
+    font-weight: bold;
 }
 
 #custom-scr {

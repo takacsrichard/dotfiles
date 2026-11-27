@@ -8,6 +8,7 @@
     "modules-left": ["hyprland/workspaces", "custom/terminal", "custom/scr"],
     "modules-center": ["clock"],
     "modules-right": ["custom/scr-full",
+        "custom/screenrecord",
         "custom/power-button",
         "custom/refresh-toggle",
         "backlight",
@@ -179,6 +180,17 @@
         "on-click": "~/sys/school/screenshot-full.sh",
         "signal": 8,
         "return-type": "json",
+    },
+
+    "custom/screenrecord": {
+        "format": "{}",
+        "exec": "~/.config/waybar/scripts/screenrecord.sh status",
+        "on-click": "~/.config/waybar/scripts/screenrecord.sh toggle",
+        "on-click-right": "~/.config/waybar/scripts/screenrecord.sh toggle region",
+        "interval": "once",
+        "signal": 11,
+        "return-type": "json",
+        "tooltip": true
     },
 
     "custom/power-button": {

@@ -37,6 +37,7 @@ in
     fd
     fzf
     zoxide
+    zsh-fzf-tab
     bat
     sd
     jq
@@ -127,6 +128,7 @@ in
     NIXOS_OZONE_WL = "1";
     EDITOR = "nvim";
     VISUAL = "nvim";
+    FZF_TAB_SHARE = "${pkgs.zsh-fzf-tab}/share/fzf-tab";
   };
 
   programs.obsidian = {
