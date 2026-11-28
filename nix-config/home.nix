@@ -24,6 +24,7 @@ in
     ./modules/firefox.nix
     ./modules/libreoffice.nix
     ./modules/paperless-dump.nix
+    ./modules/organizer.nix
   ];
 
   home.username = "richard";
@@ -100,6 +101,7 @@ in
     wlogout
     waybar
     fuzzel
+    rofimoji
     bluetui
 
     # screenshots & recording

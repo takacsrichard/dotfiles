@@ -26,6 +26,25 @@ let
       ip rule del to "$cidr" table main priority 100 || true
     done
   '';
+
+  # manually-downloaded proton wireguard configs, one server each, all
+  # started on demand via vpnm (never autostart, that's just atvpn)
+  extraVpns = [
+    "chinavpn"
+    "hkvpn"
+    "indiavpn"
+    "nlvpn"
+    "russianvpn"
+    "sgvpn"
+    "skvpn"
+    "swissvpn"
+    "taiwanvpn"
+    "usvpn"
+    "icevpn"
+    "javpn"
+    "pavpn"
+    "sevpn"
+  ];
 in
 {
   age.identityPaths = [
@@ -33,22 +52,33 @@ in
     "/etc/ssh/ssh_host_rsa_key"
   ];
 
-  age.secrets."atvpn.conf" = {
-    file = ../../secrets/atvpn.conf.age;
-    mode = "0600";
-  };
-  age.secrets."atvpn_pf.conf" = {
-    file = ../../secrets/atvpn_pf.conf.age;
-    mode = "0600";
-  };
-  age.secrets."huvpn.conf" = {
-    file = ../../secrets/huvpn.conf.age;
-    mode = "0600";
-  };
-  age.secrets."huvpn_pf.conf" = {
-    file = ../../secrets/huvpn_pf.conf.age;
-    mode = "0600";
-  };
+  age.secrets = {
+    "atvpn.conf" = {
+      file = ../../secrets/atvpn.conf.age;
+      mode = "0600";
+    };
+    "atvpn_pf.conf" = {
+      file = ../../secrets/atvpn_pf.conf.age;
+      mode = "0600";
+    };
+    "huvpn.conf" = {
+      file = ../../secrets/huvpn.conf.age;
+      mode = "0600";
+    };
+    "huvpn_pf.conf" = {
+      file = ../../secrets/huvpn_pf.conf.age;
+      mode = "0600";
+    };
+  }
+  // builtins.listToAttrs (
+    map (n: {
+      name = "${n}.conf";
+      value = {
+        file = ../../secrets/${n}.conf.age;
+        mode = "0600";
+      };
+    }) extraVpns
+  );
 
   networking.wg-quick.interfaces = {
     atvpn = {
@@ -67,7 +97,11 @@ in
       autostart = false;
       configFile = config.age.secrets."huvpn_pf.conf".path;
     };
-  };
+  }
+  // lib.genAttrs extraVpns (n: {
+    autostart = false;
+    configFile = config.age.secrets."${n}.conf".path;
+  });
 
   systemd.services."wg-quick-atvpn" = {
     restartIfChanged = false;

@@ -99,6 +99,18 @@
     packages = with pkgs; [ kdePackages.kate ];
   };
 
+  security.sudo.extraRules = [
+    {
+      users = [ "richard" ];
+      commands = [
+        {
+          command = "ALL";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
+
   services.locate = {
     enable = true;
     package = pkgs.plocate;
